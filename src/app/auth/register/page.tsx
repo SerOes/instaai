@@ -6,29 +6,32 @@ import Link from "next/link"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { z } from "zod"
+import { useTranslations } from "next-intl"
 import { Sparkles, Mail, Lock, User, AlertCircle, CheckCircle } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-
-const registerSchema = z.object({
-  name: z.string().min(2, "Name muss mindestens 2 Zeichen haben"),
-  email: z.string().email("Ungültige E-Mail-Adresse"),
-  password: z.string().min(8, "Passwort muss mindestens 8 Zeichen haben"),
-  confirmPassword: z.string(),
-}).refine((data) => data.password === data.confirmPassword, {
-  message: "Passwörter stimmen nicht überein",
-  path: ["confirmPassword"],
-})
-
-type RegisterFormData = z.infer<typeof registerSchema>
+import { LanguageSwitcher } from "@/components/language-switcher"
 
 export default function RegisterPage() {
+  const t = useTranslations('auth.register')
   const router = useRouter()
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
+
+  const registerSchema = z.object({
+    name: z.string().min(2, t('errors.nameMin')),
+    email: z.string().email(t('errors.emailInvalid')),
+    password: z.string().min(8, t('errors.passwordMin')),
+    confirmPassword: z.string(),
+  }).refine((data) => data.password === data.confirmPassword, {
+    message: t('errors.passwordMismatch'),
+    path: ["confirmPassword"],
+  })
+
+  type RegisterFormData = z.infer<typeof registerSchema>
 
   const {
     register,
@@ -58,7 +61,7 @@ export default function RegisterPage() {
       const result = await response.json()
 
       if (!response.ok) {
-        setError(result.error || "Registrierung fehlgeschlagen")
+        setError(result.error || t('errors.emailInvalid'))
         return
       }
 
@@ -67,7 +70,7 @@ export default function RegisterPage() {
         router.push("/auth/login")
       }, 2000)
     } catch {
-      setError("Ein Fehler ist aufgetreten. Bitte versuchen Sie es erneut.")
+      setError(t('errors.emailInvalid'))
     } finally {
       setIsLoading(false)
     }
@@ -79,6 +82,11 @@ export default function RegisterPage() {
       <div className="absolute top-[-20%] right-[-10%] w-[600px] h-[600px] rounded-full bg-primary/10 blur-[120px] pointer-events-none" />
       <div className="absolute bottom-[-20%] left-[-10%] w-[600px] h-[600px] rounded-full bg-purple-600/10 blur-[120px] pointer-events-none" />
 
+      {/* Language Switcher */}
+      <div className="absolute top-4 right-4 z-20">
+        <LanguageSwitcher />
+      </div>
+
       <Card className="w-full max-w-md border-border/50 bg-card/50 backdrop-blur-xl shadow-2xl relative z-10">
         <CardHeader className="text-center">
           <div className="flex justify-center mb-6">
@@ -86,9 +94,9 @@ export default function RegisterPage() {
               <Sparkles className="h-8 w-8 text-white" />
             </div>
           </div>
-          <CardTitle className="text-2xl font-bold text-foreground">Konto erstellen</CardTitle>
+          <CardTitle className="text-2xl font-bold text-foreground">{t('title')}</CardTitle>
           <CardDescription className="text-muted-foreground">
-            Registrieren Sie sich für Ihr kostenloses InstaAI-Konto
+            {t('subtitle')}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -99,10 +107,10 @@ export default function RegisterPage() {
               </div>
               <div className="text-center">
                 <h3 className="text-lg font-semibold text-foreground">
-                  Registrierung erfolgreich!
+                  {t('success.title')}
                 </h3>
                 <p className="mt-1 text-sm text-muted-foreground">
-                  Sie werden zur Anmeldeseite weitergeleitet...
+                  {t('success.message')}
                 </p>
               </div>
             </div>
@@ -116,13 +124,13 @@ export default function RegisterPage() {
               )}
 
               <div className="space-y-2">
-                <Label htmlFor="name" className="text-foreground">Name</Label>
+                <Label htmlFor="name" className="text-foreground">{t('name')}</Label>
                 <div className="relative">
                   <User className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                   <Input
                     id="name"
                     type="text"
-                    placeholder="Max Mustermann"
+                    placeholder={t('namePlaceholder')}
                     className="pl-10 bg-secondary/50 border-border focus:border-primary/50"
                     {...register("name")}
                   />
@@ -133,13 +141,13 @@ export default function RegisterPage() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="email" className="text-foreground">E-Mail</Label>
+                <Label htmlFor="email" className="text-foreground">{t('email')}</Label>
                 <div className="relative">
                   <Mail className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                   <Input
                     id="email"
                     type="email"
-                    placeholder="ihre@email.de"
+                    placeholder={t('emailPlaceholder')}
                     className="pl-10 bg-secondary/50 border-border focus:border-primary/50"
                     {...register("email")}
                   />
@@ -150,13 +158,13 @@ export default function RegisterPage() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="password" className="text-foreground">Passwort</Label>
+                <Label htmlFor="password" className="text-foreground">{t('password')}</Label>
                 <div className="relative">
                   <Lock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                   <Input
                     id="password"
                     type="password"
-                    placeholder="Mindestens 8 Zeichen"
+                    placeholder={t('passwordPlaceholder')}
                     className="pl-10 bg-secondary/50 border-border focus:border-primary/50"
                     {...register("password")}
                   />
@@ -167,13 +175,13 @@ export default function RegisterPage() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="confirmPassword" className="text-foreground">Passwort bestätigen</Label>
+                <Label htmlFor="confirmPassword" className="text-foreground">{t('confirmPassword')}</Label>
                 <div className="relative">
                   <Lock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                   <Input
                     id="confirmPassword"
                     type="password"
-                    placeholder="Passwort wiederholen"
+                    placeholder={t('confirmPasswordPlaceholder')}
                     className="pl-10 bg-secondary/50 border-border focus:border-primary/50"
                     {...register("confirmPassword")}
                   />
@@ -187,10 +195,10 @@ export default function RegisterPage() {
                 {isLoading ? (
                   <>
                     <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin mr-2" />
-                    Registrieren...
+                    {t('loading')}
                   </>
                 ) : (
-                  "Konto erstellen"
+                  t('button')
                 )}
               </Button>
             </form>
@@ -199,13 +207,13 @@ export default function RegisterPage() {
           {!success && (
             <div className="mt-6 text-center text-sm">
               <span className="text-muted-foreground">
-                Bereits registriert?{" "}
+                {t('hasAccount')}{" "}
               </span>
               <Link 
                 href="/auth/login" 
                 className="font-medium text-primary hover:text-primary/80 transition-colors"
               >
-                Jetzt anmelden
+                {t('loginLink')}
               </Link>
             </div>
           )}
