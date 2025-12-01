@@ -1,0 +1,272 @@
+// This is your Prisma schema file for the AI-powered Instagram Content Tool
+// Based on the specification: insta_ai_tool_extended_spec.md
+// SQLite for development (no enums), PostgreSQL for production
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// ==================== USER & AUTH ====================
+
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  passwordHash  String?
+  name          String?
+  image         String?
+  locale        String    @default("de") // "de", "en", "tr"
+  systemPrompt  String? // Global business/brand context for AI
+  
+  // Onboarding data
+  brandName     String?
+  industry      String?
+  targetAudience String?
+  brandStyle    String    @default("[]") // JSON array as string for SQLite
+  contentGoals  String    @default("[]") // JSON array as string for SQLite
+  
+  emailVerified DateTime?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  // Relations
+  accounts          Account[]
+  sessions          Session[]
+  apiKeys           ApiKey[]
+  instagramAccounts InstagramAccount[]
+  mediaProjects     MediaProject[]
+  aiPresets         AiPreset[]
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+// ==================== API KEYS ====================
+
+model ApiKey {
+  id           String   @id @default(cuid())
+  userId       String
+  provider     String   // "GEMINI", "KIEAI", etc.
+  keyEncrypted String
+  label        String?  // Optional label for the key
+  isActive     Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, provider])
+}
+
+// ==================== INSTAGRAM INTEGRATION ====================
+
+model InstagramAccount {
+  id                   String   @id @default(cuid())
+  userId               String
+  igBusinessId         String   @unique
+  accessTokenEncrypted String
+  username             String
+  profileName          String?
+  profilePicture       String?
+  followersCount       Int?
+  followingCount       Int?
+  mediaCount           Int?
+  lastSynced           DateTime?
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+
+  user              User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  postSchedules     PostSchedule[]
+  analyticsRecords  AnalyticsRecord[]
+
+  @@index([userId])
+}
+
+// ==================== MEDIA PROJECTS ====================
+// Note: SQLite doesn't support enums, so we use String with validation in code
+// type: "IMAGE" | "VIDEO"
+// status: "DRAFT" | "SCHEDULED" | "PUBLISHED" | "FAILED"
+// source: "GENERATED" | "UPLOADED" | "EDITED"
+
+model MediaProject {
+  id           String   @id @default(cuid())
+  userId       String
+  type         String   @default("IMAGE") // "IMAGE" or "VIDEO"
+  title        String
+  description  String?
+  status       String   @default("DRAFT") // "DRAFT", "SCHEDULED", "PUBLISHED", "FAILED"
+  source       String   @default("GENERATED") // "GENERATED", "UPLOADED", "EDITED"
+  
+  // File storage
+  fileUrl      String?
+  thumbnailUrl String?
+  
+  // AI Generation metadata
+  prompt       String?
+  style        String?
+  aspectRatio  String?       // "1:1", "4:5", "9:16", "16:9"
+  model        String?       // AI model used
+  provider     String?       // AI provider used
+  presetId     String?       // Reference to AI preset
+  
+  // Additional metadata as JSON string for SQLite
+  metadata     String?
+  
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+
+  user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  captions     Caption[]
+  postSchedules PostSchedule[]
+  preset       AiPreset?     @relation(fields: [presetId], references: [id])
+
+  @@index([userId, status])
+  @@index([userId, type])
+}
+
+// ==================== CAPTIONS & HASHTAGS ====================
+
+model Caption {
+  id         String   @id @default(cuid())
+  projectId  String
+  language   String   @default("de") // "de", "en", "tr"
+  text       String
+  hashtags   String   @default("[]") // JSON array as string for SQLite
+  tone       String?  // "informative", "emotional", "funny", etc.
+  isSelected Boolean  @default(false)
+  version    Int      @default(1)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  project MediaProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@index([projectId, language])
+}
+
+// ==================== POST SCHEDULING ====================
+// status: "PENDING" | "PROCESSING" | "POSTED" | "FAILED" | "CANCELLED"
+// postType: "FEED" | "REEL" | "STORY" | "CAROUSEL"
+
+model PostSchedule {
+  id                 String   @id @default(cuid())
+  projectId          String
+  instagramAccountId String
+  scheduledAt        DateTime
+  status             String   @default("PENDING") // "PENDING", "PROCESSING", "POSTED", "FAILED", "CANCELLED"
+  postType           String   @default("FEED") // "FEED", "REEL", "STORY", "CAROUSEL"
+  
+  // Instagram post result
+  igPostId           String?
+  igPermalink        String?
+  
+  // Error tracking
+  errorMessage       String?
+  retryCount         Int      @default(0)
+  lastAttemptAt      DateTime?
+  
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  project           MediaProject     @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  instagramAccount  InstagramAccount @relation(fields: [instagramAccountId], references: [id], onDelete: Cascade)
+
+  @@index([scheduledAt, status])
+  @@index([instagramAccountId])
+}
+
+// ==================== ANALYTICS ====================
+
+model AnalyticsRecord {
+  id                 String   @id @default(cuid())
+  instagramAccountId String
+  igPostId           String
+  projectId          String?
+  
+  // Metrics
+  likes              Int      @default(0)
+  comments           Int      @default(0)
+  saves              Int      @default(0)
+  shares             Int      @default(0)
+  reach              Int      @default(0)
+  impressions        Int      @default(0)
+  engagement         Float?   // Calculated engagement rate
+  
+  capturedAt         DateTime @default(now())
+
+  instagramAccount InstagramAccount @relation(fields: [instagramAccountId], references: [id], onDelete: Cascade)
+
+  @@unique([igPostId, capturedAt])
+  @@index([instagramAccountId, capturedAt])
+}
+
+// ==================== AI PRESETS ====================
+// type: "IMAGE" | "VIDEO"
+
+model AiPreset {
+  id             String   @id @default(cuid())
+  userId         String?  // null = system preset
+  name           String
+  description    String?
+  type           String   @default("IMAGE") // "IMAGE" or "VIDEO"
+  category       String   // "product", "lifestyle", "story", etc.
+  
+  // Preset configuration
+  promptTemplate String
+  style          String?
+  aspectRatio    String?
+  duration       Int?     // For video presets (seconds)
+  
+  // Brand preset elements - JSON strings for SQLite
+  colorPalette   String   @default("[]") // JSON array of hex colors
+  fontFamily     String?
+  logoPosition   String?  // "top-left", "bottom-right", etc.
+  
+  // Metadata
+  isPublic       Boolean  @default(false)
+  usageCount     Int      @default(0)
+  
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  user           User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  mediaProjects  MediaProject[]
+
+  @@index([userId, type])
+  @@index([category, isPublic])
+}
