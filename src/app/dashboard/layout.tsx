@@ -16,7 +16,8 @@ import {
   X,
   Sparkles,
   Instagram,
-  ImagePlus
+  ImagePlus,
+  MessageCircle
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
@@ -28,6 +29,7 @@ const navigation = [
   { name: "Meine Bilder", href: "/dashboard/gallery", icon: ImagePlus },
   { name: "Bilder generieren", href: "/dashboard/generate/image", icon: Image },
   { name: "Videos generieren", href: "/dashboard/generate/video", icon: Video },
+  { name: "Direktnachrichten", href: "/dashboard/messages", icon: MessageCircle },
   { name: "Content-Planer", href: "/dashboard/schedule", icon: Calendar },
   { name: "Einstellungen", href: "/dashboard/settings", icon: Settings },
 ]
