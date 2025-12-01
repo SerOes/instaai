@@ -156,11 +156,12 @@ export default function DMSettingsPage() {
     setNewKeywordResponse("")
   }
 
-  const removeKeyword = (keyword: string) => {
+  const removeKeyword = (keywordToRemove: string) => {
     if (!settings) return
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { [keyword]: _removed, ...rest } = settings.keywords
-    updateSetting("keywords", rest)
+    const newKeywords = Object.fromEntries(
+      Object.entries(settings.keywords).filter(([key]) => key !== keywordToRemove)
+    )
+    updateSetting("keywords", newKeywords)
   }
 
   const addQuickReply = () => {

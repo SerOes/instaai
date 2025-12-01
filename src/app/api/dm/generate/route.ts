@@ -96,12 +96,24 @@ export async function POST(request: NextRequest) {
       }))
 
     // Parse category responses and keywords if available
-    const categoryResponses = automation?.categoryResponses 
-      ? JSON.parse(automation.categoryResponses)
-      : undefined
-    const keywords = automation?.keywords
-      ? JSON.parse(automation.keywords)
-      : undefined
+    let categoryResponses: Record<string, string> | undefined
+    let keywords: Record<string, string> | undefined
+    
+    try {
+      categoryResponses = automation?.categoryResponses 
+        ? JSON.parse(automation.categoryResponses)
+        : undefined
+    } catch {
+      categoryResponses = undefined
+    }
+    
+    try {
+      keywords = automation?.keywords
+        ? JSON.parse(automation.keywords)
+        : undefined
+    } catch {
+      keywords = undefined
+    }
 
     // Generate response
     const result = await dmAI.generateResponse({

@@ -124,11 +124,23 @@ const languagePrompts: Record<DMLanguage, { greeting: string; instruction: strin
   },
 }
 
-// Tone instructions
-const toneInstructions: Record<DMTone, string> = {
-  friendly: 'Sei freundlich, warm und einladend. Nutze gelegentlich Emojis, um die Nachricht lebendiger zu machen.',
-  professional: 'Bleibe professionell und respektvoll. Verwende eine formelle aber zugängliche Sprache.',
-  casual: 'Sei locker und entspannt, wie in einem Gespräch mit einem Freund. Emojis sind willkommen.',
+// Tone instructions - now language-aware
+const toneInstructions: Record<DMLanguage, Record<DMTone, string>> = {
+  de: {
+    friendly: 'Sei freundlich, warm und einladend. Nutze gelegentlich Emojis, um die Nachricht lebendiger zu machen.',
+    professional: 'Bleibe professionell und respektvoll. Verwende eine formelle aber zugängliche Sprache.',
+    casual: 'Sei locker und entspannt, wie in einem Gespräch mit einem Freund. Emojis sind willkommen.',
+  },
+  en: {
+    friendly: 'Be friendly, warm and welcoming. Use occasional emojis to make the message more lively.',
+    professional: 'Stay professional and respectful. Use formal but approachable language.',
+    casual: 'Be relaxed and casual, like chatting with a friend. Emojis are welcome.',
+  },
+  tr: {
+    friendly: 'Arkadaşça, sıcak ve davetkar ol. Mesajı daha canlı hale getirmek için ara sıra emoji kullan.',
+    professional: 'Profesyonel ve saygılı ol. Resmi ama ulaşılabilir bir dil kullan.',
+    casual: 'Rahat ve samimi ol, bir arkadaşla sohbet eder gibi. Emojiler hoş karşılanır.',
+  },
 }
 
 // Main DM AI Provider Service Class
@@ -193,7 +205,7 @@ Du bist ein hilfreicher Instagram DM-Assistent.
 ${brandContext}
 ${customSystemPrompt}
 
-${toneInstructions[tone]}
+${toneInstructions[language][tone]}
 ${languagePrompts[language].greeting}.
       `.trim()
 
