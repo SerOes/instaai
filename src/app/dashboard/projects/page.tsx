@@ -33,6 +33,7 @@ interface Project {
 
 export default function ProjectsPage() {
   const t = useTranslations('projects')
+  const tCommon = useTranslations('common')
   const locale = useLocale()
   const [projects, setProjects] = useState<Project[]>([])
   const [loading, setLoading] = useState(true)
@@ -229,7 +230,7 @@ export default function ProjectsPage() {
                   <Link href={`/dashboard/projects/${project.id}`}>
                     <Button size="sm" variant="secondary" className="bg-white/10 hover:bg-white/20 text-white border-0">
                       <Edit className="mr-1 h-4 w-4" />
-                      {t('types.image') === 'Bild' ? 'Bearbeiten' : 'Edit'}
+                      {tCommon('edit')}
                     </Button>
                   </Link>
                   <Button 

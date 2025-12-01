@@ -131,11 +131,11 @@ export default async function Home() {
               <div className="text-center p-8 relative z-10">
                 <div className="flex justify-center gap-6 mb-8">
                   {[
-                    { icon: Image, color: "from-purple-500 to-pink-500" },
-                    { icon: Video, color: "from-blue-500 to-cyan-500" },
-                    { icon: Wand2, color: "from-green-500 to-emerald-500" }
-                  ].map((item, idx) => (
-                    <div key={idx} className={`h-32 w-32 rounded-2xl bg-gradient-to-br ${item.color} p-[1px] shadow-2xl transform hover:-translate-y-2 transition-transform duration-300`}>
+                    { id: "image", icon: Image, color: "from-purple-500 to-pink-500" },
+                    { id: "video", icon: Video, color: "from-blue-500 to-cyan-500" },
+                    { id: "wand", icon: Wand2, color: "from-green-500 to-emerald-500" }
+                  ].map((item) => (
+                    <div key={item.id} className={`h-32 w-32 rounded-2xl bg-gradient-to-br ${item.color} p-[1px] shadow-2xl transform hover:-translate-y-2 transition-transform duration-300`}>
                       <div className="h-full w-full bg-black/80 backdrop-blur-md rounded-2xl flex items-center justify-center">
                         <item.icon className="h-12 w-12 text-white/80" />
                       </div>
