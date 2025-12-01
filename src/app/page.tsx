@@ -2,6 +2,7 @@ import Link from "next/link"
 import { Sparkles, Image, Video, Calendar, Hash, Wand2, ArrowRight, CheckCircle2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
+import { ThemeToggle } from "@/components/ui/theme-toggle"
 
 export default function Home() {
   const features = [
@@ -55,6 +56,7 @@ export default function Home() {
             </span>
           </Link>
           <div className="flex items-center gap-4">
+            <ThemeToggle />
             <Link href="/auth/login">
               <Button variant="ghost" className="text-muted-foreground hover:text-foreground">Anmelden</Button>
             </Link>

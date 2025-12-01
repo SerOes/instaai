@@ -34,8 +34,41 @@
   --radius: 0.75rem;
 }
 
+/* Dark mode - via class or system preference */
+.dark,
+:root:has(.dark) {
+  /* Deep Space Black Background */
+  --background: #030014; /* Very dark violet-black */
+  --foreground: #fafafa;
+  
+  /* Glassy Surfaces */
+  --card: rgba(17, 17, 27, 0.6);
+  --card-foreground: #fafafa;
+  --popover: #09090b;
+  --popover-foreground: #fafafa;
+  
+  /* Neon/Glow Accents */
+  --primary: #8b5cf6; /* Violet-500 */
+  --primary-foreground: #ffffff;
+  --secondary: #1e1e2e;
+  --secondary-foreground: #fafafa;
+  
+  /* Muted for depth */
+  --muted: #1e1e2e;
+  --muted-foreground: #a1a1aa;
+  --accent: rgba(139, 92, 246, 0.15); /* Low opacity primary */
+  --accent-foreground: #fafafa;
+  
+  --destructive: #7f1d1d;
+  --destructive-foreground: #fafafa;
+  
+  --border: rgba(255, 255, 255, 0.08);
+  --input: rgba(255, 255, 255, 0.08);
+  --ring: #8b5cf6;
+}
+
 @media (prefers-color-scheme: dark) {
-  :root {
+  :root:not(.light) {
     /* Deep Space Black Background */
     --background: #030014; /* Very dark violet-black */
     --foreground: #fafafa;

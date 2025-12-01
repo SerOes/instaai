@@ -20,6 +20,7 @@ import {
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { ThemeToggle } from "@/components/ui/theme-toggle"
 
 const navigation = [
   { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
@@ -174,6 +175,7 @@ export default function DashboardLayout({
           </button>
 
           <div className="flex items-center gap-4 ml-auto">
+            <ThemeToggle />
             <Link href="/dashboard/settings/instagram">
               <Button variant="glass" size="sm" className="gap-2 rounded-full px-4">
                 <Instagram className="h-4 w-4" />
