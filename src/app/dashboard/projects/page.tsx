@@ -2,13 +2,13 @@
 
 import { useState, useEffect } from "react"
 import Link from "next/link"
+import { useTranslations, useLocale } from "next-intl"
 import { 
   Plus, 
   Search, 
   Filter,
   Image,
   Video,
-  MoreVertical,
   Trash2,
   Edit,
   Calendar
@@ -32,6 +32,8 @@ interface Project {
 }
 
 export default function ProjectsPage() {
+  const t = useTranslations('projects')
+  const locale = useLocale()
   const [projects, setProjects] = useState<Project[]>([])
   const [loading, setLoading] = useState(true)
   const [searchQuery, setSearchQuery] = useState("")
@@ -57,7 +59,7 @@ export default function ProjectsPage() {
   }
 
   const handleDelete = async (id: string) => {
-    if (!confirm("Möchten Sie dieses Projekt wirklich löschen?")) return
+    if (!confirm(t('confirmDelete'))) return
 
     setDeleteId(id)
     try {
@@ -80,6 +82,15 @@ export default function ProjectsPage() {
     return matchesSearch && matchesType
   })
 
+  const getDateLocale = () => {
+    const localeMap: Record<string, string> = {
+      de: "de-DE",
+      en: "en-US",
+      tr: "tr-TR"
+    }
+    return localeMap[locale] || "de-DE"
+  }
+
   const getStatusBadge = (status: string) => {
     const styles = {
       DRAFT: "bg-secondary text-muted-foreground border-transparent",
@@ -87,15 +98,15 @@ export default function ProjectsPage() {
       PUBLISHED: "bg-green-500/10 text-green-500 border-green-500/20",
       FAILED: "bg-red-500/10 text-red-500 border-red-500/20",
     }
-    const labels = {
-      DRAFT: "Entwurf",
-      SCHEDULED: "Geplant",
-      PUBLISHED: "Veröffentlicht",
-      FAILED: "Fehlgeschlagen",
+    const labels: Record<string, string> = {
+      DRAFT: t('status.draft'),
+      SCHEDULED: t('status.scheduled'),
+      PUBLISHED: t('status.published'),
+      FAILED: t('status.failed'),
     }
     return (
       <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium border ${styles[status as keyof typeof styles] || styles.DRAFT}`}>
-        {labels[status as keyof typeof labels] || status}
+        {labels[status] || status}
       </span>
     )
   }
@@ -113,15 +124,15 @@ export default function ProjectsPage() {
       {/* Header */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-foreground">Projekte</h1>
+          <h1 className="text-3xl font-bold text-foreground">{t('title')}</h1>
           <p className="mt-1 text-muted-foreground">
-            Verwalte deine generierten Bilder und Videos
+            {t('subtitle')}
           </p>
         </div>
         <Link href="/dashboard/projects/new">
           <Button variant="gradient" className="shadow-lg shadow-primary/20">
             <Plus className="mr-2 h-4 w-4" />
-            Neues Projekt
+            {t('newProject')}
           </Button>
         </Link>
       </div>
@@ -131,7 +142,7 @@ export default function ProjectsPage() {
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <Input
-            placeholder="Projekte durchsuchen..."
+            placeholder={t('searchPlaceholder')}
             className="pl-10 bg-secondary/50 border-border focus:border-primary/50"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
@@ -144,7 +155,7 @@ export default function ProjectsPage() {
             onClick={() => setFilterType(null)}
             className={filterType === null ? "bg-primary text-primary-foreground" : "bg-secondary/50 text-muted-foreground hover:text-foreground border-border"}
           >
-            Alle
+            {t('filters.all')}
           </Button>
           <Button
             variant={filterType === "IMAGE" ? "default" : "outline"}
@@ -152,8 +163,8 @@ export default function ProjectsPage() {
             onClick={() => setFilterType("IMAGE")}
             className={filterType === "IMAGE" ? "bg-primary text-primary-foreground" : "bg-secondary/50 text-muted-foreground hover:text-foreground border-border"}
           >
-            <Image className="mr-2 h-4 w-4" />
-            Bilder
+            <Image className="mr-2 h-4 w-4" alt="" />
+            {t('filters.images')}
           </Button>
           <Button
             variant={filterType === "VIDEO" ? "default" : "outline"}
@@ -162,7 +173,7 @@ export default function ProjectsPage() {
             className={filterType === "VIDEO" ? "bg-primary text-primary-foreground" : "bg-secondary/50 text-muted-foreground hover:text-foreground border-border"}
           >
             <Video className="mr-2 h-4 w-4" />
-            Videos
+            {t('filters.videos')}
           </Button>
         </div>
       </div>
@@ -175,18 +186,18 @@ export default function ProjectsPage() {
               <Filter className="h-8 w-8 text-muted-foreground" />
             </div>
             <h3 className="mt-4 text-lg font-medium text-foreground">
-              {searchQuery || filterType ? "Keine Ergebnisse" : "Noch keine Projekte"}
+              {searchQuery || filterType ? t('empty.titleFiltered') : t('empty.title')}
             </h3>
             <p className="mt-2 text-center text-sm text-muted-foreground">
               {searchQuery || filterType
-                ? "Versuche eine andere Suche oder Filter."
-                : "Erstelle dein erstes Projekt, um loszulegen."}
+                ? t('empty.subtitleFiltered')
+                : t('empty.subtitle')}
             </p>
             {!searchQuery && !filterType && (
               <Link href="/dashboard/projects/new" className="mt-6">
                 <Button variant="gradient" className="shadow-lg shadow-primary/20">
                   <Plus className="mr-2 h-4 w-4" />
-                  Neues Projekt
+                  {t('newProject')}
                 </Button>
               </Link>
             )}
@@ -208,7 +219,7 @@ export default function ProjectsPage() {
                     {project.type === "VIDEO" ? (
                       <Video className="h-12 w-12 text-muted-foreground/30" />
                     ) : (
-                      <Image className="h-12 w-12 text-muted-foreground/30" />
+                      <Image className="h-12 w-12 text-muted-foreground/30" alt="" />
                     )}
                   </div>
                 )}
@@ -218,7 +229,7 @@ export default function ProjectsPage() {
                   <Link href={`/dashboard/projects/${project.id}`}>
                     <Button size="sm" variant="secondary" className="bg-white/10 hover:bg-white/20 text-white border-0">
                       <Edit className="mr-1 h-4 w-4" />
-                      Bearbeiten
+                      {t('types.image') === 'Bild' ? 'Bearbeiten' : 'Edit'}
                     </Button>
                   </Link>
                   <Button 
@@ -244,9 +255,9 @@ export default function ProjectsPage() {
                       : "bg-purple-500/80 text-white"
                   }`}>
                     {project.type === "VIDEO" ? (
-                      <><Video className="mr-1 h-3 w-3" /> Video</>
+                      <><Video className="mr-1 h-3 w-3" /> {t('types.video')}</>
                     ) : (
-                      <><Image className="mr-1 h-3 w-3" /> Bild</>
+                      <><Image className="mr-1 h-3 w-3" alt="" /> {t('types.image')}</>
                     )}
                   </span>
                 </div>
@@ -261,18 +272,18 @@ export default function ProjectsPage() {
                 <div className="mt-2 flex items-center justify-between">
                   {getStatusBadge(project.status)}
                   <span className="text-xs text-muted-foreground">
-                    {new Date(project.createdAt).toLocaleDateString("de-DE")}
+                    {new Date(project.createdAt).toLocaleDateString(getDateLocale())}
                   </span>
                 </div>
                 {project._count && (project._count.captions > 0 || project._count.postSchedules > 0) && (
                   <div className="mt-3 flex items-center gap-3 text-xs text-muted-foreground">
                     {project._count.captions > 0 && (
-                      <span>{project._count.captions} Caption{project._count.captions !== 1 && "s"}</span>
+                      <span>{project._count.captions} {t('captions')}{project._count.captions !== 1 && "s"}</span>
                     )}
                     {project._count.postSchedules > 0 && (
                       <span className="flex items-center gap-1">
                         <Calendar className="h-3 w-3" />
-                        {project._count.postSchedules} geplant
+                        {project._count.postSchedules} {t('scheduled')}
                       </span>
                     )}
                   </div>
