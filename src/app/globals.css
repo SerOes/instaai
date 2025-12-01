@@ -35,8 +35,7 @@
 }
 
 /* Dark mode - via class or system preference */
-.dark,
-:root:has(.dark) {
+.dark {
   /* Deep Space Black Background */
   --background: #030014; /* Very dark violet-black */
   --foreground: #fafafa;
