@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useMemo } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
 import { signIn } from "next-auth/react"
@@ -21,10 +21,12 @@ export default function LoginPage() {
   const [error, setError] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(false)
 
-  const loginSchema = z.object({
-    email: z.string().email(t('error')),
-    password: z.string().min(1, t('error')),
-  })
+  const loginSchema = useMemo(() => (
+    z.object({
+      email: z.string().email(t('error')),
+      password: z.string().min(1, t('error')),
+    })
+  ), [t])
 
   type LoginFormData = z.infer<typeof loginSchema>
 

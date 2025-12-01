@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useMemo } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
 import { useForm } from "react-hook-form"
@@ -21,15 +21,17 @@ export default function RegisterPage() {
   const [success, setSuccess] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
 
-  const registerSchema = z.object({
-    name: z.string().min(2, t('errors.nameMin')),
-    email: z.string().email(t('errors.emailInvalid')),
-    password: z.string().min(8, t('errors.passwordMin')),
-    confirmPassword: z.string(),
-  }).refine((data) => data.password === data.confirmPassword, {
-    message: t('errors.passwordMismatch'),
-    path: ["confirmPassword"],
-  })
+  const registerSchema = useMemo(() => (
+    z.object({
+      name: z.string().min(2, t('errors.nameMin')),
+      email: z.string().email(t('errors.emailInvalid')),
+      password: z.string().min(8, t('errors.passwordMin')),
+      confirmPassword: z.string(),
+    }).refine((data) => data.password === data.confirmPassword, {
+      message: t('errors.passwordMismatch'),
+      path: ["confirmPassword"],
+    })
+  ), [t])
 
   type RegisterFormData = z.infer<typeof registerSchema>
 

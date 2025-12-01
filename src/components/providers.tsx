@@ -1,12 +1,12 @@
 "use client"
 
 import { SessionProvider } from "next-auth/react"
-import { NextIntlClientProvider } from "next-intl"
+import { NextIntlClientProvider, AbstractIntlMessages } from "next-intl"
 
 interface ProvidersProps {
   children: React.ReactNode
   locale: string
-  messages: Record<string, unknown>
+  messages: AbstractIntlMessages
 }
 
 export function Providers({ children, locale, messages }: ProvidersProps) {

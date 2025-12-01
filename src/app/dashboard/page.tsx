@@ -230,7 +230,7 @@ export default function DashboardPage() {
                     {project.type === "VIDEO" ? (
                       <Video className="h-6 w-6 text-blue-500" />
                     ) : (
-                      <Image className="h-6 w-6 text-purple-500" alt="" />
+                      <Image className="h-6 w-6 text-purple-500" />
                     )}
                   </div>
                   <div className="flex-1 min-w-0">

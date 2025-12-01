@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useMemo } from "react"
 import { useRouter } from "next/navigation"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -21,11 +21,13 @@ export default function NewProjectPage() {
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  const projectSchema = z.object({
-    title: z.string().min(1, t('titleRequired')),
-    description: z.string().optional(),
-    type: z.enum(["IMAGE", "VIDEO"]),
-  })
+  const projectSchema = useMemo(() => (
+    z.object({
+      title: z.string().min(1, t('titleRequired')),
+      description: z.string().optional(),
+      type: z.enum(["IMAGE", "VIDEO"]),
+    })
+  ), [t])
 
   type ProjectFormData = z.infer<typeof projectSchema>
 
@@ -131,7 +133,7 @@ export default function NewProjectPage() {
                       ? "bg-purple-500 text-white"
                       : "bg-secondary text-muted-foreground"
                   }`}>
-                    <Image className="h-6 w-6" alt="" />
+                    <Image className="h-6 w-6" />
                   </div>
                   <div className="text-center">
                     <p className="font-medium text-foreground">{t('typeImage')}</p>
