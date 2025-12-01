@@ -11,6 +11,8 @@ const imageSchema = z.object({
   aspectRatio: z.enum(["1:1", "4:5", "9:16", "16:9"]).default("1:1"),
   model: z.enum(["kie-standard", "kie-realistic", "kie-artistic"]).default("kie-standard"),
   projectId: z.string().cuid().optional(),
+  referenceImageUrl: z.string().optional(),
+  referenceImageId: z.string().optional(),
 })
 
 export async function POST(request: NextRequest) {
@@ -24,7 +26,12 @@ export async function POST(request: NextRequest) {
     const body = await request.json()
     const data = imageSchema.parse(body)
 
-    // Get user's API key for KIE.ai
+    // Get user with systemPrompt and API key for KIE.ai
+    const user = await prisma.user.findUnique({
+      where: { id: session.user.id },
+      select: { systemPrompt: true },
+    })
+
     const apiKey = await prisma.apiKey.findFirst({
       where: {
         userId: session.user.id,
@@ -43,10 +50,11 @@ export async function POST(request: NextRequest) {
     const { decryptApiKey } = await import("@/lib/utils")
     const kieKey = decryptApiKey(apiKey.keyEncrypted)
 
-    // Build enhanced prompt if preset is used
+    // Build enhanced prompt with preset and system prompt
     let enhancedPrompt = data.prompt
     let styleUsed = data.style
 
+    // Apply preset template if selected
     if (data.presetId) {
       const preset = await prisma.aiPreset.findUnique({
         where: { id: data.presetId },
@@ -56,6 +64,11 @@ export async function POST(request: NextRequest) {
         enhancedPrompt = `${preset.promptTemplate}\n\n${data.prompt}`
         styleUsed = preset.name
       }
+    }
+
+    // Add user's global system prompt for brand consistency
+    if (user?.systemPrompt) {
+      enhancedPrompt = `Brand Context:\n${user.systemPrompt}\n\n${enhancedPrompt}`
     }
 
     // Get resolution based on aspect ratio
@@ -70,21 +83,36 @@ export async function POST(request: NextRequest) {
 
     // Call KIE.ai API for image generation
     // Note: This is a placeholder - actual KIE.ai API endpoint and format may vary
+    const requestBody: Record<string, unknown> = {
+      prompt: enhancedPrompt,
+      negative_prompt: data.negativePrompt || "",
+      model: data.model,
+      width: resolution.width,
+      height: resolution.height,
+      num_images: 1,
+      style: styleUsed,
+    }
+
+    // Add reference image if provided (for image-to-image generation)
+    if (data.referenceImageUrl) {
+      // Convert relative URL to absolute URL for external API
+      const baseUrl = process.env.NEXTAUTH_URL || 'http://localhost:3000'
+      const absoluteUrl = data.referenceImageUrl.startsWith('/')
+        ? `${baseUrl}${data.referenceImageUrl}`
+        : data.referenceImageUrl
+      
+      requestBody.init_image = absoluteUrl
+      requestBody.strength = 0.7 // How much to transform the reference (0.0-1.0)
+      requestBody.mode = "img2img" // Switch to image-to-image mode
+    }
+
     const kieResponse = await fetch("https://api.kie.ai/v1/images/generate", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         "Authorization": `Bearer ${kieKey}`,
       },
-      body: JSON.stringify({
-        prompt: enhancedPrompt,
-        negative_prompt: data.negativePrompt || "",
-        model: data.model,
-        width: resolution.width,
-        height: resolution.height,
-        num_images: 1,
-        style: styleUsed,
-      }),
+      body: JSON.stringify(requestBody),
     })
 
     if (!kieResponse.ok) {
@@ -138,6 +166,7 @@ export async function POST(request: NextRequest) {
       aspectRatio: data.aspectRatio,
       model: data.model,
       resolution,
+      referenceImageUsed: data.referenceImageUrl ? true : false,
     })
   } catch (error) {
     console.error("Error generating image:", error)

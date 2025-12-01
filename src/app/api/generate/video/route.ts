@@ -26,7 +26,12 @@ export async function POST(request: NextRequest) {
     const body = await request.json()
     const data = videoSchema.parse(body)
 
-    // Get user's API key for KIE.ai
+    // Get user with systemPrompt and API key for KIE.ai
+    const user = await prisma.user.findUnique({
+      where: { id: session.user.id },
+      select: { systemPrompt: true },
+    })
+
     const apiKey = await prisma.apiKey.findFirst({
       where: {
         userId: session.user.id,
@@ -45,10 +50,11 @@ export async function POST(request: NextRequest) {
     const { decryptApiKey } = await import("@/lib/utils")
     const kieKey = decryptApiKey(apiKey.keyEncrypted)
 
-    // Build enhanced prompt if preset is used
+    // Build enhanced prompt with preset and system prompt (Veo 3.1 style)
     let enhancedPrompt = data.prompt
     let styleUsed = data.style
 
+    // Apply preset template if selected
     if (data.presetId) {
       const preset = await prisma.aiPreset.findUnique({
         where: { id: data.presetId },
@@ -58,6 +64,11 @@ export async function POST(request: NextRequest) {
         enhancedPrompt = `${preset.promptTemplate}\n\n${data.prompt}`
         styleUsed = preset.name
       }
+    }
+
+    // Add user's global system prompt for brand consistency
+    if (user?.systemPrompt) {
+      enhancedPrompt = `Brand Guidelines:\n${user.systemPrompt}\n\n${enhancedPrompt}`
     }
 
     // Motion intensity descriptions for the prompt

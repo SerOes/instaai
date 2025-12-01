@@ -12,7 +12,6 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Spinner } from "@/components/ui/spinner"
 
 const projectSchema = z.object({
   title: z.string().min(1, "Titel erforderlich"),
@@ -76,64 +75,64 @@ export default function NewProjectPage() {
   }
 
   return (
-    <div className="mx-auto max-w-2xl space-y-6">
+    <div className="mx-auto max-w-2xl space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
       {/* Header */}
       <div className="flex items-center gap-4">
         <Link href="/dashboard/projects">
-          <Button variant="ghost" size="sm">
+          <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-foreground">
             <ArrowLeft className="mr-2 h-4 w-4" />
             Zurück
           </Button>
         </Link>
         <div>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Neues Projekt</h1>
-          <p className="mt-1 text-gray-600 dark:text-gray-400">
+          <h1 className="text-2xl font-bold text-foreground">Neues Projekt</h1>
+          <p className="mt-1 text-muted-foreground">
             Erstelle ein neues Content-Projekt
           </p>
         </div>
       </div>
 
-      <Card>
+      <Card className="border-border/50 bg-card/50 backdrop-blur-xl">
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
+          <CardTitle className="flex items-center gap-2 text-foreground">
             <Sparkles className="h-5 w-5 text-purple-500" />
             Projekt erstellen
           </CardTitle>
-          <CardDescription>
+          <CardDescription className="text-muted-foreground">
             Wähle einen Projekttyp und gib die grundlegenden Informationen ein.
           </CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
             {error && (
-              <div className="rounded-lg bg-red-50 dark:bg-red-900/20 p-3 text-sm text-red-600 dark:text-red-400">
+              <div className="rounded-lg bg-red-500/10 border border-red-500/20 p-3 text-sm text-red-500">
                 {error}
               </div>
             )}
 
             {/* Type Selection */}
             <div className="space-y-3">
-              <Label>Projekttyp</Label>
+              <Label className="text-foreground">Projekttyp</Label>
               <div className="grid grid-cols-2 gap-4">
                 <button
                   type="button"
                   onClick={() => setValue("type", "IMAGE")}
-                  className={`flex flex-col items-center gap-3 rounded-lg border-2 p-6 transition-all ${
+                  className={`flex flex-col items-center gap-3 rounded-xl border-2 p-6 transition-all duration-300 ${
                     selectedType === "IMAGE"
-                      ? "border-purple-500 bg-purple-50 dark:bg-purple-900/20"
-                      : "border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600"
+                      ? "border-purple-500 bg-purple-500/10 shadow-lg shadow-purple-500/10"
+                      : "border-border bg-secondary/30 hover:bg-secondary/50 hover:border-primary/50"
                   }`}
                 >
-                  <div className={`flex h-12 w-12 items-center justify-center rounded-lg ${
+                  <div className={`flex h-12 w-12 items-center justify-center rounded-lg transition-colors ${
                     selectedType === "IMAGE"
                       ? "bg-purple-500 text-white"
-                      : "bg-gray-100 dark:bg-gray-800 text-gray-500"
+                      : "bg-secondary text-muted-foreground"
                   }`}>
                     <Image className="h-6 w-6" />
                   </div>
                   <div className="text-center">
-                    <p className="font-medium text-gray-900 dark:text-white">Bild</p>
-                    <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                    <p className="font-medium text-foreground">Bild</p>
+                    <p className="mt-1 text-xs text-muted-foreground">
                       KI-generierte Bilder
                     </p>
                   </div>
@@ -142,22 +141,22 @@ export default function NewProjectPage() {
                 <button
                   type="button"
                   onClick={() => setValue("type", "VIDEO")}
-                  className={`flex flex-col items-center gap-3 rounded-lg border-2 p-6 transition-all ${
+                  className={`flex flex-col items-center gap-3 rounded-xl border-2 p-6 transition-all duration-300 ${
                     selectedType === "VIDEO"
-                      ? "border-blue-500 bg-blue-50 dark:bg-blue-900/20"
-                      : "border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600"
+                      ? "border-blue-500 bg-blue-500/10 shadow-lg shadow-blue-500/10"
+                      : "border-border bg-secondary/30 hover:bg-secondary/50 hover:border-primary/50"
                   }`}
                 >
-                  <div className={`flex h-12 w-12 items-center justify-center rounded-lg ${
+                  <div className={`flex h-12 w-12 items-center justify-center rounded-lg transition-colors ${
                     selectedType === "VIDEO"
                       ? "bg-blue-500 text-white"
-                      : "bg-gray-100 dark:bg-gray-800 text-gray-500"
+                      : "bg-secondary text-muted-foreground"
                   }`}>
                     <Video className="h-6 w-6" />
                   </div>
                   <div className="text-center">
-                    <p className="font-medium text-gray-900 dark:text-white">Video</p>
-                    <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                    <p className="font-medium text-foreground">Video</p>
+                    <p className="mt-1 text-xs text-muted-foreground">
                       Reels und Videos
                     </p>
                   </div>
@@ -167,41 +166,43 @@ export default function NewProjectPage() {
 
             {/* Title */}
             <div className="space-y-2">
-              <Label htmlFor="title">Projekttitel</Label>
+              <Label htmlFor="title" className="text-foreground">Projekttitel</Label>
               <Input
                 id="title"
                 placeholder="z.B. Produktlaunch Kampagne"
                 {...register("title")}
+                className="bg-secondary/50 border-border focus:border-primary/50"
               />
               {errors.title && (
-                <p className="text-sm text-red-600">{errors.title.message}</p>
+                <p className="text-sm text-red-500">{errors.title.message}</p>
               )}
             </div>
 
             {/* Description */}
             <div className="space-y-2">
-              <Label htmlFor="description">
-                Beschreibung <span className="text-gray-400">(optional)</span>
+              <Label htmlFor="description" className="text-foreground">
+                Beschreibung <span className="text-muted-foreground">(optional)</span>
               </Label>
               <Textarea
                 id="description"
                 placeholder="Beschreibe kurz, worum es in diesem Projekt geht..."
                 rows={3}
                 {...register("description")}
+                className="bg-secondary/50 border-border focus:border-primary/50"
               />
             </div>
 
             {/* Actions */}
             <div className="flex gap-4 pt-4">
               <Link href="/dashboard/projects" className="flex-1">
-                <Button type="button" variant="outline" className="w-full">
+                <Button type="button" variant="outline" className="w-full border-border hover:bg-secondary/50">
                   Abbrechen
                 </Button>
               </Link>
-              <Button type="submit" className="flex-1" disabled={isLoading}>
+              <Button type="submit" className="flex-1 shadow-lg shadow-primary/20" variant="gradient" disabled={isLoading}>
                 {isLoading ? (
                   <>
-                    <Spinner size="sm" className="mr-2" />
+                    <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin mr-2" />
                     Erstellen...
                   </>
                 ) : (

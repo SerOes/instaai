@@ -144,23 +144,23 @@ export default function SystemPromptSettingsPage() {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
-        <div className="w-8 h-8 border-4 border-indigo-500/30 border-t-indigo-500 rounded-full animate-spin" />
+        <div className="w-12 h-12 border-4 border-primary/30 border-t-primary rounded-full animate-spin" />
       </div>
     )
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-white">System-Prompt Einstellungen</h1>
-          <p className="text-slate-400 mt-1">
+          <h1 className="text-3xl font-bold text-foreground">System-Prompt Einstellungen</h1>
+          <p className="text-muted-foreground mt-1">
             Definiere deinen globalen Business-Kontext für alle KI-Generierungen
           </p>
         </div>
         <Link href="/onboarding">
-          <Button variant="outline" className="border-slate-600 text-slate-300 hover:bg-slate-700">
+          <Button variant="outline" className="border-border/50 bg-card/50 backdrop-blur-sm hover:bg-secondary/50">
             <Wand2 className="w-4 h-4 mr-2" />
             Wizard starten
           </Button>
@@ -169,10 +169,10 @@ export default function SystemPromptSettingsPage() {
 
       {/* Message */}
       {message && (
-        <div className={`p-4 rounded-lg ${
+        <div className={`p-4 rounded-xl backdrop-blur-sm border ${
           message.type === "success" 
-            ? "bg-green-500/20 border border-green-500/30 text-green-400"
-            : "bg-red-500/20 border border-red-500/30 text-red-400"
+            ? "bg-green-500/10 border-green-500/20 text-green-500"
+            : "bg-red-500/10 border-red-500/20 text-red-500"
         }`}>
           {message.text}
         </div>
@@ -180,56 +180,56 @@ export default function SystemPromptSettingsPage() {
 
       {/* Quick Info Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <Card className="p-4 bg-slate-800/50 border-slate-700">
+        <Card className="p-4 border-border/50 bg-card/50 backdrop-blur-xl hover:bg-card/80 transition-colors">
           <div className="flex items-center gap-3">
             <div className="p-2 rounded-lg bg-indigo-500/20">
               <Building2 className="w-5 h-5 text-indigo-400" />
             </div>
             <div>
-              <p className="text-xs text-slate-500">Marke</p>
-              <p className="text-white font-medium truncate">
+              <p className="text-xs text-muted-foreground">Marke</p>
+              <p className="text-foreground font-medium truncate">
                 {data.brandName || "Nicht gesetzt"}
               </p>
             </div>
           </div>
         </Card>
 
-        <Card className="p-4 bg-slate-800/50 border-slate-700">
+        <Card className="p-4 border-border/50 bg-card/50 backdrop-blur-xl hover:bg-card/80 transition-colors">
           <div className="flex items-center gap-3">
             <div className="p-2 rounded-lg bg-pink-500/20">
               <Users className="w-5 h-5 text-pink-400" />
             </div>
             <div>
-              <p className="text-xs text-slate-500">Zielgruppe</p>
-              <p className="text-white font-medium truncate">
+              <p className="text-xs text-muted-foreground">Zielgruppe</p>
+              <p className="text-foreground font-medium truncate">
                 {data.targetAudience || "Nicht gesetzt"}
               </p>
             </div>
           </div>
         </Card>
 
-        <Card className="p-4 bg-slate-800/50 border-slate-700">
+        <Card className="p-4 border-border/50 bg-card/50 backdrop-blur-xl hover:bg-card/80 transition-colors">
           <div className="flex items-center gap-3">
             <div className="p-2 rounded-lg bg-orange-500/20">
               <Palette className="w-5 h-5 text-orange-400" />
             </div>
             <div>
-              <p className="text-xs text-slate-500">Stil-Tags</p>
-              <p className="text-white font-medium">
+              <p className="text-xs text-muted-foreground">Stil-Tags</p>
+              <p className="text-foreground font-medium">
                 {data.brandStyle.length} ausgewählt
               </p>
             </div>
           </div>
         </Card>
 
-        <Card className="p-4 bg-slate-800/50 border-slate-700">
+        <Card className="p-4 border-border/50 bg-card/50 backdrop-blur-xl hover:bg-card/80 transition-colors">
           <div className="flex items-center gap-3">
             <div className="p-2 rounded-lg bg-green-500/20">
               <Target className="w-5 h-5 text-green-400" />
             </div>
             <div>
-              <p className="text-xs text-slate-500">Content-Ziele</p>
-              <p className="text-white font-medium">
+              <p className="text-xs text-muted-foreground">Content-Ziele</p>
+              <p className="text-foreground font-medium">
                 {data.contentGoals.length} ausgewählt
               </p>
             </div>
@@ -238,19 +238,19 @@ export default function SystemPromptSettingsPage() {
       </div>
 
       {/* Main System Prompt */}
-      <Card className="p-6 bg-slate-800/50 border-slate-700">
+      <Card className="p-6 border-border/50 bg-card/50 backdrop-blur-xl">
         <div className="flex items-center gap-2 mb-4">
           <Sparkles className="w-5 h-5 text-indigo-400" />
-          <h2 className="text-lg font-semibold text-white">Globaler System-Prompt</h2>
+          <h2 className="text-lg font-semibold text-foreground">Globaler System-Prompt</h2>
         </div>
         
         <Textarea
           value={data.systemPrompt}
           onChange={(e) => setData(prev => ({ ...prev, systemPrompt: e.target.value }))}
           placeholder="Dein System-Prompt wird bei allen KI-Generierungen automatisch verwendet..."
-          className="bg-slate-700/50 border-slate-600 text-white font-mono text-sm min-h-[200px]"
+          className="bg-secondary/20 border-border/50 text-foreground font-mono text-sm min-h-[200px] focus:ring-indigo-500/50"
         />
-        <p className="text-xs text-slate-500 mt-2">
+        <p className="text-xs text-muted-foreground mt-2">
           {data.systemPrompt.length} Zeichen • Dieser Prompt wird bei allen KI-Aufrufen vorangestellt
         </p>
       </Card>
@@ -258,46 +258,46 @@ export default function SystemPromptSettingsPage() {
       {/* Additional Settings */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Brand Info */}
-        <Card className="p-6 bg-slate-800/50 border-slate-700">
-          <h3 className="text-lg font-semibold text-white mb-4">Marken-Infos</h3>
+        <Card className="p-6 border-border/50 bg-card/50 backdrop-blur-xl">
+          <h3 className="text-lg font-semibold text-foreground mb-4">Marken-Infos</h3>
           <div className="space-y-4">
             <div>
-              <Label htmlFor="brandName" className="text-slate-300">Markenname</Label>
+              <Label htmlFor="brandName" className="text-muted-foreground">Markenname</Label>
               <Input
                 id="brandName"
                 value={data.brandName}
                 onChange={(e) => setData(prev => ({ ...prev, brandName: e.target.value }))}
-                className="mt-1 bg-slate-700/50 border-slate-600 text-white"
+                className="mt-1 bg-secondary/20 border-border/50 text-foreground focus:ring-indigo-500/50"
               />
             </div>
             <div>
-              <Label htmlFor="industry" className="text-slate-300">Branche</Label>
+              <Label htmlFor="industry" className="text-muted-foreground">Branche</Label>
               <Input
                 id="industry"
                 value={data.industry}
                 onChange={(e) => setData(prev => ({ ...prev, industry: e.target.value }))}
-                className="mt-1 bg-slate-700/50 border-slate-600 text-white"
+                className="mt-1 bg-secondary/20 border-border/50 text-foreground focus:ring-indigo-500/50"
               />
             </div>
             <div>
-              <Label htmlFor="targetAudience" className="text-slate-300">Zielgruppe</Label>
+              <Label htmlFor="targetAudience" className="text-muted-foreground">Zielgruppe</Label>
               <Input
                 id="targetAudience"
                 value={data.targetAudience}
                 onChange={(e) => setData(prev => ({ ...prev, targetAudience: e.target.value }))}
-                className="mt-1 bg-slate-700/50 border-slate-600 text-white"
+                className="mt-1 bg-secondary/20 border-border/50 text-foreground focus:ring-indigo-500/50"
               />
             </div>
           </div>
         </Card>
 
         {/* Style & Goals */}
-        <Card className="p-6 bg-slate-800/50 border-slate-700">
-          <h3 className="text-lg font-semibold text-white mb-4">Stil & Ziele</h3>
+        <Card className="p-6 border-border/50 bg-card/50 backdrop-blur-xl">
+          <h3 className="text-lg font-semibold text-foreground mb-4">Stil & Ziele</h3>
           
           <div className="space-y-4">
             <div>
-              <Label className="text-slate-300 mb-2 block">Stil-Tags</Label>
+              <Label className="text-muted-foreground mb-2 block">Stil-Tags</Label>
               <div className="flex flex-wrap gap-2">
                 {STYLE_TAGS.map((tag) => (
                   <button
@@ -306,8 +306,8 @@ export default function SystemPromptSettingsPage() {
                     onClick={() => toggleArrayItem("brandStyle", tag.id)}
                     className={`px-3 py-1.5 rounded-full text-xs font-medium transition-all ${
                       data.brandStyle.includes(tag.id)
-                        ? "bg-indigo-500 text-white"
-                        : "bg-slate-700/50 text-slate-400 hover:bg-slate-600"
+                        ? "bg-gradient-to-r from-indigo-500 to-purple-500 text-white shadow-lg shadow-indigo-500/20"
+                        : "bg-secondary/30 text-muted-foreground hover:bg-secondary/50 border border-border/50"
                     }`}
                   >
                     {tag.emoji} {tag.label}
@@ -317,7 +317,7 @@ export default function SystemPromptSettingsPage() {
             </div>
 
             <div>
-              <Label className="text-slate-300 mb-2 block">Content-Ziele</Label>
+              <Label className="text-muted-foreground mb-2 block">Content-Ziele</Label>
               <div className="flex flex-wrap gap-2">
                 {CONTENT_GOALS.map((goal) => (
                   <button
@@ -326,8 +326,8 @@ export default function SystemPromptSettingsPage() {
                     onClick={() => toggleArrayItem("contentGoals", goal.id)}
                     className={`px-3 py-1.5 rounded-full text-xs font-medium transition-all ${
                       data.contentGoals.includes(goal.id)
-                        ? "bg-green-500 text-white"
-                        : "bg-slate-700/50 text-slate-400 hover:bg-slate-600"
+                        ? "bg-gradient-to-r from-green-500 to-emerald-500 text-white shadow-lg shadow-green-500/20"
+                        : "bg-secondary/30 text-muted-foreground hover:bg-secondary/50 border border-border/50"
                     }`}
                   >
                     {goal.label}
@@ -340,11 +340,11 @@ export default function SystemPromptSettingsPage() {
       </div>
 
       {/* Actions */}
-      <div className="flex items-center justify-between pt-4 border-t border-slate-700">
+      <div className="flex items-center justify-between pt-4 border-t border-border/50">
         <Button
           variant="ghost"
           onClick={handleReset}
-          className="text-red-400 hover:text-red-300 hover:bg-red-500/10"
+          className="text-red-500 hover:text-red-600 hover:bg-red-500/10"
         >
           <RotateCcw className="w-4 h-4 mr-2" />
           Zurücksetzen
@@ -353,7 +353,7 @@ export default function SystemPromptSettingsPage() {
         <Button
           onClick={handleSave}
           disabled={isSaving}
-          className="bg-indigo-500 hover:bg-indigo-600 text-white"
+          className="bg-gradient-to-r from-indigo-500 to-purple-500 hover:from-indigo-600 hover:to-purple-600 text-white shadow-lg shadow-indigo-500/20 border-0"
         >
           {isSaving ? (
             <>

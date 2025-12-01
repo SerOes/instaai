@@ -9,7 +9,8 @@ const hashtagSchema = z.object({
   niche: z.string().optional(),
   count: z.number().min(5).max(30).default(15),
   mixType: z.enum(["popular", "niche", "mixed"]).default("mixed"),
-  language: z.enum(["de", "en", "both"]).default("de"),
+  language: z.enum(["de", "en", "tr", "both"]).default("de"),
+  model: z.enum(["gemini-2.5-flash", "gemini-3.0-pro"]).default("gemini-2.5-flash"),
 })
 
 export async function POST(request: NextRequest) {
@@ -23,14 +24,25 @@ export async function POST(request: NextRequest) {
     const body = await request.json()
     const data = hashtagSchema.parse(body)
 
-    // Get user's API key for Gemini
-    const apiKey = await prisma.apiKey.findFirst({
-      where: {
-        userId: session.user.id,
-        provider: "GEMINI",
-        isActive: true,
-      },
-    })
+    // Get user's API key and profile for Gemini
+    const [apiKey, user] = await Promise.all([
+      prisma.apiKey.findFirst({
+        where: {
+          userId: session.user.id,
+          provider: "GEMINI",
+          isActive: true,
+        },
+      }),
+      prisma.user.findUnique({
+        where: { id: session.user.id },
+        select: {
+          systemPrompt: true,
+          brandName: true,
+          industry: true,
+          targetAudience: true,
+        },
+      }),
+    ])
 
     if (!apiKey) {
       return NextResponse.json({ 
@@ -42,15 +54,23 @@ export async function POST(request: NextRequest) {
     const { decryptApiKey } = await import("@/lib/utils")
     const geminiKey = decryptApiKey(apiKey.keyEncrypted)
 
+    // Build brand context from systemPrompt
+    const brandContext = user?.systemPrompt
+      ? `\nMarken-Kontext (verwende passende Marken-Hashtags):\n${user.systemPrompt}\n`
+      : user?.brandName
+      ? `\nMarke: ${user.brandName}${user.industry ? ` (Branche: ${user.industry})` : ""}${user.targetAudience ? ` - Zielgruppe: ${user.targetAudience}` : ""}\n`
+      : ""
+
     const mixTypeDescriptions = {
       popular: "nur sehr beliebte Hashtags mit hohem Suchvolumen (1M+ Posts)",
       niche: "nur spezifische Nischen-Hashtags mit weniger Konkurrenz (10k-100k Posts)",
       mixed: "eine Mischung aus beliebten (30%), mittelgroßen (40%) und Nischen-Hashtags (30%)",
     }
 
-    const languageInstruction = {
+    const languageInstruction: Record<string, string> = {
       de: "Generiere deutsche Hashtags.",
       en: "Generate English hashtags.",
+      tr: "Türkçe hashtag'ler oluştur.",
       both: "Generiere eine Mischung aus deutschen und englischen Hashtags.",
     }
 
@@ -59,7 +79,7 @@ export async function POST(request: NextRequest) {
       : ""
 
     const prompt = `Generiere ${data.count} optimale Instagram-Hashtags für folgenden Content:
-
+${brandContext}
 Beschreibung: ${data.description}
 ${nicheContext}
 
@@ -68,14 +88,15 @@ Anforderungen:
 - ${languageInstruction[data.language]}
 - Hashtags müssen relevant und aktuell sein
 - Keine verbotenen oder shadowbanned Hashtags
+- Wenn Marken-Kontext vorhanden, füge passende Marken-/Branchen-Hashtags hinzu
 - Formatiere sie als Liste, ein Hashtag pro Zeile
 - Beginne jeden Hashtag mit #
 
 Gib NUR die Hashtags aus, ohne zusätzliche Erklärungen.`
 
-    // Call Gemini API
+    // Call Gemini API with selected model
     const geminiResponse = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${geminiKey}`,
+      `https://generativelanguage.googleapis.com/v1beta/models/${data.model}:generateContent?key=${geminiKey}`,
       {
         method: "POST",
         headers: {

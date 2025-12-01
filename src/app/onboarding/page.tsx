@@ -216,33 +216,37 @@ Sprich die Leser:innen direkt an („du") und verwende einen positiven, einladen
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 flex items-center justify-center p-4">
-      <div className="w-full max-w-2xl">
+    <div className="min-h-screen bg-background flex items-center justify-center p-4 relative overflow-hidden">
+      {/* Background Effects */}
+      <div className="absolute top-[-20%] right-[-10%] w-[600px] h-[600px] rounded-full bg-primary/10 blur-[120px] pointer-events-none" />
+      <div className="absolute bottom-[-20%] left-[-10%] w-[600px] h-[600px] rounded-full bg-purple-600/10 blur-[120px] pointer-events-none" />
+
+      <div className="w-full max-w-2xl relative z-10">
         {/* Progress Header */}
         <div className="mb-8">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-sm text-slate-400">Schritt {step} von {totalSteps}</span>
-            <span className="text-sm text-slate-400">{Math.round(progress)}%</span>
+            <span className="text-sm font-medium text-muted-foreground">Schritt {step} von {totalSteps}</span>
+            <span className="text-sm font-medium text-primary">{Math.round(progress)}%</span>
           </div>
-          <Progress value={progress} className="h-2" />
+          <Progress value={progress} className="h-2 bg-secondary" />
         </div>
 
         {/* Step Content */}
-        <Card className="p-8 bg-slate-800/50 border-slate-700 backdrop-blur-sm">
+        <Card className="p-8 border-border/50 bg-card/50 backdrop-blur-xl shadow-2xl">
           {/* Step 1: Business Info */}
           {step === 1 && (
-            <div className="space-y-6">
+            <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
               <div className="text-center mb-8">
-                <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-indigo-500/20 mb-4">
-                  <Building2 className="w-8 h-8 text-indigo-400" />
+                <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-primary/10 mb-4 shadow-inner shadow-primary/5">
+                  <Building2 className="w-8 h-8 text-primary" />
                 </div>
-                <h2 className="text-2xl font-bold text-white mb-2">Dein Business</h2>
-                <p className="text-slate-400">Erzähle uns von deiner Marke</p>
+                <h2 className="text-2xl font-bold text-foreground mb-2">Dein Business</h2>
+                <p className="text-muted-foreground">Erzähle uns von deiner Marke</p>
               </div>
 
               <div className="space-y-4">
                 <div>
-                  <Label htmlFor="brandName" className="text-white">
+                  <Label htmlFor="brandName" className="text-foreground">
                     Wie heißt deine Marke / dein Business? *
                   </Label>
                   <Input
@@ -250,19 +254,19 @@ Sprich die Leser:innen direkt an („du") und verwende einen positiven, einladen
                     value={data.brandName}
                     onChange={(e) => updateData("brandName", e.target.value)}
                     placeholder="z.B. Duygu Handdesigns"
-                    className="mt-2 bg-slate-700/50 border-slate-600 text-white"
+                    className="mt-2 bg-secondary/50 border-border focus:border-primary/50"
                   />
                 </div>
 
                 <div>
-                  <Label htmlFor="industry" className="text-white">
+                  <Label htmlFor="industry" className="text-foreground">
                     In welcher Branche bist du?
                   </Label>
                   <select
                     id="industry"
                     value={data.industry}
                     onChange={(e) => updateData("industry", e.target.value)}
-                    className="mt-2 w-full rounded-md bg-slate-700/50 border-slate-600 text-white p-2.5"
+                    className="mt-2 w-full rounded-lg bg-secondary/50 border border-border text-foreground p-2.5 focus:ring-2 focus:ring-primary/20 focus:border-primary/50 outline-none transition-all"
                   >
                     <option value="">Branche wählen...</option>
                     {INDUSTRIES.map((ind) => (
@@ -272,7 +276,7 @@ Sprich die Leser:innen direkt an („du") und verwende einen positiven, einladen
                 </div>
 
                 <div>
-                  <Label htmlFor="products" className="text-white">
+                  <Label htmlFor="products" className="text-foreground">
                     Was verkaufst du hauptsächlich?
                   </Label>
                   <Textarea
@@ -280,7 +284,7 @@ Sprich die Leser:innen direkt an („du") und verwende einen positiven, einladen
                     value={data.products}
                     onChange={(e) => updateData("products", e.target.value)}
                     placeholder="z.B. handgemachte personalisierte Produkte wie Schultüten, Turnbeutel und Tassen für Kinder"
-                    className="mt-2 bg-slate-700/50 border-slate-600 text-white"
+                    className="mt-2 bg-secondary/50 border-border focus:border-primary/50"
                     rows={3}
                   />
                 </div>
@@ -290,18 +294,18 @@ Sprich die Leser:innen direkt an („du") und verwende einen positiven, einladen
 
           {/* Step 2: Target Audience */}
           {step === 2 && (
-            <div className="space-y-6">
+            <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
               <div className="text-center mb-8">
-                <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-pink-500/20 mb-4">
-                  <Users className="w-8 h-8 text-pink-400" />
+                <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-pink-500/10 mb-4 shadow-inner shadow-pink-500/5">
+                  <Users className="w-8 h-8 text-pink-500" />
                 </div>
-                <h2 className="text-2xl font-bold text-white mb-2">Deine Zielgruppe</h2>
-                <p className="text-slate-400">Wer sind deine idealen Kunden?</p>
+                <h2 className="text-2xl font-bold text-foreground mb-2">Deine Zielgruppe</h2>
+                <p className="text-muted-foreground">Wer sind deine idealen Kunden?</p>
               </div>
 
               <div className="space-y-4">
                 <div>
-                  <Label htmlFor="targetAudience" className="text-white">
+                  <Label htmlFor="targetAudience" className="text-foreground">
                     Wer ist deine Hauptzielgruppe? *
                   </Label>
                   <Input
@@ -309,12 +313,12 @@ Sprich die Leser:innen direkt an („du") und verwende einen positiven, einladen
                     value={data.targetAudience}
                     onChange={(e) => updateData("targetAudience", e.target.value)}
                     placeholder="z.B. Mütter mit Kindern im Grundschulalter"
-                    className="mt-2 bg-slate-700/50 border-slate-600 text-white"
+                    className="mt-2 bg-secondary/50 border-border focus:border-primary/50"
                   />
                 </div>
 
                 <div>
-                  <Label htmlFor="region" className="text-white">
+                  <Label htmlFor="region" className="text-foreground">
                     In welcher Region sind sie hauptsächlich?
                   </Label>
                   <Input
@@ -322,12 +326,12 @@ Sprich die Leser:innen direkt an („du") und verwende einen positiven, einladen
                     value={data.region}
                     onChange={(e) => updateData("region", e.target.value)}
                     placeholder="z.B. Deutschland, Österreich, Schweiz"
-                    className="mt-2 bg-slate-700/50 border-slate-600 text-white"
+                    className="mt-2 bg-secondary/50 border-border focus:border-primary/50"
                   />
                 </div>
 
                 <div>
-                  <Label htmlFor="problemSolved" className="text-white">
+                  <Label htmlFor="problemSolved" className="text-foreground">
                     Welches Problem löst du für sie?
                   </Label>
                   <Textarea
@@ -335,7 +339,7 @@ Sprich die Leser:innen direkt an („du") und verwende einen positiven, einladen
                     value={data.problemSolved}
                     onChange={(e) => updateData("problemSolved", e.target.value)}
                     placeholder="z.B. suchen einzigartige, personalisierte Geschenke für besondere Anlässe ihrer Kinder"
-                    className="mt-2 bg-slate-700/50 border-slate-600 text-white"
+                    className="mt-2 bg-secondary/50 border-border focus:border-primary/50"
                     rows={3}
                   />
                 </div>
@@ -345,18 +349,18 @@ Sprich die Leser:innen direkt an („du") und verwende einen positiven, einladen
 
           {/* Step 3: Brand Style */}
           {step === 3 && (
-            <div className="space-y-6">
+            <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
               <div className="text-center mb-8">
-                <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-orange-500/20 mb-4">
-                  <Palette className="w-8 h-8 text-orange-400" />
+                <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-orange-500/10 mb-4 shadow-inner shadow-orange-500/5">
+                  <Palette className="w-8 h-8 text-orange-500" />
                 </div>
-                <h2 className="text-2xl font-bold text-white mb-2">Markenstil & Tonalität</h2>
-                <p className="text-slate-400">Wie soll sich deine Marke anfühlen?</p>
+                <h2 className="text-2xl font-bold text-foreground mb-2">Markenstil & Tonalität</h2>
+                <p className="text-muted-foreground">Wie soll sich deine Marke anfühlen?</p>
               </div>
 
               <div className="space-y-4">
                 <div>
-                  <Label className="text-white mb-3 block">
+                  <Label className="text-foreground mb-3 block">
                     Wähle passende Stil-Tags (mind. 1) *
                   </Label>
                   <div className="flex flex-wrap gap-2">
@@ -365,10 +369,10 @@ Sprich die Leser:innen direkt an („du") und verwende einen positiven, einladen
                         key={tag.id}
                         type="button"
                         onClick={() => toggleArrayItem("stylesTags", tag.id)}
-                        className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${
+                        className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 ${
                           data.stylesTags.includes(tag.id)
-                            ? "bg-indigo-500 text-white"
-                            : "bg-slate-700/50 text-slate-300 hover:bg-slate-600"
+                            ? "bg-primary text-primary-foreground shadow-lg shadow-primary/25 scale-105"
+                            : "bg-secondary text-muted-foreground hover:bg-secondary/80 hover:text-foreground"
                         }`}
                       >
                         {tag.emoji} {tag.label}
@@ -378,7 +382,7 @@ Sprich die Leser:innen direkt an („du") und verwende einen positiven, einladen
                 </div>
 
                 <div>
-                  <Label htmlFor="brandFeeling" className="text-white">
+                  <Label htmlFor="brandFeeling" className="text-foreground">
                     Beschreibe, wie sich deine Marke anfühlen soll
                   </Label>
                   <Textarea
@@ -386,7 +390,7 @@ Sprich die Leser:innen direkt an („du") und verwende einen positiven, einladen
                     value={data.brandFeeling}
                     onChange={(e) => updateData("brandFeeling", e.target.value)}
                     placeholder="z.B. Wie eine liebe Freundin, die immer die besten Geschenkideen hat - herzlich, kreativ und zuverlässig"
-                    className="mt-2 bg-slate-700/50 border-slate-600 text-white"
+                    className="mt-2 bg-secondary/50 border-border focus:border-primary/50"
                     rows={3}
                   />
                 </div>
@@ -396,13 +400,13 @@ Sprich die Leser:innen direkt an („du") und verwende einen positiven, einladen
 
           {/* Step 4: Content Goals */}
           {step === 4 && (
-            <div className="space-y-6">
+            <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
               <div className="text-center mb-8">
-                <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-green-500/20 mb-4">
-                  <Target className="w-8 h-8 text-green-400" />
+                <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-green-500/10 mb-4 shadow-inner shadow-green-500/5">
+                  <Target className="w-8 h-8 text-green-500" />
                 </div>
-                <h2 className="text-2xl font-bold text-white mb-2">Content-Ziele</h2>
-                <p className="text-slate-400">Was möchtest du mit deinem Content erreichen?</p>
+                <h2 className="text-2xl font-bold text-foreground mb-2">Content-Ziele</h2>
+                <p className="text-muted-foreground">Was möchtest du mit deinem Content erreichen?</p>
               </div>
 
               <div className="space-y-3">
@@ -414,18 +418,18 @@ Sprich die Leser:innen direkt an („du") und verwende einen positiven, einladen
                       key={goal.id}
                       type="button"
                       onClick={() => toggleArrayItem("contentGoals", goal.id)}
-                      className={`w-full p-4 rounded-xl text-left flex items-center gap-4 transition-all ${
+                      className={`w-full p-4 rounded-xl text-left flex items-center gap-4 transition-all duration-200 ${
                         isSelected
-                          ? "bg-indigo-500/20 border-2 border-indigo-500"
-                          : "bg-slate-700/30 border-2 border-transparent hover:border-slate-600"
+                          ? "bg-primary/10 border-2 border-primary shadow-lg shadow-primary/10"
+                          : "bg-secondary/30 border-2 border-transparent hover:bg-secondary/50 hover:border-border"
                       }`}
                     >
-                      <div className={`p-3 rounded-lg ${isSelected ? "bg-indigo-500" : "bg-slate-700"}`}>
-                        <Icon className="w-5 h-5 text-white" />
+                      <div className={`p-3 rounded-lg transition-colors ${isSelected ? "bg-primary text-primary-foreground" : "bg-secondary text-muted-foreground"}`}>
+                        <Icon className="w-5 h-5" />
                       </div>
-                      <span className="text-white font-medium">{goal.label}</span>
+                      <span className={`font-medium ${isSelected ? "text-primary" : "text-foreground"}`}>{goal.label}</span>
                       {isSelected && (
-                        <Check className="w-5 h-5 text-indigo-400 ml-auto" />
+                        <Check className="w-5 h-5 text-primary ml-auto" />
                       )}
                     </button>
                   )
@@ -436,18 +440,18 @@ Sprich die Leser:innen direkt an („du") und verwende einen positiven, einladen
 
           {/* Step 5: Examples & Restrictions */}
           {step === 5 && (
-            <div className="space-y-6">
+            <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
               <div className="text-center mb-8">
-                <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-purple-500/20 mb-4">
-                  <Sparkles className="w-8 h-8 text-purple-400" />
+                <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-purple-500/10 mb-4 shadow-inner shadow-purple-500/5">
+                  <Sparkles className="w-8 h-8 text-purple-500" />
                 </div>
-                <h2 className="text-2xl font-bold text-white mb-2">Beispiele & Einschränkungen</h2>
-                <p className="text-slate-400">Optional: Verfeinere deinen Stil</p>
+                <h2 className="text-2xl font-bold text-foreground mb-2">Beispiele & Einschränkungen</h2>
+                <p className="text-muted-foreground">Optional: Verfeinere deinen Stil</p>
               </div>
 
               <div className="space-y-4">
                 <div>
-                  <Label htmlFor="captionExamples" className="text-white">
+                  <Label htmlFor="captionExamples" className="text-foreground">
                     Beispiele, wie deine Captions klingen sollen
                   </Label>
                   <Textarea
@@ -455,16 +459,16 @@ Sprich die Leser:innen direkt an („du") und verwende einen positiven, einladen
                     value={data.captionExamples}
                     onChange={(e) => updateData("captionExamples", e.target.value)}
                     placeholder="z.B. 'Heute zeig ich dir mein neues Lieblingsprojekt 💕 Schau mal, ist das nicht süß?'"
-                    className="mt-2 bg-slate-700/50 border-slate-600 text-white"
+                    className="mt-2 bg-secondary/50 border-border focus:border-primary/50"
                     rows={4}
                   />
-                  <p className="text-xs text-slate-500 mt-1">
+                  <p className="text-xs text-muted-foreground mt-1">
                     Gib 1-3 Beispiel-Sätze an, die deinen Stil gut repräsentieren
                   </p>
                 </div>
 
                 <div>
-                  <Label htmlFor="avoidWords" className="text-white">
+                  <Label htmlFor="avoidWords" className="text-foreground">
                     Wörter/Stile, die vermieden werden sollen
                   </Label>
                   <Textarea
@@ -472,7 +476,7 @@ Sprich die Leser:innen direkt an („du") und verwende einen positiven, einladen
                     value={data.avoidWords}
                     onChange={(e) => updateData("avoidWords", e.target.value)}
                     placeholder="z.B. aggressive Verkaufssprache, 'Kauf jetzt!', übertriebene Superlative"
-                    className="mt-2 bg-slate-700/50 border-slate-600 text-white"
+                    className="mt-2 bg-secondary/50 border-border focus:border-primary/50"
                     rows={3}
                   />
                 </div>
@@ -482,34 +486,37 @@ Sprich die Leser:innen direkt an („du") und verwende einen positiven, einladen
 
           {/* Step 6: Preview & Confirm */}
           {step === 6 && (
-            <div className="space-y-6">
+            <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
               <div className="text-center mb-8">
-                <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-indigo-500/20 mb-4">
-                  <Check className="w-8 h-8 text-indigo-400" />
+                <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-indigo-500/10 mb-4 shadow-inner shadow-indigo-500/5">
+                  <Check className="w-8 h-8 text-indigo-500" />
                 </div>
-                <h2 className="text-2xl font-bold text-white mb-2">Dein System-Prompt</h2>
-                <p className="text-slate-400">Überprüfe und bestätige deinen generierten Prompt</p>
+                <h2 className="text-2xl font-bold text-foreground mb-2">Dein System-Prompt</h2>
+                <p className="text-muted-foreground">Überprüfe und bestätige deinen generierten Prompt</p>
               </div>
 
-              <div className="bg-slate-900/50 rounded-xl p-6 border border-slate-700">
+              <div className="bg-secondary/30 rounded-xl p-6 border border-border/50">
                 <div className="flex items-center justify-between mb-3">
-                  <h3 className="text-sm font-medium text-slate-400">Generierter Prompt</h3>
-                  <span className="text-xs text-slate-500">{generatedPrompt.length} Zeichen</span>
+                  <h3 className="text-sm font-medium text-muted-foreground">Generierter Prompt</h3>
+                  <span className="text-xs text-muted-foreground">{generatedPrompt.length} Zeichen</span>
                 </div>
                 <Textarea
                   value={generatedPrompt}
                   onChange={(e) => setGeneratedPrompt(e.target.value)}
-                  className="bg-slate-800/50 border-slate-600 text-white font-mono text-sm"
+                  className="bg-background/50 border-border text-foreground font-mono text-sm focus:border-primary/50"
                   rows={12}
                 />
-                <p className="text-xs text-slate-500 mt-2">
+                <p className="text-xs text-muted-foreground mt-2">
                   Du kannst den Prompt hier noch manuell anpassen
                 </p>
               </div>
 
-              <div className="bg-indigo-500/10 rounded-xl p-4 border border-indigo-500/30">
-                <h4 className="text-indigo-400 font-medium mb-2">💡 So wird dein Prompt verwendet</h4>
-                <p className="text-slate-300 text-sm">
+              <div className="bg-primary/5 rounded-xl p-4 border border-primary/20">
+                <h4 className="text-primary font-medium mb-2 flex items-center gap-2">
+                  <Sparkles className="w-4 h-4" />
+                  So wird dein Prompt verwendet
+                </h4>
+                <p className="text-muted-foreground text-sm">
                   Dieser System-Prompt wird bei allen KI-Generierungen automatisch verwendet - 
                   für Captions, Hashtags, Bilder und Videos. So bleibt dein Content immer 
                   konsistent mit deiner Marke.
@@ -519,12 +526,12 @@ Sprich die Leser:innen direkt an („du") und verwende einen positiven, einladen
           )}
 
           {/* Navigation Buttons */}
-          <div className="flex items-center justify-between mt-8 pt-6 border-t border-slate-700">
+          <div className="flex items-center justify-between mt-8 pt-6 border-t border-border/50">
             <Button
               variant="ghost"
               onClick={handleBack}
               disabled={step === 1}
-              className="text-slate-400 hover:text-white"
+              className="text-muted-foreground hover:text-foreground"
             >
               <ChevronLeft className="w-4 h-4 mr-2" />
               Zurück
@@ -534,7 +541,8 @@ Sprich die Leser:innen direkt an („du") und verwende einen positiven, einladen
               <Button
                 onClick={handleNext}
                 disabled={!canProceed()}
-                className="bg-indigo-500 hover:bg-indigo-600 text-white"
+                variant="gradient"
+                className="shadow-lg shadow-primary/20"
               >
                 Weiter
                 <ChevronRight className="w-4 h-4 ml-2" />
@@ -543,7 +551,7 @@ Sprich die Leser:innen direkt an („du") und verwende einen positiven, einladen
               <Button
                 onClick={handleSubmit}
                 disabled={isSubmitting}
-                className="bg-green-500 hover:bg-green-600 text-white"
+                className="bg-green-600 hover:bg-green-700 text-white shadow-lg shadow-green-600/20"
               >
                 {isSubmitting ? (
                   <>
@@ -562,10 +570,10 @@ Sprich die Leser:innen direkt an („du") und verwende einen positiven, einladen
         </Card>
 
         {/* Skip Link */}
-        <div className="text-center mt-4">
+        <div className="text-center mt-6">
           <button
             onClick={() => router.push("/dashboard")}
-            className="text-sm text-slate-500 hover:text-slate-300 underline"
+            className="text-sm text-muted-foreground hover:text-foreground underline transition-colors"
           >
             Überspringen und später einrichten
           </button>

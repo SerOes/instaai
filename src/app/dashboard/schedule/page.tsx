@@ -17,7 +17,6 @@ import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Spinner } from "@/components/ui/spinner"
 
 interface Schedule {
   id: string
@@ -91,10 +90,10 @@ export default function SchedulePage() {
 
   const getStatusBadge = (status: string) => {
     const styles = {
-      SCHEDULED: "bg-blue-100 text-blue-800 dark:bg-blue-900/50 dark:text-blue-300",
-      PUBLISHED: "bg-green-100 text-green-800 dark:bg-green-900/50 dark:text-green-300",
-      FAILED: "bg-red-100 text-red-800 dark:bg-red-900/50 dark:text-red-300",
-      CANCELLED: "bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-300",
+      SCHEDULED: "bg-blue-500/10 text-blue-500 border-blue-500/20",
+      PUBLISHED: "bg-green-500/10 text-green-500 border-green-500/20",
+      FAILED: "bg-red-500/10 text-red-500 border-red-500/20",
+      CANCELLED: "bg-secondary text-muted-foreground border-transparent",
     }
     const labels = {
       SCHEDULED: "Geplant",
@@ -103,7 +102,7 @@ export default function SchedulePage() {
       CANCELLED: "Abgebrochen",
     }
     return (
-      <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${styles[status as keyof typeof styles] || styles.SCHEDULED}`}>
+      <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium border ${styles[status as keyof typeof styles] || styles.SCHEDULED}`}>
         {labels[status as keyof typeof labels] || status}
       </span>
     )
@@ -132,23 +131,23 @@ export default function SchedulePage() {
   if (loading) {
     return (
       <div className="flex h-full items-center justify-center">
-        <Spinner size="lg" />
+        <div className="w-12 h-12 border-4 border-primary/30 border-t-primary rounded-full animate-spin" />
       </div>
     )
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
       {/* Header */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Content-Planer</h1>
-          <p className="mt-1 text-gray-600 dark:text-gray-400">
+          <h1 className="text-3xl font-bold text-foreground">Content-Planer</h1>
+          <p className="mt-1 text-muted-foreground">
             Plane und verwalte deine Instagram-Posts
           </p>
         </div>
         <Link href="/dashboard/projects">
-          <Button>
+          <Button variant="gradient" className="shadow-lg shadow-primary/20">
             <Plus className="mr-2 h-4 w-4" />
             Neuen Post planen
           </Button>
@@ -156,15 +155,15 @@ export default function SchedulePage() {
       </div>
 
       {/* Month Navigation */}
-      <Card>
+      <Card className="border-border/50 bg-card/50 backdrop-blur-xl">
         <CardContent className="flex items-center justify-between p-4">
-          <Button variant="ghost" size="icon" onClick={goToPreviousMonth}>
+          <Button variant="ghost" size="icon" onClick={goToPreviousMonth} className="hover:bg-secondary/50">
             <ChevronLeft className="h-5 w-5" />
           </Button>
-          <h2 className="text-lg font-semibold">
+          <h2 className="text-lg font-semibold text-foreground">
             {currentDate.toLocaleDateString("de-DE", { month: "long", year: "numeric" })}
           </h2>
-          <Button variant="ghost" size="icon" onClick={goToNextMonth}>
+          <Button variant="ghost" size="icon" onClick={goToNextMonth} className="hover:bg-secondary/50">
             <ChevronRight className="h-5 w-5" />
           </Button>
         </CardContent>
@@ -172,17 +171,19 @@ export default function SchedulePage() {
 
       {/* Schedules List */}
       {schedules.length === 0 ? (
-        <Card>
+        <Card className="border-border/50 bg-card/50 backdrop-blur-xl">
           <CardContent className="flex flex-col items-center justify-center py-16">
-            <Calendar className="h-12 w-12 text-gray-400" />
-            <h3 className="mt-4 text-lg font-medium text-gray-900 dark:text-white">
+            <div className="h-16 w-16 rounded-full bg-secondary/50 flex items-center justify-center mb-4">
+              <Calendar className="h-8 w-8 text-muted-foreground" />
+            </div>
+            <h3 className="mt-4 text-lg font-medium text-foreground">
               Keine geplanten Posts
             </h3>
-            <p className="mt-2 text-center text-sm text-gray-500 dark:text-gray-400">
+            <p className="mt-2 text-center text-sm text-muted-foreground">
               Erstelle ein Projekt und plane deinen ersten Post.
             </p>
             <Link href="/dashboard/projects" className="mt-4">
-              <Button>
+              <Button variant="gradient" className="shadow-lg shadow-primary/20">
                 <Plus className="mr-2 h-4 w-4" />
                 Projekt erstellen
               </Button>
@@ -193,16 +194,16 @@ export default function SchedulePage() {
         <div className="space-y-6">
           {Object.entries(groupedSchedules).map(([date, daySchedules]) => (
             <div key={date}>
-              <h3 className="mb-3 flex items-center gap-2 text-sm font-medium text-gray-500 dark:text-gray-400">
+              <h3 className="mb-3 flex items-center gap-2 text-sm font-medium text-muted-foreground">
                 <Calendar className="h-4 w-4" />
                 {date}
               </h3>
               <div className="space-y-3">
                 {daySchedules.map((schedule) => (
-                  <Card key={schedule.id}>
+                  <Card key={schedule.id} className="border-border/50 bg-card/50 backdrop-blur-xl hover:border-primary/50 transition-all duration-300">
                     <CardContent className="flex items-center gap-4 p-4">
                       {/* Thumbnail */}
-                      <div className="flex h-16 w-16 flex-shrink-0 items-center justify-center rounded-lg bg-gray-100 dark:bg-gray-800 overflow-hidden">
+                      <div className="flex h-16 w-16 flex-shrink-0 items-center justify-center rounded-lg bg-secondary/30 overflow-hidden">
                         {schedule.project.thumbnailUrl ? (
                           <img
                             src={schedule.project.thumbnailUrl}
@@ -210,9 +211,9 @@ export default function SchedulePage() {
                             className="h-full w-full object-cover"
                           />
                         ) : schedule.project.type === "VIDEO" ? (
-                          <Video className="h-8 w-8 text-gray-400" />
+                          <Video className="h-8 w-8 text-muted-foreground/30" />
                         ) : (
-                          <Image className="h-8 w-8 text-gray-400" />
+                          <Image className="h-8 w-8 text-muted-foreground/30" />
                         )}
                       </div>
 
@@ -221,13 +222,13 @@ export default function SchedulePage() {
                         <div className="flex items-center gap-2">
                           <Link 
                             href={`/dashboard/projects/${schedule.project.id}`}
-                            className="font-medium text-gray-900 dark:text-white truncate hover:text-purple-600"
+                            className="font-medium text-foreground truncate hover:text-primary transition-colors"
                           >
                             {schedule.project.title}
                           </Link>
                           {getStatusBadge(schedule.status)}
                         </div>
-                        <div className="mt-1 flex items-center gap-4 text-sm text-gray-500 dark:text-gray-400">
+                        <div className="mt-1 flex items-center gap-4 text-sm text-muted-foreground">
                           <span className="flex items-center gap-1">
                             <Clock className="h-4 w-4" />
                             {new Date(schedule.scheduledAt).toLocaleTimeString("de-DE", {
@@ -236,9 +237,9 @@ export default function SchedulePage() {
                             })}
                           </span>
                           <span className="flex items-center gap-1">
-                            <Avatar className="h-5 w-5">
+                            <Avatar className="h-5 w-5 border border-border">
                               <AvatarImage src={schedule.instagramAccount.profilePicture} />
-                              <AvatarFallback className="text-xs">
+                              <AvatarFallback className="text-xs bg-secondary text-muted-foreground">
                                 {schedule.instagramAccount.username[0].toUpperCase()}
                               </AvatarFallback>
                             </Avatar>
@@ -246,7 +247,7 @@ export default function SchedulePage() {
                           </span>
                         </div>
                         {schedule.caption && (
-                          <p className="mt-2 text-sm text-gray-600 dark:text-gray-300 line-clamp-2">
+                          <p className="mt-2 text-sm text-muted-foreground/80 line-clamp-2">
                             {schedule.caption}
                           </p>
                         )}
@@ -255,7 +256,7 @@ export default function SchedulePage() {
                       {/* Actions */}
                       <div className="flex items-center gap-2">
                         <Link href={`/dashboard/projects/${schedule.project.id}`}>
-                          <Button variant="ghost" size="icon">
+                          <Button variant="ghost" size="icon" className="hover:bg-secondary/50">
                             <Edit className="h-4 w-4" />
                           </Button>
                         </Link>
@@ -263,7 +264,7 @@ export default function SchedulePage() {
                           variant="ghost" 
                           size="icon"
                           onClick={() => handleDelete(schedule.id)}
-                          className="text-red-500 hover:text-red-600 hover:bg-red-50"
+                          className="text-red-500 hover:text-red-600 hover:bg-red-500/10"
                         >
                           <Trash2 className="h-4 w-4" />
                         </Button>

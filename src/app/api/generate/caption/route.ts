@@ -8,9 +8,10 @@ const captionSchema = z.object({
   imageUrl: z.string().url().optional(),
   description: z.string().min(1, "Beschreibung erforderlich"),
   style: z.enum(["casual", "professional", "humorous", "inspirational", "storytelling"]).default("casual"),
-  language: z.enum(["de", "en"]).default("de"),
+  language: z.enum(["de", "en", "tr"]).default("de"),
   includeEmojis: z.boolean().default(true),
   maxLength: z.number().min(50).max(2200).default(500),
+  model: z.enum(["gemini-2.5-flash", "gemini-3.0-pro"]).default("gemini-2.5-flash"),
 })
 
 export async function POST(request: NextRequest) {
@@ -43,6 +44,12 @@ export async function POST(request: NextRequest) {
     const { decryptApiKey } = await import("@/lib/utils")
     const geminiKey = decryptApiKey(apiKey.keyEncrypted)
 
+    // Get user's system prompt for brand consistency
+    const user = await prisma.user.findUnique({
+      where: { id: session.user.id },
+      select: { systemPrompt: true, brandName: true },
+    })
+
     // Build the prompt based on style and language
     const stylePrompts = {
       casual: "locker und freundlich, wie ein Gespräch mit Freunden",
@@ -60,8 +67,13 @@ export async function POST(request: NextRequest) {
       ? "Verwende passende Emojis, um den Text lebendiger zu machen."
       : "Verwende keine Emojis."
 
-    const prompt = `Erstelle eine Instagram-Caption für folgendes Bild/Thema:
+    // Include user's brand context if available
+    const brandContext = user?.systemPrompt 
+      ? `\nMarken-Kontext:\n${user.systemPrompt}\n`
+      : ""
 
+    const prompt = `Erstelle eine Instagram-Caption für folgendes Bild/Thema:
+${brandContext}
 Beschreibung: ${data.description}
 
 Anforderungen:
@@ -70,13 +82,13 @@ Anforderungen:
 - ${emojiInstruction}
 - Maximale Länge: ${data.maxLength} Zeichen
 - Füge einen Call-to-Action hinzu, der zur Interaktion einlädt
-- Die Caption soll authentisch und ansprechend sein
+- Die Caption soll authentisch und zur Marke passend sein
 
 Gib NUR die Caption aus, ohne zusätzliche Erklärungen.`
 
-    // Call Gemini API
+    // Call Gemini API with user-selected model (default: gemini-2.5-flash)
     const geminiResponse = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${geminiKey}`,
+      `https://generativelanguage.googleapis.com/v1beta/models/${data.model}:generateContent?key=${geminiKey}`,
       {
         method: "POST",
         headers: {
@@ -124,7 +136,7 @@ Gib NUR die Caption aus, ohne zusätzliche Erklärungen.`
             text: caption,
             tone: data.style,
             language: data.language,
-            hashtags: "[]", // JSON string for SQLite
+            // hashtags defaults to "[]" in schema
             isSelected: false,
           },
         })

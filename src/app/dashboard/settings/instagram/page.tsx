@@ -15,7 +15,6 @@ import {
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Spinner } from "@/components/ui/spinner"
 
 interface InstagramAccount {
   id: string
@@ -89,37 +88,37 @@ export default function InstagramSettingsPage() {
   if (loading) {
     return (
       <div className="flex h-full items-center justify-center">
-        <Spinner size="lg" />
+        <div className="w-12 h-12 border-4 border-primary/30 border-t-primary rounded-full animate-spin" />
       </div>
     )
   }
 
   return (
-    <div className="mx-auto max-w-4xl space-y-6">
+    <div className="mx-auto max-w-4xl space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
       {/* Header */}
       <div>
-        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+        <h1 className="text-3xl font-bold text-foreground">
           Instagram-Verbindung
         </h1>
-        <p className="mt-1 text-gray-600 dark:text-gray-400">
+        <p className="mt-1 text-muted-foreground">
           Verbinde und verwalte deine Instagram Business-Accounts
         </p>
       </div>
 
       {/* Connection Status */}
-      <Card>
+      <Card className="border-border/50 bg-card/50 backdrop-blur-xl">
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
+          <CardTitle className="flex items-center gap-2 text-foreground">
             <Instagram className="h-5 w-5 text-pink-500" />
             Verbundene Accounts
           </CardTitle>
-          <CardDescription>
+          <CardDescription className="text-muted-foreground">
             Verknüpfe Instagram Business-Accounts für automatisches Posten
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           {error && (
-            <div className="flex items-center gap-2 rounded-lg border border-amber-200 bg-amber-50 dark:border-amber-900 dark:bg-amber-950 p-4 text-amber-800 dark:text-amber-200">
+            <div className="flex items-center gap-2 rounded-lg border border-amber-500/20 bg-amber-500/10 p-4 text-amber-500">
               <AlertCircle className="h-5 w-5 flex-shrink-0" />
               <p className="text-sm">{error}</p>
             </div>
@@ -127,23 +126,23 @@ export default function InstagramSettingsPage() {
 
           {accounts.length === 0 ? (
             <div className="text-center py-8">
-              <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-pink-500 to-orange-500 mb-4">
+              <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-pink-500 to-orange-500 mb-4 shadow-lg shadow-pink-500/20">
                 <Instagram className="h-8 w-8 text-white" />
               </div>
-              <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
+              <h3 className="text-lg font-medium text-foreground mb-2">
                 Kein Instagram-Account verbunden
               </h3>
-              <p className="text-gray-500 dark:text-gray-400 mb-6 max-w-md mx-auto">
+              <p className="text-muted-foreground mb-6 max-w-md mx-auto">
                 Verbinde deinen Instagram Business-Account, um Posts direkt aus der App zu planen und zu veröffentlichen.
               </p>
               <Button 
                 onClick={handleConnect}
                 disabled={connecting}
-                className="bg-gradient-to-r from-pink-500 to-orange-500 hover:from-pink-600 hover:to-orange-600"
+                className="bg-gradient-to-r from-pink-500 to-orange-500 hover:from-pink-600 hover:to-orange-600 shadow-lg shadow-pink-500/20 text-white border-0"
               >
                 {connecting ? (
                   <>
-                    <Spinner size="sm" className="mr-2" />
+                    <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin mr-2" />
                     Verbinden...
                   </>
                 ) : (
@@ -159,10 +158,10 @@ export default function InstagramSettingsPage() {
               {accounts.map((account) => (
                 <div
                   key={account.id}
-                  className="flex items-center justify-between rounded-lg border p-4"
+                  className="flex items-center justify-between rounded-xl border border-border/50 bg-secondary/20 p-4 hover:bg-secondary/30 transition-colors"
                 >
                   <div className="flex items-center gap-4">
-                    <div className="h-12 w-12 rounded-full bg-gradient-to-br from-pink-500 to-orange-500 flex items-center justify-center">
+                    <div className="h-12 w-12 rounded-full bg-gradient-to-br from-pink-500 to-orange-500 flex items-center justify-center shadow-md">
                       {account.profilePictureUrl ? (
                         <img 
                           src={account.profilePictureUrl} 
@@ -175,17 +174,17 @@ export default function InstagramSettingsPage() {
                     </div>
                     <div>
                       <div className="flex items-center gap-2">
-                        <p className="font-medium text-gray-900 dark:text-white">
+                        <p className="font-medium text-foreground">
                           @{account.username}
                         </p>
                         {account.isActive && (
-                          <span className="flex items-center gap-1 text-xs text-green-600 dark:text-green-400">
+                          <span className="flex items-center gap-1 text-xs text-green-500">
                             <Check className="h-3 w-3" />
                             Aktiv
                           </span>
                         )}
                       </div>
-                      <div className="flex items-center gap-4 text-sm text-gray-500 dark:text-gray-400">
+                      <div className="flex items-center gap-4 text-sm text-muted-foreground">
                         {account.followersCount !== undefined && (
                           <span className="flex items-center gap-1">
                             <Users className="h-3 w-3" />
@@ -207,6 +206,7 @@ export default function InstagramSettingsPage() {
                       size="icon"
                       onClick={() => handleRefresh(account.id)}
                       title="Aktualisieren"
+                      className="hover:bg-secondary/50"
                     >
                       <RefreshCw className="h-4 w-4" />
                     </Button>
@@ -214,7 +214,7 @@ export default function InstagramSettingsPage() {
                       variant="ghost"
                       size="icon"
                       onClick={() => handleDisconnect(account.id)}
-                      className="text-red-500 hover:text-red-600 hover:bg-red-50"
+                      className="text-red-500 hover:text-red-600 hover:bg-red-500/10"
                       title="Trennen"
                     >
                       <Trash2 className="h-4 w-4" />
@@ -227,7 +227,7 @@ export default function InstagramSettingsPage() {
                 onClick={handleConnect}
                 disabled={connecting}
                 variant="outline"
-                className="w-full"
+                className="w-full border-border hover:bg-secondary/50"
               >
                 <Plus className="mr-2 h-4 w-4" />
                 Weiteren Account verbinden
@@ -238,12 +238,12 @@ export default function InstagramSettingsPage() {
       </Card>
 
       {/* Info */}
-      <Card>
+      <Card className="border-border/50 bg-card/50 backdrop-blur-xl">
         <CardContent className="p-4">
-          <h4 className="font-medium text-gray-900 dark:text-white mb-2">
+          <h4 className="font-medium text-foreground mb-2">
             Voraussetzungen für Instagram-Verbindung
           </h4>
-          <ul className="space-y-2 text-sm text-gray-600 dark:text-gray-400">
+          <ul className="space-y-2 text-sm text-muted-foreground">
             <li className="flex items-start gap-2">
               <Check className="h-4 w-4 text-green-500 mt-0.5 flex-shrink-0" />
               <span>Instagram Business- oder Creator-Account</span>
@@ -261,7 +261,7 @@ export default function InstagramSettingsPage() {
             href="https://help.instagram.com/502981923235522"
             target="_blank"
             rel="noopener noreferrer"
-            className="mt-4 inline-flex items-center gap-1 text-sm text-purple-600 hover:text-purple-500 dark:text-purple-400"
+            className="mt-4 inline-flex items-center gap-1 text-sm text-purple-500 hover:text-purple-400 transition-colors"
           >
             Mehr erfahren
             <ExternalLink className="h-3 w-3" />

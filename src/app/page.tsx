@@ -1,6 +1,7 @@
 import Link from "next/link"
-import { Sparkles, Image, Video, Calendar, Hash, Wand2, ArrowRight } from "lucide-react"
+import { Sparkles, Image, Video, Calendar, Hash, Wand2, ArrowRight, CheckCircle2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { Card } from "@/components/ui/card"
 
 export default function Home() {
   const features = [
@@ -37,60 +38,68 @@ export default function Home() {
   ]
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-900 dark:to-gray-800">
+    <div className="min-h-screen bg-background text-foreground overflow-hidden relative">
+      {/* Background Effects */}
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1000px] h-[600px] bg-primary/20 blur-[120px] rounded-full pointer-events-none opacity-50" />
+      <div className="absolute bottom-0 right-0 w-[800px] h-[600px] bg-purple-600/10 blur-[120px] rounded-full pointer-events-none opacity-30" />
+
       {/* Header */}
-      <header className="border-b bg-white/80 backdrop-blur-sm dark:bg-gray-900/80 dark:border-gray-800 sticky top-0 z-50">
+      <header className="fixed top-0 w-full z-50 border-b border-white/5 bg-background/50 backdrop-blur-xl">
         <div className="container mx-auto flex h-16 items-center justify-between px-4">
-          <Link href="/" className="flex items-center gap-2">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-purple-600 to-pink-500">
+          <Link href="/" className="flex items-center gap-2 group">
+            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-primary to-purple-600 shadow-lg shadow-primary/25 group-hover:scale-105 transition-transform">
               <Sparkles className="h-5 w-5 text-white" />
             </div>
-            <span className="text-xl font-bold bg-gradient-to-r from-purple-600 to-pink-500 bg-clip-text text-transparent">
+            <span className="text-xl font-bold bg-gradient-to-r from-white to-white/60 bg-clip-text text-transparent">
               InstaAI
             </span>
           </Link>
           <div className="flex items-center gap-4">
             <Link href="/auth/login">
-              <Button variant="ghost">Anmelden</Button>
+              <Button variant="ghost" className="text-muted-foreground hover:text-foreground">Anmelden</Button>
             </Link>
             <Link href="/auth/register">
-              <Button>Kostenlos starten</Button>
+              <Button variant="gradient" className="shadow-lg shadow-primary/20">
+                Kostenlos starten
+              </Button>
             </Link>
           </div>
         </div>
       </header>
 
       {/* Hero Section */}
-      <section className="container mx-auto px-4 py-20 text-center">
-        <div className="mx-auto max-w-4xl">
-          <div className="mb-6 inline-flex items-center gap-2 rounded-full bg-purple-100 dark:bg-purple-900/30 px-4 py-2 text-sm text-purple-700 dark:text-purple-300">
-            <Sparkles className="h-4 w-4" />
+      <section className="relative pt-32 pb-20 lg:pt-48 lg:pb-32 px-4">
+        <div className="container mx-auto text-center max-w-5xl">
+          <div className="inline-flex items-center gap-2 rounded-full bg-white/5 border border-white/10 px-4 py-1.5 text-sm text-muted-foreground mb-8 backdrop-blur-sm animate-in fade-in slide-in-from-bottom-4 duration-700">
+            <Sparkles className="h-3.5 w-3.5 text-primary" />
             <span>Powered by Gemini & KIE.ai</span>
           </div>
           
-          <h1 className="text-4xl font-bold tracking-tight text-gray-900 dark:text-white sm:text-6xl">
+          <h1 className="text-5xl md:text-7xl font-bold tracking-tight mb-8 animate-in fade-in slide-in-from-bottom-8 duration-700 delay-100">
             Erstelle viralen
-            <span className="bg-gradient-to-r from-purple-600 via-pink-500 to-orange-500 bg-clip-text text-transparent">
-              {" "}Instagram-Content{" "}
+            <br />
+            <span className="bg-gradient-to-r from-primary via-purple-500 to-pink-500 bg-clip-text text-transparent drop-shadow-2xl">
+              Instagram-Content
             </span>
+            <br />
             mit KI
           </h1>
           
-          <p className="mt-6 text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
+          <p className="text-xl text-muted-foreground max-w-2xl mx-auto mb-12 animate-in fade-in slide-in-from-bottom-8 duration-700 delay-200">
             InstaAI nutzt die neuesten KI-Technologien, um atemberaubende Bilder, Videos, 
             Captions und Hashtags für deinen Instagram-Account zu generieren. 
             Spare Zeit und steigere dein Engagement.
           </p>
 
-          <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 animate-in fade-in slide-in-from-bottom-8 duration-700 delay-300">
             <Link href="/auth/register">
-              <Button size="lg" className="text-lg px-8">
+              <Button size="lg" variant="gradient" className="h-14 px-8 text-lg shadow-xl shadow-primary/20 hover:scale-105 transition-transform">
                 Jetzt kostenlos starten
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
             </Link>
             <Link href="#features">
-              <Button variant="outline" size="lg" className="text-lg px-8">
+              <Button variant="glass" size="lg" className="h-14 px-8 text-lg hover:bg-white/10">
                 Mehr erfahren
               </Button>
             </Link>
@@ -98,32 +107,38 @@ export default function Home() {
         </div>
 
         {/* Demo Preview */}
-        <div className="mt-16 mx-auto max-w-5xl">
-          <div className="rounded-2xl border bg-white dark:bg-gray-800 shadow-2xl overflow-hidden">
-            <div className="bg-gray-100 dark:bg-gray-700 px-4 py-3 flex items-center gap-2">
+        <div className="mt-24 mx-auto max-w-6xl px-4 animate-in fade-in slide-in-from-bottom-12 duration-1000 delay-500">
+          <div className="rounded-2xl border border-white/10 bg-black/40 backdrop-blur-xl shadow-2xl overflow-hidden relative group">
+            <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-purple-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+            
+            <div className="bg-white/5 border-b border-white/5 px-4 py-3 flex items-center gap-2">
               <div className="flex gap-2">
-                <div className="h-3 w-3 rounded-full bg-red-500" />
-                <div className="h-3 w-3 rounded-full bg-yellow-500" />
-                <div className="h-3 w-3 rounded-full bg-green-500" />
+                <div className="h-3 w-3 rounded-full bg-red-500/80" />
+                <div className="h-3 w-3 rounded-full bg-yellow-500/80" />
+                <div className="h-3 w-3 rounded-full bg-green-500/80" />
               </div>
-              <div className="flex-1 text-center text-sm text-gray-500 dark:text-gray-400">
+              <div className="flex-1 text-center text-sm text-muted-foreground font-medium">
                 InstaAI Dashboard
               </div>
             </div>
-            <div className="aspect-video bg-gradient-to-br from-purple-100 via-pink-50 to-orange-100 dark:from-gray-800 dark:via-gray-800 dark:to-gray-800 flex items-center justify-center">
-              <div className="text-center p-8">
-                <div className="flex justify-center gap-4 mb-8">
-                  <div className="h-32 w-32 rounded-xl bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center">
-                    <Image className="h-16 w-16 text-white" />
-                  </div>
-                  <div className="h-32 w-32 rounded-xl bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center">
-                    <Video className="h-16 w-16 text-white" />
-                  </div>
-                  <div className="h-32 w-32 rounded-xl bg-gradient-to-br from-green-500 to-emerald-500 flex items-center justify-center">
-                    <Wand2 className="h-16 w-16 text-white" />
-                  </div>
+            
+            <div className="aspect-video bg-black/20 flex items-center justify-center relative overflow-hidden">
+              <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-20" />
+              <div className="text-center p-8 relative z-10">
+                <div className="flex justify-center gap-6 mb-8">
+                  {[
+                    { icon: Image, color: "from-purple-500 to-pink-500" },
+                    { icon: Video, color: "from-blue-500 to-cyan-500" },
+                    { icon: Wand2, color: "from-green-500 to-emerald-500" }
+                  ].map((item, i) => (
+                    <div key={i} className={`h-32 w-32 rounded-2xl bg-gradient-to-br ${item.color} p-[1px] shadow-2xl transform hover:-translate-y-2 transition-transform duration-300`}>
+                      <div className="h-full w-full bg-black/80 backdrop-blur-md rounded-2xl flex items-center justify-center">
+                        <item.icon className="h-12 w-12 text-white/80" />
+                      </div>
+                    </div>
+                  ))}
                 </div>
-                <p className="text-gray-500 dark:text-gray-400">
+                <p className="text-lg text-muted-foreground font-medium">
                   Erstelle beeindruckenden Content in Sekunden
                 </p>
               </div>
@@ -133,67 +148,81 @@ export default function Home() {
       </section>
 
       {/* Features Section */}
-      <section id="features" className="container mx-auto px-4 py-20">
-        <div className="text-center mb-16">
-          <h2 className="text-3xl font-bold text-gray-900 dark:text-white sm:text-4xl">
-            Alles, was du für Instagram brauchst
-          </h2>
-          <p className="mt-4 text-lg text-gray-600 dark:text-gray-300">
-            Eine komplette Suite von KI-Tools für deine Content-Erstellung
-          </p>
-        </div>
+      <section id="features" className="py-32 relative">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-20">
+            <h2 className="text-3xl md:text-5xl font-bold mb-6">
+              Alles, was du für <span className="text-primary">Instagram</span> brauchst
+            </h2>
+            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+              Eine komplette Suite von KI-Tools für deine Content-Erstellung
+            </p>
+          </div>
 
-        <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-          {features.map((feature) => (
-            <div
-              key={feature.title}
-              className="rounded-2xl border bg-white dark:bg-gray-800 p-8 transition-all hover:shadow-lg hover:-translate-y-1"
-            >
-              <div className={`inline-flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br ${feature.color}`}>
-                <feature.icon className="h-6 w-6 text-white" />
-              </div>
-              <h3 className="mt-6 text-xl font-semibold text-gray-900 dark:text-white">
-                {feature.title}
-              </h3>
-              <p className="mt-3 text-gray-600 dark:text-gray-300">
-                {feature.description}
-              </p>
-            </div>
-          ))}
+          <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+            {features.map((feature, i) => (
+              <Card 
+                key={feature.title}
+                className="group p-8 bg-white/5 border-white/10 hover:bg-white/10 transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl hover:shadow-primary/10"
+              >
+                <div className={`inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br ${feature.color} shadow-lg mb-6 group-hover:scale-110 transition-transform duration-300`}>
+                  <feature.icon className="h-7 w-7 text-white" />
+                </div>
+                <h3 className="text-xl font-bold mb-3 text-foreground">
+                  {feature.title}
+                </h3>
+                <p className="text-muted-foreground leading-relaxed">
+                  {feature.description}
+                </p>
+              </Card>
+            ))}
+          </div>
         </div>
       </section>
 
       {/* CTA Section */}
-      <section className="container mx-auto px-4 py-20">
-        <div className="rounded-3xl bg-gradient-to-r from-purple-600 via-pink-500 to-orange-500 p-12 text-center text-white">
-          <h2 className="text-3xl font-bold sm:text-4xl">
-            Bereit, deinen Instagram-Account zu transformieren?
-          </h2>
-          <p className="mt-4 text-lg text-white/90 max-w-2xl mx-auto">
-            Starte noch heute kostenlos und erlebe, wie KI deine Content-Erstellung revolutioniert.
-          </p>
-          <Link href="/auth/register" className="mt-8 inline-block">
-            <Button size="lg" variant="secondary" className="text-lg px-8">
-              Jetzt kostenlos starten
-              <ArrowRight className="ml-2 h-5 w-5" />
-            </Button>
-          </Link>
+      <section className="py-20 px-4">
+        <div className="container mx-auto max-w-5xl">
+          <div className="rounded-3xl bg-gradient-to-r from-primary via-purple-600 to-pink-600 p-12 md:p-20 text-center relative overflow-hidden shadow-2xl shadow-primary/25">
+            <div className="absolute inset-0 bg-[url('/noise.png')] opacity-10 mix-blend-overlay" />
+            <div className="absolute top-0 left-0 w-full h-full bg-white/10 backdrop-blur-3xl opacity-0 hover:opacity-100 transition-opacity duration-500" />
+            
+            <div className="relative z-10">
+              <h2 className="text-3xl md:text-5xl font-bold text-white mb-6">
+                Bereit, deinen Instagram-Account zu transformieren?
+              </h2>
+              <p className="text-xl text-white/90 max-w-2xl mx-auto mb-10">
+                Starte noch heute kostenlos und erlebe, wie KI deine Content-Erstellung revolutioniert.
+              </p>
+              <Link href="/auth/register" className="inline-block">
+                <Button size="lg" className="h-14 px-10 text-lg bg-white text-primary hover:bg-white/90 shadow-xl">
+                  Jetzt kostenlos starten
+                  <ArrowRight className="ml-2 h-5 w-5" />
+                </Button>
+              </Link>
+            </div>
+          </div>
         </div>
       </section>
 
       {/* Footer */}
-      <footer className="border-t bg-white dark:bg-gray-900 dark:border-gray-800">
+      <footer className="border-t border-white/5 bg-black/20 backdrop-blur-xl">
         <div className="container mx-auto px-4 py-12">
-          <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-6">
             <div className="flex items-center gap-2">
-              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-purple-600 to-pink-500">
+              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-primary to-purple-600">
                 <Sparkles className="h-5 w-5 text-white" />
               </div>
-              <span className="text-xl font-bold bg-gradient-to-r from-purple-600 to-pink-500 bg-clip-text text-transparent">
+              <span className="text-xl font-bold text-foreground">
                 InstaAI
               </span>
             </div>
-            <p className="text-sm text-gray-500 dark:text-gray-400">
+            <div className="flex gap-8 text-sm text-muted-foreground">
+              <Link href="#" className="hover:text-primary transition-colors">Datenschutz</Link>
+              <Link href="#" className="hover:text-primary transition-colors">Impressum</Link>
+              <Link href="#" className="hover:text-primary transition-colors">AGB</Link>
+            </div>
+            <p className="text-sm text-muted-foreground">
               © {new Date().getFullYear()} InstaAI. Alle Rechte vorbehalten.
             </p>
           </div>

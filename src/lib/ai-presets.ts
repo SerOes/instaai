@@ -121,6 +121,103 @@ Text im Bild: "VORHER" und "NACHHER" Labels.`,
     aspectRatio: '1:1',
     tags: ['before-after', 'transformation', 'comparison', 'results'],
   },
+  // ========== NEW IMAGE PRESETS ==========
+  {
+    id: 'flat-lay-arrangement',
+    name: 'Flat Lay Arrangement',
+    description: 'Vogelperspektive auf arrangierte Produkte - perfekt für Produktgruppen',
+    category: 'product',
+    promptTemplate: `Subject: Mehrere [PRODUKTNAME] Produkte kunstvoll von oben arrangiert.
+Composition: Vogelperspektive (top-down), symmetrische oder asymmetrische Anordnung, viel negativer Raum.
+Action: Statisch, perfekt arrangiert.
+Location: Sauberer, texturierter Hintergrund (Marmor, Holz, Leinen oder einfarbig in Markenfarbe).
+Style: Hochauflösende Flat-Lay-Fotografie, weiches diffuses Licht von oben, keine harten Schatten.
+Markenbezug: Farben und Dekoelemente passend zur Marke, optional kleine Props.
+Text im Bild: Optional - Produktname oder Slogan dezent am Rand.`,
+    style: 'realistic',
+    aspectRatio: '1:1',
+    tags: ['flat-lay', 'arrangement', 'multiple-products', 'overhead'],
+  },
+  {
+    id: 'behind-the-scenes',
+    name: 'Behind the Scenes',
+    description: 'Authentische Einblicke in den Arbeitsprozess',
+    category: 'lifestyle',
+    promptTemplate: `Subject: Hände bei der Arbeit an [PRODUKTNAME], Werkzeuge und Materialien sichtbar.
+Composition: Natürlicher, leicht schräger Winkel, Fokus auf die Handarbeit, unscharfer Hintergrund.
+Action: Aktive Arbeit - nähen, basteln, malen, verpacken oder gestalten.
+Location: Authentischer Arbeitsplatz mit natürlichem Licht, leichte Unordnung erlaubt.
+Style: Dokumentarisch-authentischer Look, warme Farbtöne, natürliches Tageslicht.
+Markenbezug: Markentypische Materialien und Farben subtil im Bild.
+Text im Bild: Keiner oder sehr dezent "Made with ❤️".`,
+    style: 'realistic',
+    aspectRatio: '4:5',
+    tags: ['bts', 'authentic', 'handmade', 'process', 'crafting'],
+  },
+  {
+    id: 'seasonal-mood',
+    name: 'Seasonal Mood',
+    description: 'Saisonales Stimmungsbild mit Produkt',
+    category: 'brand',
+    promptTemplate: `Subject: [PRODUKTNAME] eingebettet in saisonale Dekoration und Stimmung.
+Composition: Produkt im Vordergrund, saisonale Elemente als Rahmen und Hintergrund.
+Action: Statisch, atmosphärisch.
+Location: Passend zur Saison - Herbstlaub, Weihnachtsdeko, Frühlingsblumen oder Sommervibes.
+Style: Stimmungsvolle, warme Fotografie mit saisonaler Farbpalette, Bokeh-Effekte.
+Markenbezug: Produkt bleibt Hauptfokus, saisonale Elemente ergänzen die Markenwerte.
+Text im Bild: Optional saisonaler Gruß oder Angebot.`,
+    style: 'realistic',
+    aspectRatio: '1:1',
+    tags: ['seasonal', 'mood', 'holiday', 'atmosphere', 'festive'],
+  },
+  {
+    id: 'customer-testimonial',
+    name: 'Kunden-Testimonial',
+    description: 'Zitat mit Kundenfoto-Platzhalter für Social Proof',
+    category: 'brand',
+    promptTemplate: `Subject: Stilisierter Testimonial-Frame mit Platzhalter für Kundenfoto.
+Composition: Kundenbereich (Foto/Avatar) links oder oben, Zitat-Bereich rechts oder unten.
+Action: Statisch, text-fokussiert.
+Location: Dezenter, eleganter Hintergrund in Markenfarben mit subtilen Mustern.
+Style: Modern, clean, vertrauensbildend, professionelles Social-Proof-Design.
+Markenbezug: Markenfarben, Logo dezent platziert, konsistente Typografie.
+Text im Bild: "[ZITAT]" - [KUNDENNAME] ⭐⭐⭐⭐⭐ Sternebewertung optional.`,
+    style: 'minimal',
+    aspectRatio: '1:1',
+    tags: ['testimonial', 'review', 'social-proof', 'customer', 'quote'],
+  },
+  {
+    id: 'announcement-banner',
+    name: 'Ankündigungs-Banner',
+    description: 'Aufmerksamkeitsstarkes Banner für Sales, Launches oder News',
+    category: 'brand',
+    promptTemplate: `Subject: Bold typografisches Design mit starker Hauptbotschaft.
+Composition: Zentriert oder asymmetrisch, klare visuelle Hierarchie, Headline dominant.
+Action: Statisch, aber dynamisch wirkend durch Typografie und Farben.
+Location: Abstrakter Hintergrund mit Farbverlauf oder geometrischen Formen in Markenfarben.
+Style: Modern, bold, eye-catching, hoher Kontrast, klare Lesbarkeit.
+Markenbezug: Primäre Markenfarben, Logo sichtbar, Brand-Fonts.
+Text im Bild: "[HAUPTBOTSCHAFT]" groß, "[DETAILS/DATUM]" kleiner darunter, CTA-Button-Optik.`,
+    style: 'modern',
+    aspectRatio: '1:1',
+    tags: ['announcement', 'sale', 'launch', 'news', 'banner', 'bold'],
+  },
+  {
+    id: 'gift-wrapping',
+    name: 'Geschenkverpackung',
+    description: 'Produkt als liebevoll verpacktes Geschenk präsentiert',
+    category: 'product',
+    promptTemplate: `Subject: [PRODUKTNAME] schön verpackt als Geschenk mit Schleife und Dekoration.
+Composition: Geschenk im Zentrum, leicht schräger Winkel, umgeben von Verpackungsmaterial.
+Action: Halb ausgepackt oder perfekt verpackt, einladend präsentiert.
+Location: Festlicher, einladender Hintergrund - Tisch mit Konfetti, Blumen oder saisonaler Deko.
+Style: Warm, einladend, festlich, hochwertige Produktfotografie mit Lifestyle-Touch.
+Markenbezug: Verpackung in Markenfarben, Geschenkband passend, Logo auf Tag oder Karte.
+Text im Bild: Optional "Das perfekte Geschenk" oder ähnlich.`,
+    style: 'realistic',
+    aspectRatio: '4:5',
+    tags: ['gift', 'wrapping', 'present', 'celebration', 'festive'],
+  },
 ]
 
 // ================== VIDEO PRESETS ==================
@@ -206,6 +303,87 @@ Audio: Leise ASMR-artige Geräusche (Papier, Verpackung), sanfte Hintergrundmusi
     format: '9:16',
     audioType: 'ambient',
     tags: ['unboxing', 'reveal', 'teaser', 'satisfying'],
+  },
+  // ========== NEW VIDEO PRESETS ==========
+  {
+    id: 'customer-review-reel',
+    name: 'Kunden-Review Reel',
+    description: 'Animierte Kundenbewertung als kurzes Reel',
+    category: 'brand',
+    promptTemplate: `Cinematography: Statische oder leichte Zoom-Bewegung, Text-Animationen im Fokus.
+Subject: Stilisierter Review-Screen mit Sternebewertung und Kundenzitat.
+Action: Text erscheint animiert, Sterne leuchten auf, Produkt-Shot am Ende.
+Context: Eleganter Hintergrund in Markenfarben, dezente Partikel oder Lichteffekte.
+Style & Ambiance: Modern, vertrauensbildend, professionell, cleane Typografie.
+Audio: Upbeat aber subtile Hintergrundmusik, optional Whoosh-Sounds bei Text-Animationen.`,
+    duration: 5,
+    format: '9:16',
+    audioType: 'music',
+    tags: ['review', 'testimonial', 'social-proof', 'animated', 'trust'],
+  },
+  {
+    id: 'how-to-tutorial',
+    name: 'How-To Tutorial',
+    description: 'Schnelles Tutorial mit Schritt-für-Schritt Anleitung',
+    category: 'tutorial',
+    promptTemplate: `Cinematography: Top-down oder leicht schräge Perspektive, klare Schnitte zwischen Schritten.
+Subject: Hände demonstrieren die Verwendung/Pflege von [PRODUKTNAME].
+Action: Klare, nachvollziehbare Schritte: Schritt 1, 2, 3 mit Fokus auf die Handlung.
+Context: Aufgeräumter Arbeitsbereich, alle benötigten Materialien sichtbar.
+Style & Ambiance: Informativ, freundlich, leicht zu folgen, gute Beleuchtung.
+Audio: Klare Hintergrundmusik, optional Text-Overlays mit Schritt-Nummern.`,
+    duration: 8,
+    format: '9:16',
+    audioType: 'music',
+    tags: ['tutorial', 'how-to', 'educational', 'step-by-step', 'diy'],
+  },
+  {
+    id: 'mood-aesthetic',
+    name: 'Mood Aesthetic',
+    description: 'Atmosphärisches Stimmungsvideo für Brand Awareness',
+    category: 'brand',
+    promptTemplate: `Cinematography: Langsame, cinematische Kamerabewegungen, sanfte Übergänge, Slow-Motion-Elemente.
+Subject: [PRODUKTNAME] in verschiedenen stimmungsvollen Szenen.
+Action: Subtile Bewegungen - Lichtspiel, sanfter Wind, fließende Stoffe, Reflexionen.
+Context: Ästhetische, zur Marke passende Umgebung mit viel Atmosphäre.
+Style & Ambiance: Dreamy, aspirational, warm oder kühl je nach Markenidentität, cinematischer Look.
+Audio: Emotionale, atmosphärische Musik ohne Lyrics, Ambiente-Sounds.`,
+    duration: 6,
+    format: '9:16',
+    audioType: 'ambient',
+    tags: ['aesthetic', 'mood', 'cinematic', 'brand', 'atmospheric'],
+  },
+  {
+    id: 'countdown-sale',
+    name: 'Countdown Sale',
+    description: 'Dynamisches Sale-Ankündigungsvideo mit Countdown-Element',
+    category: 'teaser',
+    promptTemplate: `Cinematography: Schnelle Schnitte, dynamische Zooms, pulsierende Bewegungen zum Beat.
+Subject: Produkte im Sale-Spotlight, Countdown-Zahlen, Rabatt-Prozente.
+Action: Countdown-Animation (3, 2, 1, SALE!), Produkte flashen auf, CTA am Ende.
+Context: Bold, energetischer Hintergrund mit Markenfarben, Konfetti oder Partikel-Effekte.
+Style & Ambiance: Urgent, exciting, bold, hoher Kontrast, energiegeladen.
+Audio: Uptempo Beat, Countdown-Sounds, energetische Drops.`,
+    duration: 5,
+    format: '9:16',
+    audioType: 'music',
+    tags: ['sale', 'countdown', 'urgent', 'discount', 'promotion', 'dynamic'],
+  },
+  {
+    id: 'day-in-life',
+    name: 'Day in the Life',
+    description: 'Mini-Vlog Stil - Produkt im Alltag integriert',
+    category: 'story',
+    promptTemplate: `Cinematography: POV und Third-Person Mix, natürliche Handheld-Bewegungen, authentische Übergänge.
+Subject: Person im Alltag, die [PRODUKTNAME] natürlich verwendet.
+Action: Morgenroutine, Arbeit, Pause, Feierabend - Produkt als natürlicher Teil des Tages.
+Context: Realistische Alltagsumgebung - Zuhause, Büro, Café, unterwegs.
+Style & Ambiance: Authentic, relatable, warm, natürliches Licht, Social-Media-native Look.
+Audio: Trendy Hintergrundmusik, optional ASMR-Sounds bei Produktnutzung.`,
+    duration: 8,
+    format: '9:16',
+    audioType: 'music',
+    tags: ['vlog', 'day-in-life', 'authentic', 'lifestyle', 'relatable'],
   },
 ]
 
