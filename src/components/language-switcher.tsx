@@ -2,7 +2,7 @@
 
 import { useTransition } from 'react';
 import { useRouter } from 'next/navigation';
-import { useLocale, useTranslations } from 'next-intl';
+import { useLocale } from 'next-intl';
 import { Globe } from 'lucide-react';
 import {
   DropdownMenu,
@@ -22,7 +22,6 @@ export function LanguageSwitcher() {
   const locale = useLocale();
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
-  const t = useTranslations('languageSwitcher');
 
   const currentLanguage = languages.find((lang) => lang.code === locale) || languages[0];
 

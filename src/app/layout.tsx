@@ -1,10 +1,9 @@
 import type { Metadata } from "next";
-import { getLocale, getMessages, getTranslations } from "next-intl/server";
+import { getLocale, getMessages } from "next-intl/server";
 import { Providers } from "@/components/providers";
 import "./globals.css";
 
 export async function generateMetadata(): Promise<Metadata> {
-  const t = await getTranslations('landing');
   const locale = await getLocale();
   
   const titles: Record<string, string> = {
