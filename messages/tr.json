@@ -1,0 +1,645 @@
+{
+  "common": {
+    "loading": "Yükleniyor...",
+    "save": "Kaydet",
+    "cancel": "İptal",
+    "delete": "Sil",
+    "edit": "Düzenle",
+    "back": "Geri",
+    "next": "İleri",
+    "submit": "Gönder",
+    "close": "Kapat",
+    "yes": "Evet",
+    "no": "Hayır",
+    "all": "Tümü",
+    "search": "Ara",
+    "filter": "Filtre",
+    "download": "İndir",
+    "upload": "Yükle",
+    "preview": "Önizleme",
+    "generate": "Oluştur",
+    "error": "Bir hata oluştu",
+    "success": "Başarılı",
+    "required": "Zorunlu",
+    "optional": "isteğe bağlı"
+  },
+  "nav": {
+    "dashboard": "Panel",
+    "projects": "Projeler",
+    "myImages": "Resimlerim",
+    "generateImages": "Resim Oluştur",
+    "generateVideos": "Video Oluştur",
+    "contentPlanner": "İçerik Planlayıcı",
+    "settings": "Ayarlar",
+    "logout": "Çıkış Yap",
+    "login": "Giriş Yap",
+    "register": "Ücretsiz Başla",
+    "connectInstagram": "Instagram Bağla"
+  },
+  "landing": {
+    "hero": {
+      "badge": "Gemini & KIE.ai tarafından desteklenmektedir",
+      "title1": "Viral",
+      "title2": "Instagram İçeriği",
+      "title3": "yapay zeka ile oluştur",
+      "description": "InstaAI, Instagram hesabınız için etkileyici görüntüler, videolar, açıklamalar ve hashtag'ler oluşturmak için en son yapay zeka teknolojilerini kullanır. Zaman kazanın ve etkileşiminizi artırın.",
+      "cta": "Ücretsiz Başla",
+      "learnMore": "Daha Fazla Bilgi"
+    },
+    "features": {
+      "title": "{highlight} için ihtiyacın olan her şey",
+      "highlight": "Instagram",
+      "subtitle": "İçerik oluşturmanız için eksiksiz bir yapay zeka araç paketi",
+      "imageGeneration": {
+        "title": "Yapay Zeka Görüntü Oluşturma",
+        "description": "Instagram akışınız için en son yapay zeka modelleriyle etkileyici görüntüler oluşturun."
+      },
+      "videoReels": {
+        "title": "Video & Reels",
+        "description": "Takipçilerinizi heyecanlandıracak büyüleyici videolar ve reels oluşturun."
+      },
+      "smartCaptions": {
+        "title": "Akıllı Açıklamalar",
+        "description": "İçeriğinize mükemmel uyum sağlayan çeşitli tarzlarda otomatik oluşturulmuş açıklamalar."
+      },
+      "hashtagOptimization": {
+        "title": "Hashtag Optimizasyonu",
+        "description": "Maksimum erişim ve etkileşim için yapay zeka ile optimize edilmiş hashtag'ler."
+      },
+      "contentPlanning": {
+        "title": "İçerik Planlama",
+        "description": "Tutarlı varlık için gönderilerinizi planlayın ve otomatikleştirin."
+      }
+    },
+    "cta": {
+      "title": "Instagram hesabınızı dönüştürmeye hazır mısınız?",
+      "description": "Bugün ücretsiz başlayın ve yapay zekanın içerik oluşturmanızı nasıl devrimleştirdiğini deneyimleyin.",
+      "button": "Ücretsiz Başla"
+    },
+    "preview": {
+      "title": "InstaAI Panel",
+      "subtitle": "Saniyeler içinde etkileyici içerik oluşturun"
+    },
+    "footer": {
+      "privacy": "Gizlilik",
+      "imprint": "Künye",
+      "terms": "Şartlar",
+      "copyright": "© {year} InstaAI. Tüm hakları saklıdır."
+    }
+  },
+  "auth": {
+    "login": {
+      "title": "Tekrar hoş geldiniz",
+      "subtitle": "InstaAI hesabınıza erişmek için giriş yapın",
+      "email": "E-posta",
+      "emailPlaceholder": "email@adresiniz.com",
+      "password": "Şifre",
+      "passwordPlaceholder": "••••••••",
+      "button": "Giriş Yap",
+      "loading": "Giriş yapılıyor...",
+      "noAccount": "Hesabınız yok mu?",
+      "registerLink": "Şimdi kayıt olun",
+      "error": "Geçersiz e-posta veya şifre",
+      "genericError": "Bir hata oluştu. Lütfen tekrar deneyin."
+    },
+    "register": {
+      "title": "Hesap oluştur",
+      "subtitle": "Ücretsiz InstaAI hesabınız için kayıt olun",
+      "name": "İsim",
+      "namePlaceholder": "Adınız Soyadınız",
+      "email": "E-posta",
+      "emailPlaceholder": "email@adresiniz.com",
+      "password": "Şifre",
+      "passwordPlaceholder": "En az 8 karakter",
+      "confirmPassword": "Şifreyi onayla",
+      "confirmPasswordPlaceholder": "Şifreyi tekrarla",
+      "button": "Hesap oluştur",
+      "loading": "Kayıt olunuyor...",
+      "hasAccount": "Zaten kayıtlı mısınız?",
+      "loginLink": "Şimdi giriş yapın",
+      "success": {
+        "title": "Kayıt başarılı!",
+        "message": "Giriş sayfasına yönlendiriliyorsunuz..."
+      },
+      "errors": {
+        "nameMin": "İsim en az 2 karakter olmalıdır",
+        "emailInvalid": "Geçersiz e-posta adresi",
+        "passwordMin": "Şifre en az 8 karakter olmalıdır",
+        "passwordMismatch": "Şifreler eşleşmiyor"
+      }
+    }
+  },
+  "dashboard": {
+    "welcome": "Tekrar hoş geldiniz",
+    "greeting": "👋",
+    "subtitle": "Yapay zeka desteğiyle etkileyici Instagram içeriği oluşturun.",
+    "quickActions": {
+      "generateImage": "Resim Oluştur",
+      "generateImageDesc": "Yapay zeka ile resim oluştur",
+      "generateVideo": "Video Oluştur",
+      "generateVideoDesc": "Reels ve video oluştur",
+      "newProject": "Yeni Proje",
+      "newProjectDesc": "İçerik projesi oluştur",
+      "schedule": "Zamanlama",
+      "scheduleDesc": "Gönderileri planla ve yönet"
+    },
+    "stats": {
+      "projects": "Projeler",
+      "scheduledPosts": "Planlanmış Gönderiler",
+      "published": "Yayınlanmış",
+      "generatedImages": "Oluşturulan Resimler"
+    },
+    "recentProjects": {
+      "title": "Son Projeler",
+      "subtitle": "Son oluşturduğunuz projeler",
+      "viewAll": "Tümünü gör",
+      "empty": {
+        "title": "Henüz proje yok",
+        "subtitle": "Başlamak için ilk projenizi oluşturun.",
+        "button": "Yeni Proje Başlat"
+      },
+      "status": {
+        "published": "Yayınlandı",
+        "scheduled": "Planlandı",
+        "draft": "Taslak"
+      }
+    },
+    "tip": {
+      "title": "Günün İpucu",
+      "content": "Daha tutarlı sonuçlar için istemlerinizde belirli stil açıklamaları kullanın. Örneğin:"
+    },
+    "user": "Kullanıcı"
+  },
+  "projects": {
+    "title": "Projeler",
+    "subtitle": "Oluşturduğunuz resim ve videoları yönetin",
+    "newProject": "Yeni Proje",
+    "searchPlaceholder": "Projelerde ara...",
+    "filters": {
+      "all": "Tümü",
+      "images": "Resimler",
+      "videos": "Videolar"
+    },
+    "empty": {
+      "title": "Henüz proje yok",
+      "titleFiltered": "Sonuç bulunamadı",
+      "subtitle": "Başlamak için ilk projenizi oluşturun.",
+      "subtitleFiltered": "Farklı bir arama veya filtre deneyin."
+    },
+    "status": {
+      "draft": "Taslak",
+      "scheduled": "Planlandı",
+      "published": "Yayınlandı",
+      "failed": "Başarısız"
+    },
+    "types": {
+      "image": "Resim",
+      "video": "Video"
+    },
+    "captions": "Açıklama",
+    "scheduled": "planlandı",
+    "confirmDelete": "Bu projeyi silmek istediğinizden emin misiniz?",
+    "new": {
+      "title": "Yeni Proje",
+      "subtitle": "Yeni bir içerik projesi oluştur",
+      "createTitle": "Proje Oluştur",
+      "createSubtitle": "Bir proje türü seçin ve temel bilgileri girin.",
+      "projectType": "Proje Türü",
+      "typeImage": "Resim",
+      "typeImageDesc": "Yapay zeka ile resimler",
+      "typeVideo": "Video",
+      "typeVideoDesc": "Reels ve videolar",
+      "projectTitle": "Proje Başlığı",
+      "projectTitlePlaceholder": "örn. Ürün Lansmanı Kampanyası",
+      "description": "Açıklama",
+      "descriptionPlaceholder": "Bu projenin ne hakkında olduğunu kısaca açıklayın...",
+      "createButton": "Proje Oluştur",
+      "creating": "Oluşturuluyor...",
+      "titleRequired": "Başlık gerekli"
+    }
+  },
+  "gallery": {
+    "title": "Resimlerim",
+    "subtitle": "Yüklediğiniz resimleri yönetin ve referans olarak kullanın",
+    "uploadButton": "Resim Yükle",
+    "uploading": "Yükleniyor...",
+    "dropzone": {
+      "title": "Resimleri buraya bırakın",
+      "subtitle": "veya seçmek için tıklayın • JPEG, PNG, WebP, GIF • Maks. 10MB"
+    },
+    "empty": {
+      "title": "Henüz resim yüklenmedi",
+      "subtitle": "Referans olarak kullanmak için resim yükleyin"
+    },
+    "actions": {
+      "preview": "Önizleme",
+      "useAsReference": "Referans Olarak Kullan",
+      "download": "İndir",
+      "delete": "Sil"
+    },
+    "deleteDialog": {
+      "title": "Resim silinsin mi?",
+      "description": "Bu resim kalıcı olarak silinecek. Bu işlem geri alınamaz."
+    },
+    "previewDialog": {
+      "uploadedOn": "Yüklenme tarihi"
+    },
+    "metadata": {
+      "size": "Boyut",
+      "resolution": "Çözünürlük",
+      "type": "Tür",
+      "unknown": "Bilinmiyor"
+    },
+    "errors": {
+      "loadFailed": "Resimler yüklenemedi",
+      "uploadFailed": "Yükleme başarısız",
+      "deleteFailed": "Silme başarısız"
+    }
+  },
+  "generate": {
+    "image": {
+      "title": "Resim Oluştur",
+      "subtitle": "Instagram için etkileyici yapay zeka görüntüleri oluşturun",
+      "preset": {
+        "title": "1. Bir Şablon Seçin",
+        "subtitle": "Optimize edilmiş bir şablonla başlayın - özelleştirebilirsiniz",
+        "noPreset": "Veya şablonsuz başlayın →",
+        "categories": {
+          "product": "📦 Ürün",
+          "lifestyle": "🌿 Yaşam Tarzı",
+          "story": "📱 Hikaye",
+          "carousel": "🎠 Carousel",
+          "brand": "✨ Marka",
+          "other": "🎨 Diğer"
+        }
+      },
+      "prompt": {
+        "title": "2. İstemi Özelleştirin",
+        "subtitleWithPreset": "[ÜRÜNADINI] değiştirin ve detayları ayarlayın",
+        "subtitleNoPreset": "Oluşturmak istediğiniz resmi tanımlayın",
+        "label": "Resim Açıklaması",
+        "placeholder": "örn. Mermer masada şık bir kahve fincanı, pencereden süzülen sabah ışığı, estetik minimalist fotoğrafçılık, yumuşak gölgeler...",
+        "productWarning": "⚠️ [ÜRÜNADINI] gerçek ürün adınızla değiştirin",
+        "advancedOptions": "Gelişmiş Seçenekler",
+        "lessOptions": "Daha Az Seçenek",
+        "negativePrompt": "Negatif İstem",
+        "negativePromptPlaceholder": "örn. bulanık, düşük kalite, bozuk"
+      },
+      "settings": {
+        "title": "3. Ayarlar",
+        "referenceImage": "Referans Resmi (isteğe bağlı)",
+        "referenceImageDesc": "Şablon veya ilham olarak kullanmak için bir resim yükleyin",
+        "uploadReference": "Yükle",
+        "fromGallery": "Galeriden",
+        "referenceSelected": "Referans resmi seçildi",
+        "clickToGenerate": "\"Resim Oluştur\"a tıklayın",
+        "usedAsReference": "Referans olarak kullanılacak",
+        "aspectRatio": "En Boy Oranı",
+        "aspectRatios": {
+          "square": "Kare",
+          "portrait": "Portre",
+          "story": "Hikaye/Reel",
+          "landscape": "Yatay"
+        },
+        "model": "Model",
+        "models": {
+          "standard": "Standart",
+          "standardDesc": "Hızlı & çok yönlü",
+          "realistic": "Gerçekçi",
+          "realisticDesc": "Fotogerçekçi görüntüler",
+          "artistic": "Sanatsal",
+          "artisticDesc": "Yaratıcı stiller"
+        }
+      },
+      "generateButton": "Resim Oluştur",
+      "generating": "Oluşturuluyor...",
+      "preview": {
+        "title": "Önizleme",
+        "placeholder": "Oluşturulan resminiz burada görünecek",
+        "generating": "Resminiz oluşturuluyor...",
+        "regenerate": "Yeniden Oluştur"
+      },
+      "galleryPicker": {
+        "title": "Galeriden Resim Seçin",
+        "subtitle": "Referans olarak yüklenmiş bir resim seçin",
+        "empty": "Resim bulunamadı",
+        "uploadButton": "Resim Yükle"
+      },
+      "errors": {
+        "promptRequired": "Lütfen bir istem girin",
+        "generationFailed": "Resim oluşturma başarısız",
+        "uploadFailed": "Yükleme başarısız"
+      }
+    },
+    "video": {
+      "title": "Video Oluştur",
+      "subtitle": "Instagram Reels için etkileyici yapay zeka videoları oluşturun",
+      "preset": {
+        "title": "1. Bir Şablon Seçin",
+        "subtitle": "Optimize edilmiş bir video şablonuyla başlayın",
+        "noPreset": "Veya şablonsuz başlayın →",
+        "categories": {
+          "teaser": "🎬 Tanıtım",
+          "beforeafter": "🔄 Önce/Sonra",
+          "story": "📱 Hikaye",
+          "tutorial": "📚 Eğitim",
+          "brand": "✨ Marka",
+          "other": "🎥 Diğer"
+        }
+      },
+      "prompt": {
+        "title": "2. İstemi Özelleştirin",
+        "subtitleWithPreset": "[ÜRÜNADINI] değiştirin ve detayları ayarlayın",
+        "subtitleNoPreset": "Oluşturmak istediğiniz videoyu tanımlayın",
+        "label": "Video Açıklaması",
+        "placeholder": "örn. Buharı yükselen bir kahve fincanı, rahat bir kafe iç mekanını ortaya koyan nazik kamera hareketi, yumuşak altın ışıklı sabah atmosferi...",
+        "productWarning": "⚠️ [ÜRÜNADINI] gerçek ürün adınızla değiştirin",
+        "advancedOptions": "Gelişmiş Seçenekler (Resimden Videoya)",
+        "lessOptions": "Daha Az Seçenek",
+        "sourceImage": "Kaynak Resim",
+        "sourceImagePlaceholder": "Resimden Videoya için bir resim URL'si",
+        "sourceImageDesc": "Canlandırmak için bir resim ekleyin"
+      },
+      "settings": {
+        "title": "3. Ayarlar",
+        "aspectRatio": "En Boy Oranı",
+        "aspectRatios": {
+          "square": "Kare",
+          "feed": "Akış Gönderisi",
+          "reel": "Reel/Hikaye",
+          "landscape": "Yatay"
+        },
+        "duration": "Süre",
+        "durations": {
+          "short": "Kısa",
+          "standard": "Standart",
+          "long": "Uzun"
+        },
+        "motion": "Hareket Yoğunluğu",
+        "motions": {
+          "subtle": "Hafif",
+          "subtleDesc": "Yumuşak hareketler",
+          "moderate": "Orta",
+          "moderateDesc": "Doğal hareketler",
+          "dynamic": "Dinamik",
+          "dynamicDesc": "Enerjik hareketler"
+        },
+        "model": "Model",
+        "models": {
+          "standard": "Standart",
+          "standardDesc": "Hızlı & verimli",
+          "premium": "Premium",
+          "premiumDesc": "En yüksek kalite"
+        }
+      },
+      "generateButton": "Video Oluştur",
+      "generating": "Oluşturuluyor...",
+      "preview": {
+        "title": "Önizleme",
+        "placeholder": "Oluşturulan videonuz burada görünecek",
+        "generating": "Videonuz oluşturuluyor...",
+        "generatingNote": "Bu birkaç dakika sürebilir",
+        "processing": "Video işleniyor",
+        "jobId": "İş ID",
+        "regenerate": "Yeniden Oluştur"
+      },
+      "errors": {
+        "promptRequired": "Lütfen bir istem girin",
+        "generationFailed": "Video oluşturma başarısız"
+      }
+    }
+  },
+  "schedule": {
+    "title": "İçerik Planlayıcı",
+    "subtitle": "Instagram gönderilerinizi planlayın ve yönetin",
+    "newPost": "Yeni Gönderi Planla",
+    "empty": {
+      "title": "Planlanmış gönderi yok",
+      "subtitle": "Bir proje oluşturun ve ilk gönderinizi planlayın.",
+      "button": "Proje Oluştur"
+    },
+    "status": {
+      "scheduled": "Planlandı",
+      "published": "Yayınlandı",
+      "failed": "Başarısız",
+      "cancelled": "İptal Edildi"
+    },
+    "confirmDelete": "Bu planlamayı silmek istediğinizden emin misiniz?"
+  },
+  "settings": {
+    "title": "Ayarlar",
+    "subtitle": "API anahtarlarınızı ve hesap ayarlarınızı yönetin",
+    "systemPrompt": {
+      "title": "Sistem İstemi Sihirbazı",
+      "subtitle": "Yapay zeka kişiliğini ve marka stilini yapılandırın"
+    },
+    "instagram": {
+      "title": "Instagram Bağla",
+      "subtitle": "Hesapları bağlayın ve yönetin"
+    },
+    "apiKeys": {
+      "title": "API Anahtarları",
+      "subtitle": "İçerik oluşturma için yapay zeka servislerinizi bağlayın",
+      "addButton": "Anahtar Ekle",
+      "newKey": "Yeni API Anahtarı",
+      "name": "İsim",
+      "namePlaceholder": "örn. Gemini Production",
+      "provider": "Sağlayıcı",
+      "key": "API Anahtarı",
+      "keyPlaceholder": "API anahtarınızı yapıştırın",
+      "saveButton": "Kaydet",
+      "saving": "Kaydediliyor...",
+      "empty": {
+        "title": "API anahtarı yok",
+        "subtitle": "Yapay zeka özelliklerini kullanmak için API anahtarları ekleyin."
+      },
+      "status": {
+        "active": "Aktif",
+        "inactive": "Pasif"
+      },
+      "providers": {
+        "gemini": {
+          "name": "Google Gemini",
+          "description": "Açıklamalar ve hashtag'ler için"
+        },
+        "kie": {
+          "name": "KIE.ai",
+          "description": "Resim ve video oluşturma için"
+        }
+      },
+      "getKey": "API anahtarı al →",
+      "errors": {
+        "required": "İsim ve anahtar gereklidir",
+        "saveFailed": "Kaydetme başarısız"
+      },
+      "confirmDelete": "Bu API anahtarını silmek istediğinizden emin misiniz?"
+    },
+    "instagramPage": {
+      "title": "Instagram Bağlantısı",
+      "subtitle": "Instagram İşletme hesaplarınızı bağlayın ve yönetin",
+      "connectedAccounts": "Bağlı Hesaplar",
+      "connectedSubtitle": "Otomatik paylaşım için Instagram İşletme hesaplarını bağlayın",
+      "noAccount": {
+        "title": "Instagram hesabı bağlı değil",
+        "subtitle": "Gönderileri doğrudan uygulamadan planlamak ve yayınlamak için Instagram İşletme hesabınızı bağlayın."
+      },
+      "connectButton": "Instagram Bağla",
+      "connecting": "Bağlanıyor...",
+      "addAnother": "Başka Hesap Bağla",
+      "accountStats": {
+        "followers": "Takipçi",
+        "posts": "Gönderi"
+      },
+      "refresh": "Yenile",
+      "disconnect": "Bağlantıyı Kes",
+      "confirmDisconnect": "Bu Instagram hesabının bağlantısını kesmek istediğinizden emin misiniz?",
+      "requirements": {
+        "title": "Instagram Bağlantısı Gereksinimleri",
+        "business": "Instagram İşletme veya İçerik Üretici hesabı",
+        "facebook": "Bir Facebook Sayfasına bağlı",
+        "admin": "Facebook Sayfasına yönetici erişimi"
+      },
+      "learnMore": "Daha fazla bilgi",
+      "oauthError": "Instagram OAuth üretimde etkinleştirilecektir. Lütfen INSTAGRAM_CLIENT_ID ve INSTAGRAM_CLIENT_SECRET yapılandırın."
+    },
+    "systemPromptPage": {
+      "title": "Sistem İstemi Ayarları",
+      "subtitle": "Tüm yapay zeka oluşturmaları için global iş bağlamınızı tanımlayın",
+      "wizardButton": "Sihirbazı Başlat",
+      "cards": {
+        "brand": "Marka",
+        "audience": "Hedef Kitle",
+        "styleTags": "Stil Etiketleri",
+        "contentGoals": "İçerik Hedefleri",
+        "selected": "seçildi",
+        "notSet": "Ayarlanmadı"
+      },
+      "globalPrompt": {
+        "title": "Global Sistem İstemi",
+        "placeholder": "Sistem isteminiz tüm yapay zeka oluşturmalarında otomatik olarak kullanılacak...",
+        "charCount": "{count} karakter • Bu istem tüm yapay zeka çağrılarına eklenir"
+      },
+      "brandInfo": {
+        "title": "Marka Bilgileri",
+        "brandName": "Marka Adı",
+        "industry": "Sektör",
+        "targetAudience": "Hedef Kitle"
+      },
+      "styleGoals": {
+        "title": "Stil & Hedefler",
+        "styleTags": "Stil Etiketleri",
+        "contentGoals": "İçerik Hedefleri"
+      },
+      "styleTags": {
+        "friendly": "Samimi",
+        "professional": "Profesyonel",
+        "luxurious": "Lüks",
+        "playful": "Eğlenceli",
+        "minimalist": "Minimalist",
+        "emotional": "Duygusal",
+        "humorous": "Mizahi",
+        "inspiring": "İlham Verici",
+        "authentic": "Otantik",
+        "modern": "Modern"
+      },
+      "goals": {
+        "followers": "Daha Fazla Takipçi",
+        "sales": "Daha Fazla Satış",
+        "community": "Topluluk",
+        "brand": "Marka Bilinirliği"
+      },
+      "resetButton": "Sıfırla",
+      "saveButton": "Değişiklikleri Kaydet",
+      "confirmReset": "Tüm sistem istemi ayarlarını sıfırlamak istediğinizden emin misiniz?",
+      "messages": {
+        "saved": "Sistem istemi başarıyla kaydedildi!",
+        "reset": "Sistem istemi sıfırlandı",
+        "error": "Kaydetme başarısız"
+      }
+    }
+  },
+  "onboarding": {
+    "step": "Adım {current} / {total}",
+    "step1": {
+      "title": "İşletmeniz",
+      "subtitle": "Bize markanız hakkında bilgi verin",
+      "brandName": "Marka / işletme adınız nedir?",
+      "brandNamePlaceholder": "örn. El Yapımı Tasarımlar",
+      "industry": "Hangi sektördesiniz?",
+      "industryPlaceholder": "Sektör seçin...",
+      "products": "Ağırlıklı olarak ne satıyorsunuz?",
+      "productsPlaceholder": "örn. okul çantaları, ipli çantalar ve çocuklar için kupalar gibi el yapımı kişiselleştirilmiş ürünler"
+    },
+    "step2": {
+      "title": "Hedef Kitleniz",
+      "subtitle": "İdeal müşterileriniz kim?",
+      "targetAudience": "Ana hedef kitleniz kim?",
+      "targetAudiencePlaceholder": "örn. İlkokul çağında çocukları olan anneler",
+      "region": "Ağırlıklı olarak hangi bölgedeler?",
+      "regionPlaceholder": "örn. Türkiye, Almanya, Avusturya",
+      "problemSolved": "Onlar için hangi sorunu çözüyorsunuz?",
+      "problemSolvedPlaceholder": "örn. çocuklarının özel günleri için eşsiz, kişiselleştirilmiş hediyeler arıyorlar"
+    },
+    "step3": {
+      "title": "Marka Stili & Tonu",
+      "subtitle": "Markanız nasıl hissettirmeli?",
+      "styleTagsLabel": "Uygun stil etiketleri seçin (en az 1)",
+      "brandFeeling": "Markanızın nasıl hissettirmesi gerektiğini tanımlayın",
+      "brandFeelingPlaceholder": "örn. Her zaman en iyi hediye fikirlerine sahip sevgili bir arkadaş gibi - sıcak, yaratıcı ve güvenilir"
+    },
+    "step4": {
+      "title": "İçerik Hedefleri",
+      "subtitle": "İçeriğinizle ne elde etmek istiyorsunuz?",
+      "goals": {
+        "follower": "Daha fazla takipçi kazanmak",
+        "sales": "Daha fazla satış oluşturmak",
+        "community": "Topluluk etkileşimini artırmak",
+        "brand": "Marka bilinirliği oluşturmak"
+      }
+    },
+    "step5": {
+      "title": "Örnekler & Kısıtlamalar",
+      "subtitle": "İsteğe bağlı: Stilinizi iyileştirin",
+      "captionExamples": "Açıklamalarınızın nasıl seslendirilmesi gerektiğine dair örnekler",
+      "captionExamplesPlaceholder": "örn. 'Bugün size yeni favori projemi gösteriyorum 💕 Bakın, bu çok tatlı değil mi?'",
+      "captionExamplesHelp": "Stilinizi iyi temsil eden 1-3 örnek cümle verin",
+      "avoidWords": "Kaçınılması gereken kelimeler/stiller",
+      "avoidWordsPlaceholder": "örn. agresif satış dili, 'Hemen satın al!', abartılı süperlatifler"
+    },
+    "step6": {
+      "title": "Sistem İsteminiz",
+      "subtitle": "Oluşturulan isteminizi gözden geçirin ve onaylayın",
+      "generatedPrompt": "Oluşturulan İstem",
+      "charCount": "{count} karakter",
+      "editHint": "İstemi burada manuel olarak ayarlayabilirsiniz",
+      "usage": {
+        "title": "İsteminiz nasıl kullanılacak",
+        "description": "Bu sistem istemi tüm yapay zeka oluşturmalarında otomatik olarak kullanılacak - açıklamalar, hashtag'ler, resimler ve videolar için. Bu, içeriğinizi markanızla tutarlı tutar."
+      }
+    },
+    "industries": {
+      "ecommerce": "E-Ticaret / Online Mağaza",
+      "handmade": "El Yapımı Ürünler / El Sanatları",
+      "fashion": "Moda & Stil",
+      "beauty": "Güzellik & Kozmetik",
+      "food": "Yemek & Gastronomi",
+      "fitness": "Fitness & Sağlık",
+      "coaching": "Koçluk & Danışmanlık",
+      "photography": "Fotoğrafçılık & Yaratıcı",
+      "tech": "Teknoloji & Yazılım",
+      "other": "Diğer"
+    },
+    "backButton": "Geri",
+    "nextButton": "İleri",
+    "finishButton": "Bitir & Panele Git",
+    "saving": "Kaydediliyor...",
+    "skipLink": "Atla ve sonra ayarla",
+    "error": "Kaydetme başarısız. Lütfen tekrar deneyin."
+  },
+  "languageSwitcher": {
+    "label": "Dil",
+    "de": "Deutsch",
+    "en": "English",
+    "tr": "Türkçe"
+  }
+}

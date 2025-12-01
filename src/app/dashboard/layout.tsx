@@ -4,6 +4,7 @@ import { useSession, signOut } from "next-auth/react"
 import { usePathname, useRouter } from "next/navigation"
 import Link from "next/link"
 import { useEffect, useState } from "react"
+import { useTranslations } from "next-intl"
 import { 
   LayoutDashboard, 
   FolderOpen, 
@@ -20,26 +21,29 @@ import {
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-
-const navigation = [
-  { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
-  { name: "Projekte", href: "/dashboard/projects", icon: FolderOpen },
-  { name: "Meine Bilder", href: "/dashboard/gallery", icon: ImagePlus },
-  { name: "Bilder generieren", href: "/dashboard/generate/image", icon: Image },
-  { name: "Videos generieren", href: "/dashboard/generate/video", icon: Video },
-  { name: "Content-Planer", href: "/dashboard/schedule", icon: Calendar },
-  { name: "Einstellungen", href: "/dashboard/settings", icon: Settings },
-]
+import { LanguageSwitcher } from "@/components/language-switcher"
 
 export default function DashboardLayout({
   children,
 }: {
   children: React.ReactNode
 }) {
+  const t = useTranslations('nav')
+  const tDashboard = useTranslations('dashboard')
   const { data: session, status } = useSession()
   const pathname = usePathname()
   const router = useRouter()
   const [sidebarOpen, setSidebarOpen] = useState(false)
+
+  const navigation = [
+    { name: t('dashboard'), href: "/dashboard", icon: LayoutDashboard },
+    { name: t('projects'), href: "/dashboard/projects", icon: FolderOpen },
+    { name: t('myImages'), href: "/dashboard/gallery", icon: ImagePlus },
+    { name: t('generateImages'), href: "/dashboard/generate/image", icon: Image },
+    { name: t('generateVideos'), href: "/dashboard/generate/video", icon: Video },
+    { name: t('contentPlanner'), href: "/dashboard/schedule", icon: Calendar },
+    { name: t('settings'), href: "/dashboard/settings", icon: Settings },
+  ]
 
   useEffect(() => {
     if (status === "unauthenticated") {
@@ -110,7 +114,7 @@ export default function DashboardLayout({
               const isActive = pathname === item.href || pathname.startsWith(item.href + "/")
               return (
                 <Link
-                  key={item.name}
+                  key={item.href}
                   href={item.href}
                   className={`flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium transition-all duration-200 group ${
                     isActive
@@ -137,7 +141,7 @@ export default function DashboardLayout({
               </Avatar>
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-medium text-foreground truncate">
-                  {session.user?.name || "Benutzer"}
+                  {session.user?.name || tDashboard('user')}
                 </p>
                 <p className="text-xs text-muted-foreground truncate">
                   {session.user?.email}
@@ -150,7 +154,7 @@ export default function DashboardLayout({
               onClick={() => signOut({ callbackUrl: "/auth/login" })}
             >
               <LogOut className="mr-2 h-4 w-4" />
-              Abmelden
+              {t('logout')}
             </Button>
           </div>
         </div>
@@ -174,10 +178,11 @@ export default function DashboardLayout({
           </button>
 
           <div className="flex items-center gap-4 ml-auto">
+            <LanguageSwitcher />
             <Link href="/dashboard/settings/instagram">
               <Button variant="glass" size="sm" className="gap-2 rounded-full px-4">
                 <Instagram className="h-4 w-4" />
-                <span className="hidden sm:inline">Instagram verbinden</span>
+                <span className="hidden sm:inline">{t('connectInstagram')}</span>
               </Button>
             </Link>
           </div>

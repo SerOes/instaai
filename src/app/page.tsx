@@ -1,38 +1,43 @@
 import Link from "next/link"
-import { Sparkles, Image, Video, Calendar, Hash, Wand2, ArrowRight, CheckCircle2 } from "lucide-react"
+import { Sparkles, Image, Video, Calendar, Hash, Wand2, ArrowRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
+import { getTranslations } from "next-intl/server"
+import { LanguageSwitcher } from "@/components/language-switcher"
 
-export default function Home() {
+export default async function Home() {
+  const t = await getTranslations('landing')
+  const tNav = await getTranslations('nav')
+  
   const features = [
     {
       icon: Image,
-      title: "KI-Bildgenerierung",
-      description: "Erstelle atemberaubende Bilder mit modernsten KI-Modellen für deinen Instagram-Feed.",
+      title: t('features.imageGeneration.title'),
+      description: t('features.imageGeneration.description'),
       color: "from-purple-500 to-pink-500",
     },
     {
       icon: Video,
-      title: "Video & Reels",
-      description: "Generiere fesselnde Videos und Reels, die deine Follower begeistern werden.",
+      title: t('features.videoReels.title'),
+      description: t('features.videoReels.description'),
       color: "from-blue-500 to-cyan-500",
     },
     {
       icon: Wand2,
-      title: "Smart Captions",
-      description: "Automatisch generierte Captions in verschiedenen Stilen, perfekt auf dein Content abgestimmt.",
+      title: t('features.smartCaptions.title'),
+      description: t('features.smartCaptions.description'),
       color: "from-green-500 to-emerald-500",
     },
     {
       icon: Hash,
-      title: "Hashtag-Optimierung",
-      description: "KI-optimierte Hashtags für maximale Reichweite und Engagement.",
+      title: t('features.hashtagOptimization.title'),
+      description: t('features.hashtagOptimization.description'),
       color: "from-orange-500 to-amber-500",
     },
     {
       icon: Calendar,
-      title: "Content-Planung",
-      description: "Plane und automatisiere deine Posts für konsistente Präsenz.",
+      title: t('features.contentPlanning.title'),
+      description: t('features.contentPlanning.description'),
       color: "from-rose-500 to-red-500",
     },
   ]
@@ -55,12 +60,13 @@ export default function Home() {
             </span>
           </Link>
           <div className="flex items-center gap-4">
+            <LanguageSwitcher />
             <Link href="/auth/login">
-              <Button variant="ghost" className="text-muted-foreground hover:text-foreground">Anmelden</Button>
+              <Button variant="ghost" className="text-muted-foreground hover:text-foreground">{tNav('login')}</Button>
             </Link>
             <Link href="/auth/register">
               <Button variant="gradient" className="shadow-lg shadow-primary/20">
-                Kostenlos starten
+                {tNav('register')}
               </Button>
             </Link>
           </div>
@@ -72,35 +78,33 @@ export default function Home() {
         <div className="container mx-auto text-center max-w-5xl">
           <div className="inline-flex items-center gap-2 rounded-full bg-white/5 border border-white/10 px-4 py-1.5 text-sm text-muted-foreground mb-8 backdrop-blur-sm animate-in fade-in slide-in-from-bottom-4 duration-700">
             <Sparkles className="h-3.5 w-3.5 text-primary" />
-            <span>Powered by Gemini & KIE.ai</span>
+            <span>{t('hero.badge')}</span>
           </div>
           
           <h1 className="text-5xl md:text-7xl font-bold tracking-tight mb-8 animate-in fade-in slide-in-from-bottom-8 duration-700 delay-100">
-            Erstelle viralen
+            {t('hero.title1')}
             <br />
             <span className="bg-gradient-to-r from-primary via-purple-500 to-pink-500 bg-clip-text text-transparent drop-shadow-2xl">
-              Instagram-Content
+              {t('hero.title2')}
             </span>
             <br />
-            mit KI
+            {t('hero.title3')}
           </h1>
           
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto mb-12 animate-in fade-in slide-in-from-bottom-8 duration-700 delay-200">
-            InstaAI nutzt die neuesten KI-Technologien, um atemberaubende Bilder, Videos, 
-            Captions und Hashtags für deinen Instagram-Account zu generieren. 
-            Spare Zeit und steigere dein Engagement.
+            {t('hero.description')}
           </p>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 animate-in fade-in slide-in-from-bottom-8 duration-700 delay-300">
             <Link href="/auth/register">
               <Button size="lg" variant="gradient" className="h-14 px-8 text-lg shadow-xl shadow-primary/20 hover:scale-105 transition-transform">
-                Jetzt kostenlos starten
+                {t('hero.cta')}
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
             </Link>
             <Link href="#features">
               <Button variant="glass" size="lg" className="h-14 px-8 text-lg hover:bg-white/10">
-                Mehr erfahren
+                {t('hero.learnMore')}
               </Button>
             </Link>
           </div>
@@ -118,7 +122,7 @@ export default function Home() {
                 <div className="h-3 w-3 rounded-full bg-green-500/80" />
               </div>
               <div className="flex-1 text-center text-sm text-muted-foreground font-medium">
-                InstaAI Dashboard
+                {t('preview.title')}
               </div>
             </div>
             
@@ -130,8 +134,8 @@ export default function Home() {
                     { icon: Image, color: "from-purple-500 to-pink-500" },
                     { icon: Video, color: "from-blue-500 to-cyan-500" },
                     { icon: Wand2, color: "from-green-500 to-emerald-500" }
-                  ].map((item, i) => (
-                    <div key={i} className={`h-32 w-32 rounded-2xl bg-gradient-to-br ${item.color} p-[1px] shadow-2xl transform hover:-translate-y-2 transition-transform duration-300`}>
+                  ].map((item, idx) => (
+                    <div key={idx} className={`h-32 w-32 rounded-2xl bg-gradient-to-br ${item.color} p-[1px] shadow-2xl transform hover:-translate-y-2 transition-transform duration-300`}>
                       <div className="h-full w-full bg-black/80 backdrop-blur-md rounded-2xl flex items-center justify-center">
                         <item.icon className="h-12 w-12 text-white/80" />
                       </div>
@@ -139,7 +143,7 @@ export default function Home() {
                   ))}
                 </div>
                 <p className="text-lg text-muted-foreground font-medium">
-                  Erstelle beeindruckenden Content in Sekunden
+                  {t('preview.subtitle')}
                 </p>
               </div>
             </div>
@@ -152,15 +156,17 @@ export default function Home() {
         <div className="container mx-auto px-4">
           <div className="text-center mb-20">
             <h2 className="text-3xl md:text-5xl font-bold mb-6">
-              Alles, was du für <span className="text-primary">Instagram</span> brauchst
+              {t.rich('features.title', {
+                highlight: (chunks) => <span className="text-primary">{t('features.highlight')}</span>
+              })}
             </h2>
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-              Eine komplette Suite von KI-Tools für deine Content-Erstellung
+              {t('features.subtitle')}
             </p>
           </div>
 
           <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-            {features.map((feature, i) => (
+            {features.map((feature) => (
               <Card 
                 key={feature.title}
                 className="group p-8 bg-white/5 border-white/10 hover:bg-white/10 transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl hover:shadow-primary/10"
@@ -189,14 +195,14 @@ export default function Home() {
             
             <div className="relative z-10">
               <h2 className="text-3xl md:text-5xl font-bold text-white mb-6">
-                Bereit, deinen Instagram-Account zu transformieren?
+                {t('cta.title')}
               </h2>
               <p className="text-xl text-white/90 max-w-2xl mx-auto mb-10">
-                Starte noch heute kostenlos und erlebe, wie KI deine Content-Erstellung revolutioniert.
+                {t('cta.description')}
               </p>
               <Link href="/auth/register" className="inline-block">
                 <Button size="lg" className="h-14 px-10 text-lg bg-white text-primary hover:bg-white/90 shadow-xl">
-                  Jetzt kostenlos starten
+                  {t('cta.button')}
                   <ArrowRight className="ml-2 h-5 w-5" />
                 </Button>
               </Link>
@@ -218,12 +224,12 @@ export default function Home() {
               </span>
             </div>
             <div className="flex gap-8 text-sm text-muted-foreground">
-              <Link href="#" className="hover:text-primary transition-colors">Datenschutz</Link>
-              <Link href="#" className="hover:text-primary transition-colors">Impressum</Link>
-              <Link href="#" className="hover:text-primary transition-colors">AGB</Link>
+              <Link href="#" className="hover:text-primary transition-colors">{t('footer.privacy')}</Link>
+              <Link href="#" className="hover:text-primary transition-colors">{t('footer.imprint')}</Link>
+              <Link href="#" className="hover:text-primary transition-colors">{t('footer.terms')}</Link>
             </div>
             <p className="text-sm text-muted-foreground">
-              © {new Date().getFullYear()} InstaAI. Alle Rechte vorbehalten.
+              {t('footer.copyright', { year: new Date().getFullYear() })}
             </p>
           </div>
         </div>
