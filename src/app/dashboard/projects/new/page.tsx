@@ -1,10 +1,11 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useMemo } from "react"
 import { useRouter } from "next/navigation"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { z } from "zod"
+import { useTranslations } from "next-intl"
 import { ArrowLeft, Image, Video, Sparkles } from "lucide-react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
@@ -13,18 +14,22 @@ import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 
-const projectSchema = z.object({
-  title: z.string().min(1, "Titel erforderlich"),
-  description: z.string().optional(),
-  type: z.enum(["IMAGE", "VIDEO"]),
-})
-
-type ProjectFormData = z.infer<typeof projectSchema>
-
 export default function NewProjectPage() {
+  const t = useTranslations('projects.new')
+  const tCommon = useTranslations('common')
   const router = useRouter()
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+
+  const projectSchema = useMemo(() => (
+    z.object({
+      title: z.string().min(1, t('titleRequired')),
+      description: z.string().optional(),
+      type: z.enum(["IMAGE", "VIDEO"]),
+    })
+  ), [t])
+
+  type ProjectFormData = z.infer<typeof projectSchema>
 
   const {
     register,
@@ -57,7 +62,7 @@ export default function NewProjectPage() {
       const result = await response.json()
 
       if (!response.ok) {
-        setError(result.error || "Fehler beim Erstellen des Projekts")
+        setError(result.error || tCommon('error'))
         return
       }
 
@@ -68,7 +73,7 @@ export default function NewProjectPage() {
         router.push(`/dashboard/generate/image?projectId=${result.project.id}`)
       }
     } catch {
-      setError("Ein Fehler ist aufgetreten. Bitte versuchen Sie es erneut.")
+      setError(tCommon('error'))
     } finally {
       setIsLoading(false)
     }
@@ -81,13 +86,13 @@ export default function NewProjectPage() {
         <Link href="/dashboard/projects">
           <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-foreground">
             <ArrowLeft className="mr-2 h-4 w-4" />
-            Zurück
+            {tCommon('back')}
           </Button>
         </Link>
         <div>
-          <h1 className="text-2xl font-bold text-foreground">Neues Projekt</h1>
+          <h1 className="text-2xl font-bold text-foreground">{t('title')}</h1>
           <p className="mt-1 text-muted-foreground">
-            Erstelle ein neues Content-Projekt
+            {t('subtitle')}
           </p>
         </div>
       </div>
@@ -96,10 +101,10 @@ export default function NewProjectPage() {
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-foreground">
             <Sparkles className="h-5 w-5 text-purple-500" />
-            Projekt erstellen
+            {t('createTitle')}
           </CardTitle>
           <CardDescription className="text-muted-foreground">
-            Wähle einen Projekttyp und gib die grundlegenden Informationen ein.
+            {t('createSubtitle')}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -112,7 +117,7 @@ export default function NewProjectPage() {
 
             {/* Type Selection */}
             <div className="space-y-3">
-              <Label className="text-foreground">Projekttyp</Label>
+              <Label className="text-foreground">{t('projectType')}</Label>
               <div className="grid grid-cols-2 gap-4">
                 <button
                   type="button"
@@ -131,9 +136,9 @@ export default function NewProjectPage() {
                     <Image className="h-6 w-6" />
                   </div>
                   <div className="text-center">
-                    <p className="font-medium text-foreground">Bild</p>
+                    <p className="font-medium text-foreground">{t('typeImage')}</p>
                     <p className="mt-1 text-xs text-muted-foreground">
-                      KI-generierte Bilder
+                      {t('typeImageDesc')}
                     </p>
                   </div>
                 </button>
@@ -155,9 +160,9 @@ export default function NewProjectPage() {
                     <Video className="h-6 w-6" />
                   </div>
                   <div className="text-center">
-                    <p className="font-medium text-foreground">Video</p>
+                    <p className="font-medium text-foreground">{t('typeVideo')}</p>
                     <p className="mt-1 text-xs text-muted-foreground">
-                      Reels und Videos
+                      {t('typeVideoDesc')}
                     </p>
                   </div>
                 </button>
@@ -166,10 +171,10 @@ export default function NewProjectPage() {
 
             {/* Title */}
             <div className="space-y-2">
-              <Label htmlFor="title" className="text-foreground">Projekttitel</Label>
+              <Label htmlFor="title" className="text-foreground">{t('projectTitle')}</Label>
               <Input
                 id="title"
-                placeholder="z.B. Produktlaunch Kampagne"
+                placeholder={t('projectTitlePlaceholder')}
                 {...register("title")}
                 className="bg-secondary/50 border-border focus:border-primary/50"
               />
@@ -181,11 +186,11 @@ export default function NewProjectPage() {
             {/* Description */}
             <div className="space-y-2">
               <Label htmlFor="description" className="text-foreground">
-                Beschreibung <span className="text-muted-foreground">(optional)</span>
+                {t('description')} <span className="text-muted-foreground">({tCommon('optional')})</span>
               </Label>
               <Textarea
                 id="description"
-                placeholder="Beschreibe kurz, worum es in diesem Projekt geht..."
+                placeholder={t('descriptionPlaceholder')}
                 rows={3}
                 {...register("description")}
                 className="bg-secondary/50 border-border focus:border-primary/50"
@@ -196,18 +201,18 @@ export default function NewProjectPage() {
             <div className="flex gap-4 pt-4">
               <Link href="/dashboard/projects" className="flex-1">
                 <Button type="button" variant="outline" className="w-full border-border hover:bg-secondary/50">
-                  Abbrechen
+                  {tCommon('cancel')}
                 </Button>
               </Link>
               <Button type="submit" className="flex-1 shadow-lg shadow-primary/20" variant="gradient" disabled={isLoading}>
                 {isLoading ? (
                   <>
                     <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin mr-2" />
-                    Erstellen...
+                    {t('creating')}
                   </>
                 ) : (
                   <>
-                    Projekt erstellen
+                    {t('createButton')}
                     <Sparkles className="ml-2 h-4 w-4" />
                   </>
                 )}

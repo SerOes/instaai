@@ -1,0 +1,645 @@
+{
+  "common": {
+    "loading": "Loading...",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "back": "Back",
+    "next": "Next",
+    "submit": "Submit",
+    "close": "Close",
+    "yes": "Yes",
+    "no": "No",
+    "all": "All",
+    "search": "Search",
+    "filter": "Filter",
+    "download": "Download",
+    "upload": "Upload",
+    "preview": "Preview",
+    "generate": "Generate",
+    "error": "An error occurred",
+    "success": "Success",
+    "required": "Required",
+    "optional": "optional"
+  },
+  "nav": {
+    "dashboard": "Dashboard",
+    "projects": "Projects",
+    "myImages": "My Images",
+    "generateImages": "Generate Images",
+    "generateVideos": "Generate Videos",
+    "contentPlanner": "Content Planner",
+    "settings": "Settings",
+    "logout": "Log out",
+    "login": "Log in",
+    "register": "Get Started Free",
+    "connectInstagram": "Connect Instagram"
+  },
+  "landing": {
+    "hero": {
+      "badge": "Powered by Gemini & KIE.ai",
+      "title1": "Create viral",
+      "title2": "Instagram Content",
+      "title3": "with AI",
+      "description": "InstaAI uses the latest AI technologies to generate stunning images, videos, captions and hashtags for your Instagram account. Save time and increase your engagement.",
+      "cta": "Get Started Free",
+      "learnMore": "Learn More"
+    },
+    "features": {
+      "title": "Everything you need for <highlight>Instagram</highlight>",
+      "highlight": "Instagram",
+      "subtitle": "A complete suite of AI tools for your content creation",
+      "imageGeneration": {
+        "title": "AI Image Generation",
+        "description": "Create stunning images with cutting-edge AI models for your Instagram feed."
+      },
+      "videoReels": {
+        "title": "Video & Reels",
+        "description": "Generate captivating videos and reels that will excite your followers."
+      },
+      "smartCaptions": {
+        "title": "Smart Captions",
+        "description": "Automatically generated captions in various styles, perfectly tailored to your content."
+      },
+      "hashtagOptimization": {
+        "title": "Hashtag Optimization",
+        "description": "AI-optimized hashtags for maximum reach and engagement."
+      },
+      "contentPlanning": {
+        "title": "Content Planning",
+        "description": "Plan and automate your posts for consistent presence."
+      }
+    },
+    "cta": {
+      "title": "Ready to transform your Instagram account?",
+      "description": "Start free today and experience how AI revolutionizes your content creation.",
+      "button": "Get Started Free"
+    },
+    "preview": {
+      "title": "InstaAI Dashboard",
+      "subtitle": "Create impressive content in seconds"
+    },
+    "footer": {
+      "privacy": "Privacy",
+      "imprint": "Imprint",
+      "terms": "Terms",
+      "copyright": "© {year} InstaAI. All rights reserved."
+    }
+  },
+  "auth": {
+    "login": {
+      "title": "Welcome back",
+      "subtitle": "Sign in to access your InstaAI account",
+      "email": "Email",
+      "emailPlaceholder": "your@email.com",
+      "password": "Password",
+      "passwordPlaceholder": "••••••••",
+      "button": "Sign in",
+      "loading": "Signing in...",
+      "noAccount": "Don't have an account?",
+      "registerLink": "Register now",
+      "error": "Invalid email or password",
+      "genericError": "An error occurred. Please try again."
+    },
+    "register": {
+      "title": "Create account",
+      "subtitle": "Register for your free InstaAI account",
+      "name": "Name",
+      "namePlaceholder": "John Doe",
+      "email": "Email",
+      "emailPlaceholder": "your@email.com",
+      "password": "Password",
+      "passwordPlaceholder": "At least 8 characters",
+      "confirmPassword": "Confirm password",
+      "confirmPasswordPlaceholder": "Repeat password",
+      "button": "Create account",
+      "loading": "Registering...",
+      "hasAccount": "Already registered?",
+      "loginLink": "Sign in now",
+      "success": {
+        "title": "Registration successful!",
+        "message": "You will be redirected to the login page..."
+      },
+      "errors": {
+        "nameMin": "Name must be at least 2 characters",
+        "emailInvalid": "Invalid email address",
+        "passwordMin": "Password must be at least 8 characters",
+        "passwordMismatch": "Passwords do not match"
+      }
+    }
+  },
+  "dashboard": {
+    "welcome": "Welcome back",
+    "greeting": "👋",
+    "subtitle": "Create impressive Instagram content with AI support.",
+    "quickActions": {
+      "generateImage": "Generate Image",
+      "generateImageDesc": "Create AI-generated images",
+      "generateVideo": "Generate Video",
+      "generateVideoDesc": "Create reels and videos",
+      "newProject": "New Project",
+      "newProjectDesc": "Create content project",
+      "schedule": "Schedule",
+      "scheduleDesc": "Plan and manage posts"
+    },
+    "stats": {
+      "projects": "Projects",
+      "scheduledPosts": "Scheduled Posts",
+      "published": "Published",
+      "generatedImages": "Generated Images"
+    },
+    "recentProjects": {
+      "title": "Recent Projects",
+      "subtitle": "Your recently created projects",
+      "viewAll": "View all",
+      "empty": {
+        "title": "No projects yet",
+        "subtitle": "Create your first project to get started.",
+        "button": "Start New Project"
+      },
+      "status": {
+        "published": "Published",
+        "scheduled": "Scheduled",
+        "draft": "Draft"
+      }
+    },
+    "tip": {
+      "title": "Tip of the Day",
+      "content": "Use specific style descriptions in your prompts for more consistent results. For example:"
+    },
+    "user": "User"
+  },
+  "projects": {
+    "title": "Projects",
+    "subtitle": "Manage your generated images and videos",
+    "newProject": "New Project",
+    "searchPlaceholder": "Search projects...",
+    "filters": {
+      "all": "All",
+      "images": "Images",
+      "videos": "Videos"
+    },
+    "empty": {
+      "title": "No projects yet",
+      "titleFiltered": "No results",
+      "subtitle": "Create your first project to get started.",
+      "subtitleFiltered": "Try a different search or filter."
+    },
+    "status": {
+      "draft": "Draft",
+      "scheduled": "Scheduled",
+      "published": "Published",
+      "failed": "Failed"
+    },
+    "types": {
+      "image": "Image",
+      "video": "Video"
+    },
+    "captions": "Caption",
+    "scheduled": "scheduled",
+    "confirmDelete": "Are you sure you want to delete this project?",
+    "new": {
+      "title": "New Project",
+      "subtitle": "Create a new content project",
+      "createTitle": "Create Project",
+      "createSubtitle": "Choose a project type and enter the basic information.",
+      "projectType": "Project Type",
+      "typeImage": "Image",
+      "typeImageDesc": "AI-generated images",
+      "typeVideo": "Video",
+      "typeVideoDesc": "Reels and videos",
+      "projectTitle": "Project Title",
+      "projectTitlePlaceholder": "e.g. Product Launch Campaign",
+      "description": "Description",
+      "descriptionPlaceholder": "Briefly describe what this project is about...",
+      "createButton": "Create Project",
+      "creating": "Creating...",
+      "titleRequired": "Title required"
+    }
+  },
+  "gallery": {
+    "title": "My Images",
+    "subtitle": "Manage your uploaded images and use them as reference",
+    "uploadButton": "Upload Images",
+    "uploading": "Uploading...",
+    "dropzone": {
+      "title": "Drop images here",
+      "subtitle": "or click to select • JPEG, PNG, WebP, GIF • Max. 10MB"
+    },
+    "empty": {
+      "title": "No images uploaded yet",
+      "subtitle": "Upload images to use as reference"
+    },
+    "actions": {
+      "preview": "Preview",
+      "useAsReference": "Use as Reference",
+      "download": "Download",
+      "delete": "Delete"
+    },
+    "deleteDialog": {
+      "title": "Delete Image?",
+      "description": "This image will be permanently deleted. This action cannot be undone."
+    },
+    "previewDialog": {
+      "uploadedOn": "Uploaded on"
+    },
+    "metadata": {
+      "size": "Size",
+      "resolution": "Resolution",
+      "type": "Type",
+      "unknown": "Unknown"
+    },
+    "errors": {
+      "loadFailed": "Failed to load images",
+      "uploadFailed": "Upload failed",
+      "deleteFailed": "Failed to delete"
+    }
+  },
+  "generate": {
+    "image": {
+      "title": "Generate Image",
+      "subtitle": "Create impressive AI-generated images for Instagram",
+      "preset": {
+        "title": "1. Choose a Preset",
+        "subtitle": "Start with an optimized template - you can customize it",
+        "noPreset": "Or start without preset →",
+        "categories": {
+          "product": "📦 Product",
+          "lifestyle": "🌿 Lifestyle",
+          "story": "📱 Story",
+          "carousel": "🎠 Carousel",
+          "brand": "✨ Branding",
+          "other": "🎨 Other"
+        }
+      },
+      "prompt": {
+        "title": "2. Customize the Prompt",
+        "subtitleWithPreset": "Replace [PRODUCTNAME] and adjust details",
+        "subtitleNoPreset": "Describe the image you want to create",
+        "label": "Image Description",
+        "placeholder": "e.g. A stylish coffee cup on a marble table, morning light streaming through a window, aesthetic minimalist photography, soft shadows...",
+        "productWarning": "⚠️ Replace [PRODUCTNAME] with your actual product name",
+        "advancedOptions": "Advanced Options",
+        "lessOptions": "Less Options",
+        "negativePrompt": "Negative Prompt",
+        "negativePromptPlaceholder": "e.g. blurry, low quality, distorted"
+      },
+      "settings": {
+        "title": "3. Settings",
+        "referenceImage": "Reference Image (optional)",
+        "referenceImageDesc": "Upload an image to use as template or inspiration",
+        "uploadReference": "Upload",
+        "fromGallery": "From Gallery",
+        "referenceSelected": "Reference image selected",
+        "clickToGenerate": "Click \"Generate Image\"",
+        "usedAsReference": "Will be used as reference",
+        "aspectRatio": "Aspect Ratio",
+        "aspectRatios": {
+          "square": "Square",
+          "portrait": "Portrait",
+          "story": "Story/Reel",
+          "landscape": "Landscape"
+        },
+        "model": "Model",
+        "models": {
+          "standard": "Standard",
+          "standardDesc": "Fast & versatile",
+          "realistic": "Realistic",
+          "realisticDesc": "Photorealistic images",
+          "artistic": "Artistic",
+          "artisticDesc": "Creative styles"
+        }
+      },
+      "generateButton": "Generate Image",
+      "generating": "Generating...",
+      "preview": {
+        "title": "Preview",
+        "placeholder": "Your generated image will appear here",
+        "generating": "Generating your image...",
+        "regenerate": "Regenerate"
+      },
+      "galleryPicker": {
+        "title": "Choose Image from Gallery",
+        "subtitle": "Select an uploaded image as reference",
+        "empty": "No images available",
+        "uploadButton": "Upload Image"
+      },
+      "errors": {
+        "promptRequired": "Please enter a prompt",
+        "generationFailed": "Image generation failed",
+        "uploadFailed": "Upload failed"
+      }
+    },
+    "video": {
+      "title": "Generate Video",
+      "subtitle": "Create impressive AI-generated videos for Instagram Reels",
+      "preset": {
+        "title": "1. Choose a Preset",
+        "subtitle": "Start with an optimized video template",
+        "noPreset": "Or start without preset →",
+        "categories": {
+          "teaser": "🎬 Teaser",
+          "beforeafter": "🔄 Before/After",
+          "story": "📱 Story",
+          "tutorial": "📚 Tutorial",
+          "brand": "✨ Branding",
+          "other": "🎥 Other"
+        }
+      },
+      "prompt": {
+        "title": "2. Customize the Prompt",
+        "subtitleWithPreset": "Replace [PRODUCTNAME] and adjust details",
+        "subtitleNoPreset": "Describe the video you want to create",
+        "label": "Video Description",
+        "placeholder": "e.g. A coffee cup with steam rising, gentle camera movement revealing a cozy cafe interior, morning atmosphere with soft golden light...",
+        "productWarning": "⚠️ Replace [PRODUCTNAME] with your actual product name",
+        "advancedOptions": "Advanced Options (Image-to-Video)",
+        "lessOptions": "Less Options",
+        "sourceImage": "Source Image",
+        "sourceImagePlaceholder": "URL of an image for Image-to-Video",
+        "sourceImageDesc": "Add an image to bring it to life"
+      },
+      "settings": {
+        "title": "3. Settings",
+        "aspectRatio": "Aspect Ratio",
+        "aspectRatios": {
+          "square": "Square",
+          "feed": "Feed Post",
+          "reel": "Reel/Story",
+          "landscape": "Landscape"
+        },
+        "duration": "Duration",
+        "durations": {
+          "short": "Short",
+          "standard": "Standard",
+          "long": "Long"
+        },
+        "motion": "Motion Intensity",
+        "motions": {
+          "subtle": "Subtle",
+          "subtleDesc": "Soft movements",
+          "moderate": "Moderate",
+          "moderateDesc": "Natural movements",
+          "dynamic": "Dynamic",
+          "dynamicDesc": "Energetic movements"
+        },
+        "model": "Model",
+        "models": {
+          "standard": "Standard",
+          "standardDesc": "Fast & efficient",
+          "premium": "Premium",
+          "premiumDesc": "Highest quality"
+        }
+      },
+      "generateButton": "Generate Video",
+      "generating": "Generating...",
+      "preview": {
+        "title": "Preview",
+        "placeholder": "Your generated video will appear here",
+        "generating": "Generating your video...",
+        "generatingNote": "This may take a few minutes",
+        "processing": "Video is being processed",
+        "jobId": "Job ID",
+        "regenerate": "Regenerate"
+      },
+      "errors": {
+        "promptRequired": "Please enter a prompt",
+        "generationFailed": "Video generation failed"
+      }
+    }
+  },
+  "schedule": {
+    "title": "Content Planner",
+    "subtitle": "Plan and manage your Instagram posts",
+    "newPost": "Schedule New Post",
+    "empty": {
+      "title": "No scheduled posts",
+      "subtitle": "Create a project and schedule your first post.",
+      "button": "Create Project"
+    },
+    "status": {
+      "scheduled": "Scheduled",
+      "published": "Published",
+      "failed": "Failed",
+      "cancelled": "Cancelled"
+    },
+    "confirmDelete": "Are you sure you want to delete this schedule?"
+  },
+  "settings": {
+    "title": "Settings",
+    "subtitle": "Manage your API keys and account settings",
+    "systemPrompt": {
+      "title": "System Prompt Wizard",
+      "subtitle": "Configure AI personality and brand style"
+    },
+    "instagram": {
+      "title": "Connect Instagram",
+      "subtitle": "Link and manage accounts"
+    },
+    "apiKeys": {
+      "title": "API Keys",
+      "subtitle": "Connect your AI services for content generation",
+      "addButton": "Add Key",
+      "newKey": "New API Key",
+      "name": "Name",
+      "namePlaceholder": "e.g. Gemini Production",
+      "provider": "Provider",
+      "key": "API Key",
+      "keyPlaceholder": "Paste your API key",
+      "saveButton": "Save",
+      "saving": "Saving...",
+      "empty": {
+        "title": "No API keys",
+        "subtitle": "Add API keys to use the AI features."
+      },
+      "status": {
+        "active": "Active",
+        "inactive": "Inactive"
+      },
+      "providers": {
+        "gemini": {
+          "name": "Google Gemini",
+          "description": "For captions and hashtags"
+        },
+        "kie": {
+          "name": "KIE.ai",
+          "description": "For image and video generation"
+        }
+      },
+      "getKey": "Get API key →",
+      "errors": {
+        "required": "Name and key are required",
+        "saveFailed": "Failed to save"
+      },
+      "confirmDelete": "Are you sure you want to delete this API key?"
+    },
+    "instagramPage": {
+      "title": "Instagram Connection",
+      "subtitle": "Connect and manage your Instagram Business accounts",
+      "connectedAccounts": "Connected Accounts",
+      "connectedSubtitle": "Link Instagram Business accounts for automatic posting",
+      "noAccount": {
+        "title": "No Instagram account connected",
+        "subtitle": "Connect your Instagram Business account to schedule and publish posts directly from the app."
+      },
+      "connectButton": "Connect Instagram",
+      "connecting": "Connecting...",
+      "addAnother": "Connect Another Account",
+      "accountStats": {
+        "followers": "Followers",
+        "posts": "Posts"
+      },
+      "refresh": "Refresh",
+      "disconnect": "Disconnect",
+      "confirmDisconnect": "Are you sure you want to disconnect this Instagram account?",
+      "requirements": {
+        "title": "Requirements for Instagram Connection",
+        "business": "Instagram Business or Creator account",
+        "facebook": "Linked to a Facebook Page",
+        "admin": "Admin access to the Facebook Page"
+      },
+      "learnMore": "Learn more",
+      "oauthError": "Instagram OAuth will be enabled in production. Please configure INSTAGRAM_CLIENT_ID and INSTAGRAM_CLIENT_SECRET."
+    },
+    "systemPromptPage": {
+      "title": "System Prompt Settings",
+      "subtitle": "Define your global business context for all AI generations",
+      "wizardButton": "Start Wizard",
+      "cards": {
+        "brand": "Brand",
+        "audience": "Audience",
+        "styleTags": "Style Tags",
+        "contentGoals": "Content Goals",
+        "selected": "selected",
+        "notSet": "Not set"
+      },
+      "globalPrompt": {
+        "title": "Global System Prompt",
+        "placeholder": "Your system prompt will be automatically used for all AI generations...",
+        "charCount": "{count} characters • This prompt is prepended to all AI calls"
+      },
+      "brandInfo": {
+        "title": "Brand Info",
+        "brandName": "Brand Name",
+        "industry": "Industry",
+        "targetAudience": "Target Audience"
+      },
+      "styleGoals": {
+        "title": "Style & Goals",
+        "styleTags": "Style Tags",
+        "contentGoals": "Content Goals"
+      },
+      "styleTags": {
+        "friendly": "Friendly",
+        "professional": "Professional",
+        "luxurious": "Luxurious",
+        "playful": "Playful",
+        "minimalist": "Minimalist",
+        "emotional": "Emotional",
+        "humorous": "Humorous",
+        "inspiring": "Inspiring",
+        "authentic": "Authentic",
+        "modern": "Modern"
+      },
+      "goals": {
+        "followers": "More Followers",
+        "sales": "More Sales",
+        "community": "Community",
+        "brand": "Brand Awareness"
+      },
+      "resetButton": "Reset",
+      "saveButton": "Save Changes",
+      "confirmReset": "Are you sure you want to reset all system prompt settings?",
+      "messages": {
+        "saved": "System prompt saved successfully!",
+        "reset": "System prompt reset",
+        "error": "Failed to save"
+      }
+    }
+  },
+  "onboarding": {
+    "step": "Step {current} of {total}",
+    "step1": {
+      "title": "Your Business",
+      "subtitle": "Tell us about your brand",
+      "brandName": "What is your brand / business name?",
+      "brandNamePlaceholder": "e.g. Handmade Designs by Sarah",
+      "industry": "What industry are you in?",
+      "industryPlaceholder": "Select industry...",
+      "products": "What do you mainly sell?",
+      "productsPlaceholder": "e.g. handmade personalized products like school bags, drawstring bags and mugs for children"
+    },
+    "step2": {
+      "title": "Your Target Audience",
+      "subtitle": "Who are your ideal customers?",
+      "targetAudience": "Who is your main target audience?",
+      "targetAudiencePlaceholder": "e.g. Mothers with children in elementary school",
+      "region": "Which region are they mainly in?",
+      "regionPlaceholder": "e.g. United States, Canada, UK",
+      "problemSolved": "What problem do you solve for them?",
+      "problemSolvedPlaceholder": "e.g. looking for unique, personalized gifts for their children's special occasions"
+    },
+    "step3": {
+      "title": "Brand Style & Tone",
+      "subtitle": "How should your brand feel?",
+      "styleTagsLabel": "Choose matching style tags (at least 1)",
+      "brandFeeling": "Describe how your brand should feel",
+      "brandFeelingPlaceholder": "e.g. Like a dear friend who always has the best gift ideas - warm, creative and reliable"
+    },
+    "step4": {
+      "title": "Content Goals",
+      "subtitle": "What do you want to achieve with your content?",
+      "goals": {
+        "follower": "Gain more followers",
+        "sales": "Generate more sales",
+        "community": "Increase community interaction",
+        "brand": "Build brand awareness"
+      }
+    },
+    "step5": {
+      "title": "Examples & Restrictions",
+      "subtitle": "Optional: Refine your style",
+      "captionExamples": "Examples of how your captions should sound",
+      "captionExamplesPlaceholder": "e.g. 'Today I'm showing you my new favorite project 💕 Look, isn't this cute?'",
+      "captionExamplesHelp": "Give 1-3 example sentences that represent your style well",
+      "avoidWords": "Words/styles to avoid",
+      "avoidWordsPlaceholder": "e.g. aggressive sales language, 'Buy now!', exaggerated superlatives"
+    },
+    "step6": {
+      "title": "Your System Prompt",
+      "subtitle": "Review and confirm your generated prompt",
+      "generatedPrompt": "Generated Prompt",
+      "charCount": "{count} characters",
+      "editHint": "You can still manually adjust the prompt here",
+      "usage": {
+        "title": "How your prompt will be used",
+        "description": "This system prompt will be automatically used for all AI generations - for captions, hashtags, images and videos. This keeps your content consistent with your brand."
+      }
+    },
+    "industries": {
+      "ecommerce": "E-Commerce / Online Shop",
+      "handmade": "Handmade Products / Crafts",
+      "fashion": "Fashion & Style",
+      "beauty": "Beauty & Cosmetics",
+      "food": "Food & Gastronomy",
+      "fitness": "Fitness & Health",
+      "coaching": "Coaching & Consulting",
+      "photography": "Photography & Creative",
+      "tech": "Tech & Software",
+      "other": "Other"
+    },
+    "backButton": "Back",
+    "nextButton": "Next",
+    "finishButton": "Finish & Go to Dashboard",
+    "saving": "Saving...",
+    "skipLink": "Skip and set up later",
+    "error": "Failed to save. Please try again."
+  },
+  "languageSwitcher": {
+    "label": "Language",
+    "de": "Deutsch",
+    "en": "English",
+    "tr": "Türkçe"
+  }
+}

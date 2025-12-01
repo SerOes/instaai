@@ -2,14 +2,11 @@
 
 import { useState, useEffect } from "react"
 import Link from "next/link"
+import { useTranslations } from "next-intl"
 import { 
   Key,
   Plus,
   Trash2,
-  Eye,
-  EyeOff,
-  Copy,
-  Check,
   AlertCircle,
   Wand2,
   Instagram,
@@ -30,12 +27,12 @@ interface ApiKey {
 }
 
 export default function SettingsPage() {
+  const t = useTranslations('settings')
+  const tCommon = useTranslations('common')
   const [apiKeys, setApiKeys] = useState<ApiKey[]>([])
   const [loading, setLoading] = useState(true)
   const [showForm, setShowForm] = useState(false)
   const [newKey, setNewKey] = useState({ name: "", provider: "GEMINI", key: "" })
-  const [showKey, setShowKey] = useState<string | null>(null)
-  const [copied, setCopied] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [saving, setSaving] = useState(false)
 
@@ -59,7 +56,7 @@ export default function SettingsPage() {
 
   const handleAddKey = async () => {
     if (!newKey.name || !newKey.key) {
-      setError("Name und Schlüssel sind erforderlich")
+      setError(t('apiKeys.errors.required'))
       return
     }
 
@@ -78,7 +75,7 @@ export default function SettingsPage() {
       const data = await response.json()
 
       if (!response.ok) {
-        setError(data.error || "Fehler beim Speichern")
+        setError(data.error || t('apiKeys.errors.saveFailed'))
         return
       }
 
@@ -86,14 +83,14 @@ export default function SettingsPage() {
       setNewKey({ name: "", provider: "GEMINI", key: "" })
       setShowForm(false)
     } catch {
-      setError("Ein Fehler ist aufgetreten")
+      setError(tCommon('error'))
     } finally {
       setSaving(false)
     }
   }
 
   const handleDeleteKey = async (id: string) => {
-    if (!confirm("Möchten Sie diesen API-Schlüssel wirklich löschen?")) return
+    if (!confirm(t('apiKeys.confirmDelete'))) return
 
     try {
       const response = await fetch(`/api/apikeys?id=${id}`, {
@@ -107,15 +104,9 @@ export default function SettingsPage() {
     }
   }
 
-  const handleCopy = (id: string, text: string) => {
-    navigator.clipboard.writeText(text)
-    setCopied(id)
-    setTimeout(() => setCopied(null), 2000)
-  }
-
   const providers = [
-    { value: "GEMINI", label: "Google Gemini", description: "Für Captions und Hashtags" },
-    { value: "KIE", label: "KIE.ai", description: "Für Bild- und Videogenerierung" },
+    { value: "GEMINI", label: t('apiKeys.providers.gemini.name'), description: t('apiKeys.providers.gemini.description') },
+    { value: "KIE", label: t('apiKeys.providers.kie.name'), description: t('apiKeys.providers.kie.description') },
   ]
 
   if (loading) {
@@ -130,9 +121,9 @@ export default function SettingsPage() {
     <div className="mx-auto max-w-4xl space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-bold text-foreground">Einstellungen</h1>
+        <h1 className="text-3xl font-bold text-foreground">{t('title')}</h1>
         <p className="mt-1 text-muted-foreground">
-          Verwalte deine API-Schlüssel und Kontoeinstellungen
+          {t('subtitle')}
         </p>
       </div>
 
@@ -147,10 +138,10 @@ export default function SettingsPage() {
                 </div>
                 <div>
                   <h4 className="font-medium text-foreground">
-                    System-Prompt Wizard
+                    {t('systemPrompt.title')}
                   </h4>
                   <p className="text-sm text-muted-foreground">
-                    KI-Persönlichkeit und Markenstil konfigurieren
+                    {t('systemPrompt.subtitle')}
                   </p>
                 </div>
               </div>
@@ -168,10 +159,10 @@ export default function SettingsPage() {
                 </div>
                 <div>
                   <h4 className="font-medium text-foreground">
-                    Instagram verbinden
+                    {t('instagram.title')}
                   </h4>
                   <p className="text-sm text-muted-foreground">
-                    Accounts verknüpfen und verwalten
+                    {t('instagram.subtitle')}
                   </p>
                 </div>
               </div>
@@ -187,22 +178,22 @@ export default function SettingsPage() {
           <div>
             <CardTitle className="flex items-center gap-2 text-foreground">
               <Key className="h-5 w-5 text-purple-500" />
-              API-Schlüssel
+              {t('apiKeys.title')}
             </CardTitle>
             <CardDescription className="text-muted-foreground">
-              Verbinde deine KI-Dienste für die Content-Generierung
+              {t('apiKeys.subtitle')}
             </CardDescription>
           </div>
           <Button onClick={() => setShowForm(!showForm)} variant="gradient" size="sm">
             <Plus className="mr-2 h-4 w-4" />
-            Schlüssel hinzufügen
+            {t('apiKeys.addButton')}
           </Button>
         </CardHeader>
         <CardContent className="space-y-4">
           {/* Add new key form */}
           {showForm && (
             <div className="rounded-xl border border-border/50 p-4 space-y-4 bg-secondary/30 backdrop-blur-sm">
-              <h4 className="font-medium text-foreground">Neuer API-Schlüssel</h4>
+              <h4 className="font-medium text-foreground">{t('apiKeys.newKey')}</h4>
               
               {error && (
                 <div className="flex items-center gap-2 text-sm text-red-500">
@@ -213,17 +204,17 @@ export default function SettingsPage() {
 
               <div className="grid gap-4 sm:grid-cols-2">
                 <div className="space-y-2">
-                  <Label htmlFor="keyName" className="text-foreground">Name</Label>
+                  <Label htmlFor="keyName" className="text-foreground">{t('apiKeys.name')}</Label>
                   <Input
                     id="keyName"
-                    placeholder="z.B. Gemini Production"
+                    placeholder={t('apiKeys.namePlaceholder')}
                     value={newKey.name}
                     onChange={(e) => setNewKey({ ...newKey, name: e.target.value })}
                     className="bg-secondary/50 border-border focus:border-primary/50"
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="provider" className="text-foreground">Anbieter</Label>
+                  <Label htmlFor="provider" className="text-foreground">{t('apiKeys.provider')}</Label>
                   <select
                     id="provider"
                     className="w-full rounded-md border border-border bg-secondary/50 px-3 py-2 text-foreground focus:border-primary/50 focus:outline-none"
@@ -240,11 +231,11 @@ export default function SettingsPage() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="keyValue" className="text-foreground">API-Schlüssel</Label>
+                <Label htmlFor="keyValue" className="text-foreground">{t('apiKeys.key')}</Label>
                 <Input
                   id="keyValue"
                   type="password"
-                  placeholder="Füge deinen API-Schlüssel ein"
+                  placeholder={t('apiKeys.keyPlaceholder')}
                   value={newKey.key}
                   onChange={(e) => setNewKey({ ...newKey, key: e.target.value })}
                   className="bg-secondary/50 border-border focus:border-primary/50"
@@ -253,16 +244,16 @@ export default function SettingsPage() {
 
               <div className="flex gap-2 justify-end">
                 <Button variant="outline" onClick={() => setShowForm(false)} className="border-border hover:bg-secondary/50">
-                  Abbrechen
+                  {tCommon('cancel')}
                 </Button>
                 <Button onClick={handleAddKey} disabled={saving} variant="gradient">
                   {saving ? (
                     <>
                       <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin mr-2" />
-                      Speichern...
+                      {t('apiKeys.saving')}
                     </>
                   ) : (
-                    "Speichern"
+                    t('apiKeys.saveButton')
                   )}
                 </Button>
               </div>
@@ -273,9 +264,9 @@ export default function SettingsPage() {
           {apiKeys.length === 0 ? (
             <div className="text-center py-8 text-muted-foreground">
               <Key className="h-12 w-12 mx-auto mb-4 opacity-20" />
-              <p>Keine API-Schlüssel vorhanden</p>
+              <p>{t('apiKeys.empty.title')}</p>
               <p className="text-sm mt-1 opacity-70">
-                Füge API-Schlüssel hinzu, um die KI-Funktionen zu nutzen.
+                {t('apiKeys.empty.subtitle')}
               </p>
             </div>
           ) : (
@@ -302,9 +293,9 @@ export default function SettingsPage() {
                         <span>•</span>
                         <span>
                           {apiKey.isActive ? (
-                            <span className="text-green-500">Aktiv</span>
+                            <span className="text-green-500">{t('apiKeys.status.active')}</span>
                           ) : (
-                            <span className="text-red-500">Inaktiv</span>
+                            <span className="text-red-500">{t('apiKeys.status.inactive')}</span>
                           )}
                         </span>
                       </div>
@@ -357,7 +348,7 @@ export default function SettingsPage() {
                   rel="noopener noreferrer"
                   className="mt-2 inline-block text-sm text-purple-500 hover:text-purple-400 transition-colors"
                 >
-                  API-Schlüssel erhalten →
+                  {t('apiKeys.getKey')}
                 </a>
               </div>
             </CardContent>

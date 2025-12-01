@@ -3,6 +3,7 @@
 import { useSession } from "next-auth/react"
 import Link from "next/link"
 import { useEffect, useState } from "react"
+import { useTranslations, useLocale } from "next-intl"
 import { 
   FolderOpen, 
   Image, 
@@ -34,6 +35,8 @@ interface RecentProject {
 }
 
 export default function DashboardPage() {
+  const t = useTranslations('dashboard')
+  const locale = useLocale()
   const { data: session } = useSession()
   const [stats, setStats] = useState<DashboardStats | null>(null)
   const [recentProjects, setRecentProjects] = useState<RecentProject[]>([])
@@ -60,61 +63,70 @@ export default function DashboardPage() {
 
   const quickActions = [
     { 
-      name: "Bild generieren", 
+      name: t('quickActions.generateImage'), 
       href: "/dashboard/generate/image", 
       icon: Image,
       color: "from-purple-500 to-pink-500",
-      description: "KI-generierte Bilder erstellen"
+      description: t('quickActions.generateImageDesc')
     },
     { 
-      name: "Video generieren", 
+      name: t('quickActions.generateVideo'), 
       href: "/dashboard/generate/video", 
       icon: Video,
       color: "from-blue-500 to-cyan-500",
-      description: "Reels und Videos erstellen"
+      description: t('quickActions.generateVideoDesc')
     },
     { 
-      name: "Neues Projekt", 
+      name: t('quickActions.newProject'), 
       href: "/dashboard/projects/new", 
       icon: Plus,
       color: "from-green-500 to-emerald-500",
-      description: "Content-Projekt anlegen"
+      description: t('quickActions.newProjectDesc')
     },
     { 
-      name: "Zeitplan", 
+      name: t('quickActions.schedule'), 
       href: "/dashboard/schedule", 
       icon: Calendar,
       color: "from-orange-500 to-amber-500",
-      description: "Posts planen und verwalten"
+      description: t('quickActions.scheduleDesc')
     },
   ]
 
   const statsCards = [
     { 
-      name: "Projekte", 
+      name: t('stats.projects'), 
       value: stats?.totalProjects || 0, 
       icon: FolderOpen,
       color: "text-purple-600 dark:text-purple-400"
     },
     { 
-      name: "Geplante Posts", 
+      name: t('stats.scheduledPosts'), 
       value: stats?.scheduledPosts || 0, 
       icon: Clock,
       color: "text-blue-600 dark:text-blue-400"
     },
     { 
-      name: "Veröffentlicht", 
+      name: t('stats.published'), 
       value: stats?.publishedPosts || 0, 
       icon: CheckCircle,
       color: "text-green-600 dark:text-green-400"
     },
     { 
-      name: "Generierte Bilder", 
+      name: t('stats.generatedImages'), 
       value: stats?.totalImages || 0, 
       icon: Image,
       color: "text-pink-600 dark:text-pink-400"
     },
   ]
+
+  const getDateLocale = () => {
+    const localeMap: Record<string, string> = {
+      de: "de-DE",
+      en: "en-US",
+      tr: "tr-TR"
+    }
+    return localeMap[locale] || "de-DE"
+  }
 
   if (loading) {
     return (
@@ -129,17 +141,17 @@ export default function DashboardPage() {
       {/* Welcome section */}
       <div className="relative">
         <h1 className="text-3xl font-bold tracking-tight text-foreground">
-          Willkommen zurück{session?.user?.name ? `, ${session.user.name.split(" ")[0]}` : ""}! <span className="animate-wave inline-block">👋</span>
+          {t('welcome')}{session?.user?.name ? `, ${session.user.name.split(" ")[0]}` : ""}! <span className="animate-wave inline-block">{t('greeting')}</span>
         </h1>
         <p className="mt-2 text-lg text-muted-foreground">
-          Erstelle beeindruckenden Instagram-Content mit KI-Unterstützung.
+          {t('subtitle')}
         </p>
       </div>
 
       {/* Quick actions */}
       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
         {quickActions.map((action) => (
-          <Link key={action.name} href={action.href} className="group">
+          <Link key={action.href} href={action.href} className="group">
             <Card className="h-full border-0 bg-gradient-to-br from-card/50 to-card/30 backdrop-blur-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-primary/10 group-hover:ring-1 group-hover:ring-primary/20">
               <CardContent className="flex flex-col items-center p-8 text-center">
                 <div className={`flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br ${action.color} shadow-lg shadow-purple-500/20 group-hover:scale-110 transition-transform duration-300`}>
@@ -178,12 +190,12 @@ export default function DashboardPage() {
       <Card className="border-border/50 bg-card/50 backdrop-blur-sm">
         <CardHeader className="flex flex-row items-center justify-between p-6">
           <div>
-            <CardTitle>Neueste Projekte</CardTitle>
-            <CardDescription>Deine zuletzt erstellten Projekte</CardDescription>
+            <CardTitle>{t('recentProjects.title')}</CardTitle>
+            <CardDescription>{t('recentProjects.subtitle')}</CardDescription>
           </div>
           <Link href="/dashboard/projects">
             <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-primary">
-              Alle anzeigen
+              {t('recentProjects.viewAll')}
             </Button>
           </Link>
         </CardHeader>
@@ -194,15 +206,15 @@ export default function DashboardPage() {
                 <FolderOpen className="h-8 w-8 text-muted-foreground" />
               </div>
               <h3 className="text-lg font-medium text-foreground">
-                Noch keine Projekte
+                {t('recentProjects.empty.title')}
               </h3>
               <p className="mt-2 text-sm text-muted-foreground max-w-sm">
-                Erstelle dein erstes Projekt, um loszulegen.
+                {t('recentProjects.empty.subtitle')}
               </p>
               <Link href="/dashboard/projects/new" className="mt-6">
                 <Button variant="gradient" size="lg" className="shadow-lg shadow-primary/20">
                   <Plus className="mr-2 h-5 w-5" />
-                  Neues Projekt starten
+                  {t('recentProjects.empty.button')}
                 </Button>
               </Link>
             </div>
@@ -226,7 +238,7 @@ export default function DashboardPage() {
                       {project.title}
                     </p>
                     <p className="text-sm text-muted-foreground">
-                      {new Date(project.createdAt).toLocaleDateString("de-DE", {
+                      {new Date(project.createdAt).toLocaleDateString(getDateLocale(), {
                         day: "numeric",
                         month: "short",
                         year: "numeric",
@@ -240,7 +252,7 @@ export default function DashboardPage() {
                       ? "bg-blue-500/10 text-blue-500 border-blue-500/20"
                       : "bg-secondary text-muted-foreground border-transparent"
                   }`}>
-                    {project.status === "PUBLISHED" ? "Veröffentlicht" : project.status === "SCHEDULED" ? "Geplant" : "Entwurf"}
+                    {project.status === "PUBLISHED" ? t('recentProjects.status.published') : project.status === "SCHEDULED" ? t('recentProjects.status.scheduled') : t('recentProjects.status.draft')}
                   </span>
                 </Link>
               ))}
@@ -257,10 +269,9 @@ export default function DashboardPage() {
             <TrendingUp className="h-8 w-8 text-white" />
           </div>
           <div>
-            <h3 className="text-xl font-bold text-white">Tipp des Tages</h3>
+            <h3 className="text-xl font-bold text-white">{t('tip.title')}</h3>
             <p className="mt-2 text-white/90 text-lg leading-relaxed">
-              Verwende spezifische Stilbeschreibungen in deinen Prompts für konsistentere Ergebnisse. 
-              Zum Beispiel: <span className="font-mono bg-white/20 px-2 py-0.5 rounded text-sm">cinematic lighting, golden hour</span>
+              {t('tip.content')} <span className="font-mono bg-white/20 px-2 py-0.5 rounded text-sm">cinematic lighting, golden hour</span>
             </p>
           </div>
         </div>

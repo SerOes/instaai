@@ -1,0 +1,645 @@
+{
+  "common": {
+    "loading": "Laden...",
+    "save": "Speichern",
+    "cancel": "Abbrechen",
+    "delete": "Löschen",
+    "edit": "Bearbeiten",
+    "back": "Zurück",
+    "next": "Weiter",
+    "submit": "Absenden",
+    "close": "Schließen",
+    "yes": "Ja",
+    "no": "Nein",
+    "all": "Alle",
+    "search": "Suchen",
+    "filter": "Filter",
+    "download": "Download",
+    "upload": "Hochladen",
+    "preview": "Vorschau",
+    "generate": "Generieren",
+    "error": "Ein Fehler ist aufgetreten",
+    "success": "Erfolgreich",
+    "required": "Erforderlich",
+    "optional": "optional"
+  },
+  "nav": {
+    "dashboard": "Dashboard",
+    "projects": "Projekte",
+    "myImages": "Meine Bilder",
+    "generateImages": "Bilder generieren",
+    "generateVideos": "Videos generieren",
+    "contentPlanner": "Content-Planer",
+    "settings": "Einstellungen",
+    "logout": "Abmelden",
+    "login": "Anmelden",
+    "register": "Kostenlos starten",
+    "connectInstagram": "Instagram verbinden"
+  },
+  "landing": {
+    "hero": {
+      "badge": "Powered by Gemini & KIE.ai",
+      "title1": "Erstelle viralen",
+      "title2": "Instagram-Content",
+      "title3": "mit KI",
+      "description": "InstaAI nutzt die neuesten KI-Technologien, um atemberaubende Bilder, Videos, Captions und Hashtags für deinen Instagram-Account zu generieren. Spare Zeit und steigere dein Engagement.",
+      "cta": "Jetzt kostenlos starten",
+      "learnMore": "Mehr erfahren"
+    },
+    "features": {
+      "title": "Alles, was du für <highlight>Instagram</highlight> brauchst",
+      "highlight": "Instagram",
+      "subtitle": "Eine komplette Suite von KI-Tools für deine Content-Erstellung",
+      "imageGeneration": {
+        "title": "KI-Bildgenerierung",
+        "description": "Erstelle atemberaubende Bilder mit modernsten KI-Modellen für deinen Instagram-Feed."
+      },
+      "videoReels": {
+        "title": "Video & Reels",
+        "description": "Generiere fesselnde Videos und Reels, die deine Follower begeistern werden."
+      },
+      "smartCaptions": {
+        "title": "Smart Captions",
+        "description": "Automatisch generierte Captions in verschiedenen Stilen, perfekt auf dein Content abgestimmt."
+      },
+      "hashtagOptimization": {
+        "title": "Hashtag-Optimierung",
+        "description": "KI-optimierte Hashtags für maximale Reichweite und Engagement."
+      },
+      "contentPlanning": {
+        "title": "Content-Planung",
+        "description": "Plane und automatisiere deine Posts für konsistente Präsenz."
+      }
+    },
+    "cta": {
+      "title": "Bereit, deinen Instagram-Account zu transformieren?",
+      "description": "Starte noch heute kostenlos und erlebe, wie KI deine Content-Erstellung revolutioniert.",
+      "button": "Jetzt kostenlos starten"
+    },
+    "preview": {
+      "title": "InstaAI Dashboard",
+      "subtitle": "Erstelle beeindruckenden Content in Sekunden"
+    },
+    "footer": {
+      "privacy": "Datenschutz",
+      "imprint": "Impressum",
+      "terms": "AGB",
+      "copyright": "© {year} InstaAI. Alle Rechte vorbehalten."
+    }
+  },
+  "auth": {
+    "login": {
+      "title": "Willkommen zurück",
+      "subtitle": "Melden Sie sich an, um auf Ihr InstaAI-Konto zuzugreifen",
+      "email": "E-Mail",
+      "emailPlaceholder": "ihre@email.de",
+      "password": "Passwort",
+      "passwordPlaceholder": "••••••••",
+      "button": "Anmelden",
+      "loading": "Anmelden...",
+      "noAccount": "Noch kein Konto?",
+      "registerLink": "Jetzt registrieren",
+      "error": "Ungültige E-Mail oder Passwort",
+      "genericError": "Ein Fehler ist aufgetreten. Bitte versuchen Sie es erneut."
+    },
+    "register": {
+      "title": "Konto erstellen",
+      "subtitle": "Registrieren Sie sich für Ihr kostenloses InstaAI-Konto",
+      "name": "Name",
+      "namePlaceholder": "Max Mustermann",
+      "email": "E-Mail",
+      "emailPlaceholder": "ihre@email.de",
+      "password": "Passwort",
+      "passwordPlaceholder": "Mindestens 8 Zeichen",
+      "confirmPassword": "Passwort bestätigen",
+      "confirmPasswordPlaceholder": "Passwort wiederholen",
+      "button": "Konto erstellen",
+      "loading": "Registrieren...",
+      "hasAccount": "Bereits registriert?",
+      "loginLink": "Jetzt anmelden",
+      "success": {
+        "title": "Registrierung erfolgreich!",
+        "message": "Sie werden zur Anmeldeseite weitergeleitet..."
+      },
+      "errors": {
+        "nameMin": "Name muss mindestens 2 Zeichen haben",
+        "emailInvalid": "Ungültige E-Mail-Adresse",
+        "passwordMin": "Passwort muss mindestens 8 Zeichen haben",
+        "passwordMismatch": "Passwörter stimmen nicht überein"
+      }
+    }
+  },
+  "dashboard": {
+    "welcome": "Willkommen zurück",
+    "greeting": "👋",
+    "subtitle": "Erstelle beeindruckenden Instagram-Content mit KI-Unterstützung.",
+    "quickActions": {
+      "generateImage": "Bild generieren",
+      "generateImageDesc": "KI-generierte Bilder erstellen",
+      "generateVideo": "Video generieren",
+      "generateVideoDesc": "Reels und Videos erstellen",
+      "newProject": "Neues Projekt",
+      "newProjectDesc": "Content-Projekt anlegen",
+      "schedule": "Zeitplan",
+      "scheduleDesc": "Posts planen und verwalten"
+    },
+    "stats": {
+      "projects": "Projekte",
+      "scheduledPosts": "Geplante Posts",
+      "published": "Veröffentlicht",
+      "generatedImages": "Generierte Bilder"
+    },
+    "recentProjects": {
+      "title": "Neueste Projekte",
+      "subtitle": "Deine zuletzt erstellten Projekte",
+      "viewAll": "Alle anzeigen",
+      "empty": {
+        "title": "Noch keine Projekte",
+        "subtitle": "Erstelle dein erstes Projekt, um loszulegen.",
+        "button": "Neues Projekt starten"
+      },
+      "status": {
+        "published": "Veröffentlicht",
+        "scheduled": "Geplant",
+        "draft": "Entwurf"
+      }
+    },
+    "tip": {
+      "title": "Tipp des Tages",
+      "content": "Verwende spezifische Stilbeschreibungen in deinen Prompts für konsistentere Ergebnisse. Zum Beispiel:"
+    },
+    "user": "Benutzer"
+  },
+  "projects": {
+    "title": "Projekte",
+    "subtitle": "Verwalte deine generierten Bilder und Videos",
+    "newProject": "Neues Projekt",
+    "searchPlaceholder": "Projekte durchsuchen...",
+    "filters": {
+      "all": "Alle",
+      "images": "Bilder",
+      "videos": "Videos"
+    },
+    "empty": {
+      "title": "Noch keine Projekte",
+      "titleFiltered": "Keine Ergebnisse",
+      "subtitle": "Erstelle dein erstes Projekt, um loszulegen.",
+      "subtitleFiltered": "Versuche eine andere Suche oder Filter."
+    },
+    "status": {
+      "draft": "Entwurf",
+      "scheduled": "Geplant",
+      "published": "Veröffentlicht",
+      "failed": "Fehlgeschlagen"
+    },
+    "types": {
+      "image": "Bild",
+      "video": "Video"
+    },
+    "captions": "Caption",
+    "scheduled": "geplant",
+    "confirmDelete": "Möchten Sie dieses Projekt wirklich löschen?",
+    "new": {
+      "title": "Neues Projekt",
+      "subtitle": "Erstelle ein neues Content-Projekt",
+      "createTitle": "Projekt erstellen",
+      "createSubtitle": "Wähle einen Projekttyp und gib die grundlegenden Informationen ein.",
+      "projectType": "Projekttyp",
+      "typeImage": "Bild",
+      "typeImageDesc": "KI-generierte Bilder",
+      "typeVideo": "Video",
+      "typeVideoDesc": "Reels und Videos",
+      "projectTitle": "Projekttitel",
+      "projectTitlePlaceholder": "z.B. Produktlaunch Kampagne",
+      "description": "Beschreibung",
+      "descriptionPlaceholder": "Beschreibe kurz, worum es in diesem Projekt geht...",
+      "createButton": "Projekt erstellen",
+      "creating": "Erstellen...",
+      "titleRequired": "Titel erforderlich"
+    }
+  },
+  "gallery": {
+    "title": "Meine Bilder",
+    "subtitle": "Verwalte deine hochgeladenen Bilder und nutze sie als Referenz",
+    "uploadButton": "Bilder hochladen",
+    "uploading": "Uploading...",
+    "dropzone": {
+      "title": "Bilder hier ablegen",
+      "subtitle": "oder klicken zum Auswählen • JPEG, PNG, WebP, GIF • Max. 10MB"
+    },
+    "empty": {
+      "title": "Noch keine Bilder hochgeladen",
+      "subtitle": "Lade Bilder hoch, um sie als Referenz zu verwenden"
+    },
+    "actions": {
+      "preview": "Vorschau",
+      "useAsReference": "Als Referenz nutzen",
+      "download": "Herunterladen",
+      "delete": "Löschen"
+    },
+    "deleteDialog": {
+      "title": "Bild löschen?",
+      "description": "Dieses Bild wird dauerhaft gelöscht. Diese Aktion kann nicht rückgängig gemacht werden."
+    },
+    "previewDialog": {
+      "uploadedOn": "Hochgeladen am"
+    },
+    "metadata": {
+      "size": "Größe",
+      "resolution": "Auflösung",
+      "type": "Typ",
+      "unknown": "Unbekannt"
+    },
+    "errors": {
+      "loadFailed": "Fehler beim Laden der Bilder",
+      "uploadFailed": "Upload fehlgeschlagen",
+      "deleteFailed": "Fehler beim Löschen"
+    }
+  },
+  "generate": {
+    "image": {
+      "title": "Bild generieren",
+      "subtitle": "Erstelle beeindruckende KI-generierte Bilder für Instagram",
+      "preset": {
+        "title": "1. Wähle ein Preset",
+        "subtitle": "Starte mit einer optimierten Vorlage - du kannst sie anpassen",
+        "noPreset": "Oder starte ohne Preset →",
+        "categories": {
+          "product": "📦 Produkt",
+          "lifestyle": "🌿 Lifestyle",
+          "story": "📱 Story",
+          "carousel": "🎠 Karussell",
+          "brand": "✨ Branding",
+          "other": "🎨 Sonstige"
+        }
+      },
+      "prompt": {
+        "title": "2. Passe den Prompt an",
+        "subtitleWithPreset": "Ersetze [PRODUKTNAME] und passe Details an",
+        "subtitleNoPreset": "Beschreibe das Bild, das du erstellen möchtest",
+        "label": "Bildbeschreibung",
+        "placeholder": "z.B. A stylish coffee cup on a marble table, morning light streaming through a window, aesthetic minimalist photography, soft shadows...",
+        "productWarning": "⚠️ Ersetze [PRODUKTNAME] mit deinem echten Produktnamen",
+        "advancedOptions": "Erweiterte Optionen",
+        "lessOptions": "Weniger Optionen",
+        "negativePrompt": "Negative Prompt",
+        "negativePromptPlaceholder": "z.B. blurry, low quality, distorted"
+      },
+      "settings": {
+        "title": "3. Einstellungen",
+        "referenceImage": "Referenzbild (optional)",
+        "referenceImageDesc": "Lade ein Bild hoch, das als Vorlage oder Inspiration dient",
+        "uploadReference": "Hochladen",
+        "fromGallery": "Aus Galerie",
+        "referenceSelected": "Referenzbild ausgewählt",
+        "clickToGenerate": "Klicke \"Bild generieren\"",
+        "usedAsReference": "Wird als Referenz verwendet",
+        "aspectRatio": "Seitenverhältnis",
+        "aspectRatios": {
+          "square": "Quadratisch",
+          "portrait": "Portrait",
+          "story": "Story/Reel",
+          "landscape": "Landscape"
+        },
+        "model": "Modell",
+        "models": {
+          "standard": "Standard",
+          "standardDesc": "Schnell & vielseitig",
+          "realistic": "Realistisch",
+          "realisticDesc": "Fotorealistische Bilder",
+          "artistic": "Künstlerisch",
+          "artisticDesc": "Kreative Stile"
+        }
+      },
+      "generateButton": "Bild generieren",
+      "generating": "Generiere...",
+      "preview": {
+        "title": "Vorschau",
+        "placeholder": "Dein generiertes Bild erscheint hier",
+        "generating": "Generiere dein Bild...",
+        "regenerate": "Neu generieren"
+      },
+      "galleryPicker": {
+        "title": "Bild aus Galerie wählen",
+        "subtitle": "Wähle ein hochgeladenes Bild als Referenz",
+        "empty": "Keine Bilder vorhanden",
+        "uploadButton": "Bild hochladen"
+      },
+      "errors": {
+        "promptRequired": "Bitte gib einen Prompt ein",
+        "generationFailed": "Fehler bei der Bildgenerierung",
+        "uploadFailed": "Upload fehlgeschlagen"
+      }
+    },
+    "video": {
+      "title": "Video generieren",
+      "subtitle": "Erstelle beeindruckende KI-generierte Videos für Instagram Reels",
+      "preset": {
+        "title": "1. Wähle ein Preset",
+        "subtitle": "Starte mit einer optimierten Video-Vorlage",
+        "noPreset": "Oder starte ohne Preset →",
+        "categories": {
+          "teaser": "🎬 Teaser",
+          "beforeafter": "🔄 Before/After",
+          "story": "📱 Story",
+          "tutorial": "📚 Tutorial",
+          "brand": "✨ Branding",
+          "other": "🎥 Sonstige"
+        }
+      },
+      "prompt": {
+        "title": "2. Passe den Prompt an",
+        "subtitleWithPreset": "Ersetze [PRODUKTNAME] und passe Details an",
+        "subtitleNoPreset": "Beschreibe das Video, das du erstellen möchtest",
+        "label": "Videobeschreibung",
+        "placeholder": "z.B. A coffee cup with steam rising, gentle camera movement revealing a cozy cafe interior, morning atmosphere with soft golden light...",
+        "productWarning": "⚠️ Ersetze [PRODUKTNAME] mit deinem echten Produktnamen",
+        "advancedOptions": "Erweiterte Optionen (Bild-zu-Video)",
+        "lessOptions": "Weniger Optionen",
+        "sourceImage": "Ausgangsbild",
+        "sourceImagePlaceholder": "URL eines Bildes für Image-to-Video",
+        "sourceImageDesc": "Füge ein Bild hinzu, um es zum Leben zu erwecken"
+      },
+      "settings": {
+        "title": "3. Einstellungen",
+        "aspectRatio": "Seitenverhältnis",
+        "aspectRatios": {
+          "square": "Quadratisch",
+          "feed": "Feed Post",
+          "reel": "Reel/Story",
+          "landscape": "Landscape"
+        },
+        "duration": "Dauer",
+        "durations": {
+          "short": "Kurz",
+          "standard": "Standard",
+          "long": "Lang"
+        },
+        "motion": "Bewegungsintensität",
+        "motions": {
+          "subtle": "Dezent",
+          "subtleDesc": "Sanfte Bewegungen",
+          "moderate": "Moderat",
+          "moderateDesc": "Natürliche Bewegungen",
+          "dynamic": "Dynamisch",
+          "dynamicDesc": "Energetische Bewegungen"
+        },
+        "model": "Modell",
+        "models": {
+          "standard": "Standard",
+          "standardDesc": "Schnell & effizient",
+          "premium": "Premium",
+          "premiumDesc": "Höchste Qualität"
+        }
+      },
+      "generateButton": "Video generieren",
+      "generating": "Generiere...",
+      "preview": {
+        "title": "Vorschau",
+        "placeholder": "Dein generiertes Video erscheint hier",
+        "generating": "Generiere dein Video...",
+        "generatingNote": "Dies kann einige Minuten dauern",
+        "processing": "Video wird verarbeitet",
+        "jobId": "Job ID",
+        "regenerate": "Neu generieren"
+      },
+      "errors": {
+        "promptRequired": "Bitte gib einen Prompt ein",
+        "generationFailed": "Fehler bei der Videogenerierung"
+      }
+    }
+  },
+  "schedule": {
+    "title": "Content-Planer",
+    "subtitle": "Plane und verwalte deine Instagram-Posts",
+    "newPost": "Neuen Post planen",
+    "empty": {
+      "title": "Keine geplanten Posts",
+      "subtitle": "Erstelle ein Projekt und plane deinen ersten Post.",
+      "button": "Projekt erstellen"
+    },
+    "status": {
+      "scheduled": "Geplant",
+      "published": "Veröffentlicht",
+      "failed": "Fehlgeschlagen",
+      "cancelled": "Abgebrochen"
+    },
+    "confirmDelete": "Möchten Sie diesen Zeitplan wirklich löschen?"
+  },
+  "settings": {
+    "title": "Einstellungen",
+    "subtitle": "Verwalte deine API-Schlüssel und Kontoeinstellungen",
+    "systemPrompt": {
+      "title": "System-Prompt Wizard",
+      "subtitle": "KI-Persönlichkeit und Markenstil konfigurieren"
+    },
+    "instagram": {
+      "title": "Instagram verbinden",
+      "subtitle": "Accounts verknüpfen und verwalten"
+    },
+    "apiKeys": {
+      "title": "API-Schlüssel",
+      "subtitle": "Verbinde deine KI-Dienste für die Content-Generierung",
+      "addButton": "Schlüssel hinzufügen",
+      "newKey": "Neuer API-Schlüssel",
+      "name": "Name",
+      "namePlaceholder": "z.B. Gemini Production",
+      "provider": "Anbieter",
+      "key": "API-Schlüssel",
+      "keyPlaceholder": "Füge deinen API-Schlüssel ein",
+      "saveButton": "Speichern",
+      "saving": "Speichern...",
+      "empty": {
+        "title": "Keine API-Schlüssel vorhanden",
+        "subtitle": "Füge API-Schlüssel hinzu, um die KI-Funktionen zu nutzen."
+      },
+      "status": {
+        "active": "Aktiv",
+        "inactive": "Inaktiv"
+      },
+      "providers": {
+        "gemini": {
+          "name": "Google Gemini",
+          "description": "Für Captions und Hashtags"
+        },
+        "kie": {
+          "name": "KIE.ai",
+          "description": "Für Bild- und Videogenerierung"
+        }
+      },
+      "getKey": "API-Schlüssel erhalten →",
+      "errors": {
+        "required": "Name und Schlüssel sind erforderlich",
+        "saveFailed": "Fehler beim Speichern"
+      },
+      "confirmDelete": "Möchten Sie diesen API-Schlüssel wirklich löschen?"
+    },
+    "instagramPage": {
+      "title": "Instagram-Verbindung",
+      "subtitle": "Verbinde und verwalte deine Instagram Business-Accounts",
+      "connectedAccounts": "Verbundene Accounts",
+      "connectedSubtitle": "Verknüpfe Instagram Business-Accounts für automatisches Posten",
+      "noAccount": {
+        "title": "Kein Instagram-Account verbunden",
+        "subtitle": "Verbinde deinen Instagram Business-Account, um Posts direkt aus der App zu planen und zu veröffentlichen."
+      },
+      "connectButton": "Instagram verbinden",
+      "connecting": "Verbinden...",
+      "addAnother": "Weiteren Account verbinden",
+      "accountStats": {
+        "followers": "Follower",
+        "posts": "Posts"
+      },
+      "refresh": "Aktualisieren",
+      "disconnect": "Trennen",
+      "confirmDisconnect": "Möchten Sie diesen Instagram-Account wirklich trennen?",
+      "requirements": {
+        "title": "Voraussetzungen für Instagram-Verbindung",
+        "business": "Instagram Business- oder Creator-Account",
+        "facebook": "Mit einer Facebook-Seite verknüpft",
+        "admin": "Admin-Zugriff auf die Facebook-Seite"
+      },
+      "learnMore": "Mehr erfahren",
+      "oauthError": "Instagram OAuth wird in Produktion aktiviert. Bitte konfigurieren Sie INSTAGRAM_CLIENT_ID und INSTAGRAM_CLIENT_SECRET."
+    },
+    "systemPromptPage": {
+      "title": "System-Prompt Einstellungen",
+      "subtitle": "Definiere deinen globalen Business-Kontext für alle KI-Generierungen",
+      "wizardButton": "Wizard starten",
+      "cards": {
+        "brand": "Marke",
+        "audience": "Zielgruppe",
+        "styleTags": "Stil-Tags",
+        "contentGoals": "Content-Ziele",
+        "selected": "ausgewählt",
+        "notSet": "Nicht gesetzt"
+      },
+      "globalPrompt": {
+        "title": "Globaler System-Prompt",
+        "placeholder": "Dein System-Prompt wird bei allen KI-Generierungen automatisch verwendet...",
+        "charCount": "{count} Zeichen • Dieser Prompt wird bei allen KI-Aufrufen vorangestellt"
+      },
+      "brandInfo": {
+        "title": "Marken-Infos",
+        "brandName": "Markenname",
+        "industry": "Branche",
+        "targetAudience": "Zielgruppe"
+      },
+      "styleGoals": {
+        "title": "Stil & Ziele",
+        "styleTags": "Stil-Tags",
+        "contentGoals": "Content-Ziele"
+      },
+      "styleTags": {
+        "friendly": "Freundlich",
+        "professional": "Professionell",
+        "luxurious": "Luxuriös",
+        "playful": "Verspielt",
+        "minimalist": "Minimalistisch",
+        "emotional": "Emotional",
+        "humorous": "Humorvoll",
+        "inspiring": "Inspirierend",
+        "authentic": "Authentisch",
+        "modern": "Modern"
+      },
+      "goals": {
+        "followers": "Mehr Follower",
+        "sales": "Mehr Verkäufe",
+        "community": "Community",
+        "brand": "Markenbekanntheit"
+      },
+      "resetButton": "Zurücksetzen",
+      "saveButton": "Änderungen speichern",
+      "confirmReset": "Möchtest du wirklich alle System-Prompt-Einstellungen zurücksetzen?",
+      "messages": {
+        "saved": "System-Prompt erfolgreich gespeichert!",
+        "reset": "System-Prompt zurückgesetzt",
+        "error": "Fehler beim Speichern"
+      }
+    }
+  },
+  "onboarding": {
+    "step": "Schritt {current} von {total}",
+    "step1": {
+      "title": "Dein Business",
+      "subtitle": "Erzähle uns von deiner Marke",
+      "brandName": "Wie heißt deine Marke / dein Business?",
+      "brandNamePlaceholder": "z.B. Duygu Handdesigns",
+      "industry": "In welcher Branche bist du?",
+      "industryPlaceholder": "Branche wählen...",
+      "products": "Was verkaufst du hauptsächlich?",
+      "productsPlaceholder": "z.B. handgemachte personalisierte Produkte wie Schultüten, Turnbeutel und Tassen für Kinder"
+    },
+    "step2": {
+      "title": "Deine Zielgruppe",
+      "subtitle": "Wer sind deine idealen Kunden?",
+      "targetAudience": "Wer ist deine Hauptzielgruppe?",
+      "targetAudiencePlaceholder": "z.B. Mütter mit Kindern im Grundschulalter",
+      "region": "In welcher Region sind sie hauptsächlich?",
+      "regionPlaceholder": "z.B. Deutschland, Österreich, Schweiz",
+      "problemSolved": "Welches Problem löst du für sie?",
+      "problemSolvedPlaceholder": "z.B. suchen einzigartige, personalisierte Geschenke für besondere Anlässe ihrer Kinder"
+    },
+    "step3": {
+      "title": "Markenstil & Tonalität",
+      "subtitle": "Wie soll sich deine Marke anfühlen?",
+      "styleTagsLabel": "Wähle passende Stil-Tags (mind. 1)",
+      "brandFeeling": "Beschreibe, wie sich deine Marke anfühlen soll",
+      "brandFeelingPlaceholder": "z.B. Wie eine liebe Freundin, die immer die besten Geschenkideen hat - herzlich, kreativ und zuverlässig"
+    },
+    "step4": {
+      "title": "Content-Ziele",
+      "subtitle": "Was möchtest du mit deinem Content erreichen?",
+      "goals": {
+        "follower": "Mehr Follower gewinnen",
+        "sales": "Mehr Verkäufe generieren",
+        "community": "Community-Interaktion steigern",
+        "brand": "Markenbekanntheit aufbauen"
+      }
+    },
+    "step5": {
+      "title": "Beispiele & Einschränkungen",
+      "subtitle": "Optional: Verfeinere deinen Stil",
+      "captionExamples": "Beispiele, wie deine Captions klingen sollen",
+      "captionExamplesPlaceholder": "z.B. 'Heute zeig ich dir mein neues Lieblingsprojekt 💕 Schau mal, ist das nicht süß?'",
+      "captionExamplesHelp": "Gib 1-3 Beispiel-Sätze an, die deinen Stil gut repräsentieren",
+      "avoidWords": "Wörter/Stile, die vermieden werden sollen",
+      "avoidWordsPlaceholder": "z.B. aggressive Verkaufssprache, 'Kauf jetzt!', übertriebene Superlative"
+    },
+    "step6": {
+      "title": "Dein System-Prompt",
+      "subtitle": "Überprüfe und bestätige deinen generierten Prompt",
+      "generatedPrompt": "Generierter Prompt",
+      "charCount": "{count} Zeichen",
+      "editHint": "Du kannst den Prompt hier noch manuell anpassen",
+      "usage": {
+        "title": "So wird dein Prompt verwendet",
+        "description": "Dieser System-Prompt wird bei allen KI-Generierungen automatisch verwendet - für Captions, Hashtags, Bilder und Videos. So bleibt dein Content immer konsistent mit deiner Marke."
+      }
+    },
+    "industries": {
+      "ecommerce": "E-Commerce / Online-Shop",
+      "handmade": "Handgemachte Produkte / Handwerk",
+      "fashion": "Mode & Fashion",
+      "beauty": "Beauty & Kosmetik",
+      "food": "Food & Gastronomie",
+      "fitness": "Fitness & Gesundheit",
+      "coaching": "Coaching & Beratung",
+      "photography": "Fotografie & Kreativ",
+      "tech": "Tech & Software",
+      "other": "Sonstiges"
+    },
+    "backButton": "Zurück",
+    "nextButton": "Weiter",
+    "finishButton": "Fertig & zum Dashboard",
+    "saving": "Speichern...",
+    "skipLink": "Überspringen und später einrichten",
+    "error": "Fehler beim Speichern. Bitte versuche es erneut."
+  },
+  "languageSwitcher": {
+    "label": "Sprache",
+    "de": "Deutsch",
+    "en": "English",
+    "tr": "Türkçe"
+  }
+}
