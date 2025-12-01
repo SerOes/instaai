@@ -114,6 +114,8 @@ model InstagramAccount {
   user              User              @relation(fields: [userId], references: [id], onDelete: Cascade)
   postSchedules     PostSchedule[]
   analyticsRecords  AnalyticsRecord[]
+  dmConversations   DMConversation[]
+  dmAutomation      DMAutomation?
 
   @@index([userId])
 }
@@ -269,4 +271,116 @@ model AiPreset {
 
   @@index([userId, type])
   @@index([category, isPublic])
+}
+
+// ==================== DIRECT MESSAGES (DM) ====================
+// direction: "INBOUND" | "OUTBOUND"
+// status: "RECEIVED" | "READ" | "REPLIED" | "PENDING_REPLY"
+// aiStatus: "PENDING" | "GENERATED" | "APPROVED" | "SENT" | "SKIPPED"
+
+model DMConversation {
+  id                  String   @id @default(cuid())
+  instagramAccountId  String
+  igConversationId    String   @unique // Instagram's conversation ID
+  participantIgId     String   // The other participant's Instagram ID
+  participantUsername String?
+  participantName     String?
+  participantPicture  String?
+  
+  // Conversation status
+  isActive            Boolean  @default(true)
+  isAutomated         Boolean  @default(false) // Whether AI automation is enabled
+  lastMessageAt       DateTime?
+  unreadCount         Int      @default(0)
+  
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  instagramAccount    InstagramAccount @relation(fields: [instagramAccountId], references: [id], onDelete: Cascade)
+  messages            DirectMessage[]
+
+  @@index([instagramAccountId, lastMessageAt])
+  @@index([participantIgId])
+}
+
+model DirectMessage {
+  id               String   @id @default(cuid())
+  conversationId   String
+  igMessageId      String?  @unique // Instagram's message ID
+  
+  // Message content
+  direction        String   // "INBOUND" or "OUTBOUND"
+  messageType      String   @default("TEXT") // "TEXT", "IMAGE", "VIDEO", "STORY_REPLY", "REEL_SHARE"
+  content          String   // The actual message text
+  mediaUrl         String?  // For image/video messages
+  
+  // Status tracking
+  status           String   @default("RECEIVED") // "RECEIVED", "READ", "REPLIED", "PENDING_REPLY"
+  
+  // AI-generated response fields
+  aiStatus         String?  // "PENDING", "GENERATED", "APPROVED", "SENT", "SKIPPED"
+  aiResponse       String?  // AI-generated reply suggestion
+  aiConfidence     Float?   // AI's confidence in the response (0-1)
+  aiModel          String?  // Model used for generation
+  
+  // Timestamps
+  sentAt           DateTime @default(now())
+  readAt           DateTime?
+  repliedAt        DateTime?
+  
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  conversation     DMConversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+
+  @@index([conversationId, sentAt])
+  @@index([direction, aiStatus])
+}
+
+model DMAutomation {
+  id                  String   @id @default(cuid())
+  instagramAccountId  String   @unique
+  
+  // Automation settings
+  isEnabled           Boolean  @default(false)
+  autoReplyEnabled    Boolean  @default(false) // Auto-send without approval
+  
+  // Response behavior
+  defaultLanguage     String   @default("de") // "de", "en", "tr"
+  tone                String   @default("friendly") // "friendly", "professional", "casual"
+  responseDelay       Int      @default(0) // Seconds to wait before responding (for natural feel)
+  
+  // AI configuration
+  systemPrompt        String?  // Custom system prompt for DM responses
+  contextWindow       Int      @default(5) // Number of previous messages to include for context
+  maxResponseLength   Int      @default(500)
+  
+  // Category-specific responses (JSON string for SQLite)
+  categoryResponses   String   @default("{}") // e.g., {"faq": "...", "pricing": "...", "greeting": "..."}
+  
+  // Quick replies (JSON string for SQLite)
+  quickReplies        String   @default("[]") // Predefined quick reply templates
+  
+  // Keywords and triggers (JSON string for SQLite)
+  keywords            String   @default("{}") // Keywords mapped to specific responses
+  
+  // Blacklist/whitelist (JSON string for SQLite)
+  blacklistedPhrases  String   @default("[]") // Phrases that trigger manual review
+  
+  // Operating hours (JSON string for SQLite)
+  operatingHours      String   @default("{}") // e.g., {"enabled": false, "hours": {"mon": {"start": "09:00", "end": "18:00"}}}
+  
+  // Out of office message
+  outOfOfficeMessage  String?
+  
+  // Stats
+  totalProcessed      Int      @default(0)
+  totalAutoReplied    Int      @default(0)
+  
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  instagramAccount    InstagramAccount @relation(fields: [instagramAccountId], references: [id], onDelete: Cascade)
+
+  @@index([isEnabled])
 }

@@ -17,11 +17,24 @@ import {
   X,
   Sparkles,
   Instagram,
-  ImagePlus
+  ImagePlus,
+  MessageCircle
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { LanguageSwitcher } from "@/components/language-switcher"
+import { ThemeToggle } from "@/components/ui/theme-toggle"
+
+const navigation = [
+  { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
+  { name: "Projekte", href: "/dashboard/projects", icon: FolderOpen },
+  { name: "Meine Bilder", href: "/dashboard/gallery", icon: ImagePlus },
+  { name: "Bilder generieren", href: "/dashboard/generate/image", icon: Image },
+  { name: "Videos generieren", href: "/dashboard/generate/video", icon: Video },
+  { name: "Direktnachrichten", href: "/dashboard/messages", icon: MessageCircle },
+  { name: "Content-Planer", href: "/dashboard/schedule", icon: Calendar },
+  { name: "Einstellungen", href: "/dashboard/settings", icon: Settings },
+]
 
 export default function DashboardLayout({
   children,
@@ -179,6 +192,7 @@ export default function DashboardLayout({
 
           <div className="flex items-center gap-4 ml-auto">
             <LanguageSwitcher />
+            <ThemeToggle />
             <Link href="/dashboard/settings/instagram">
               <Button variant="glass" size="sm" className="gap-2 rounded-full px-4">
                 <Instagram className="h-4 w-4" />

@@ -36,6 +36,11 @@ export default async function RootLayout({
     <html lang={locale}>
       <body className="font-sans antialiased">
         <Providers locale={locale} messages={messages}>
+    <html lang="de" suppressHydrationWarning>
+      <body
+        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+      >
+        <Providers>
           {children}
         </Providers>
       </body>

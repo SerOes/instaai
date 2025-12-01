@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { getTranslations } from "next-intl/server"
 import { LanguageSwitcher } from "@/components/language-switcher"
+import { ThemeToggle } from "@/components/ui/theme-toggle"
 
 export default async function Home() {
   const t = await getTranslations('landing')
@@ -61,6 +62,7 @@ export default async function Home() {
           </Link>
           <div className="flex items-center gap-4">
             <LanguageSwitcher />
+            <ThemeToggle />
             <Link href="/auth/login">
               <Button variant="ghost" className="text-muted-foreground hover:text-foreground">{tNav('login')}</Button>
             </Link>
