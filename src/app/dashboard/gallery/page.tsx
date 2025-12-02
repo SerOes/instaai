@@ -13,7 +13,8 @@ import {
   Wand2,
   MoreVertical,
   Eye,
-  ZoomIn
+  ZoomIn,
+  Sparkles
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -41,6 +42,10 @@ interface UploadedImage {
   aspectRatio?: string
   createdAt: string
   metadata?: string
+  source?: string
+  prompt?: string
+  model?: string
+  provider?: string
 }
 
 export default function GalleryPage() {
@@ -285,6 +290,13 @@ export default function GalleryPage() {
                   alt={image.title}
                   className="absolute inset-0 w-full h-full object-cover"
                 />
+                {/* Generated Badge */}
+                {image.source === "GENERATED" && (
+                  <div className="absolute top-2 left-2 flex items-center gap-1 bg-primary/90 text-white text-xs px-2 py-1 rounded-full">
+                    <Sparkles className="h-3 w-3" />
+                    <span>KI</span>
+                  </div>
+                )}
                 {/* Hover Overlay */}
                 <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
                   <Button 
@@ -367,9 +379,17 @@ export default function GalleryPage() {
       <Dialog open={!!previewImage} onOpenChange={() => setPreviewImage(null)}>
         <DialogContent className="max-w-4xl">
           <DialogHeader>
-            <DialogTitle>{previewImage?.title}</DialogTitle>
+            <DialogTitle className="flex items-center gap-2">
+              {previewImage?.title}
+              {previewImage?.source === "GENERATED" && (
+                <span className="flex items-center gap-1 bg-primary/20 text-primary text-xs px-2 py-1 rounded-full">
+                  <Sparkles className="h-3 w-3" />
+                  KI-generiert
+                </span>
+              )}
+            </DialogTitle>
             <DialogDescription>
-              Hochgeladen am {previewImage && formatDate(previewImage.createdAt)}
+              {previewImage?.source === "GENERATED" ? "Generiert" : "Hochgeladen"} am {previewImage && formatDate(previewImage.createdAt)}
             </DialogDescription>
           </DialogHeader>
           <div className="relative">
@@ -380,6 +400,25 @@ export default function GalleryPage() {
                   alt={previewImage.title}
                   className="w-full h-auto max-h-[70vh] object-contain rounded-lg"
                 />
+                
+                {/* Prompt Info for Generated Images */}
+                {previewImage.source === "GENERATED" && previewImage.prompt && (
+                  <div className="mt-4 rounded-lg bg-primary/5 border border-primary/20 p-3">
+                    <div className="flex items-center gap-2 text-sm font-medium text-primary mb-2">
+                      <Sparkles className="h-4 w-4" />
+                      Verwendeter Prompt
+                    </div>
+                    <p className="text-sm text-muted-foreground line-clamp-3">
+                      {previewImage.prompt}
+                    </p>
+                    {previewImage.model && (
+                      <div className="mt-2 text-xs text-muted-foreground">
+                        Modell: {previewImage.model} • Provider: {previewImage.provider}
+                      </div>
+                    )}
+                  </div>
+                )}
+                
                 <div className="mt-4 flex flex-wrap gap-4 text-sm text-muted-foreground">
                   {(() => {
                     const meta = parseMetadata(previewImage.metadata)

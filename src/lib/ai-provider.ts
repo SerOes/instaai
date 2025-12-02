@@ -1,9 +1,28 @@
 // AI Provider Service - Abstraction layer for AI integrations
 // Supports Gemini 2.5 Flash / 3.0 Pro and KIE.ai
+// KIE.ai Models: Nano Banana Pro, Flux 2, Seedream V4, Nano Banana Edit, Topaz Upscale
 
 export type AIProvider = 'gemini' | 'kieai'
 export type GeminiModel = 'gemini-2.5-flash' | 'gemini-3.0-pro'
-export type ImageModel = 'nano-banana-pro' | 'stable-diffusion' | 'dalle-3'
+
+// KIE.AI Image Model Types
+export type KieImageModelType = 'text-to-image' | 'image-to-image' | 'edit' | 'upscale'
+
+export type KieImageModel = 
+  // Text-to-Image
+  | 'nano-banana-pro'
+  | 'flux-2-pro-text-to-image'
+  | 'flux-2-flex-text-to-image'
+  | 'seedream-v4-text-to-image'
+  // Image-to-Image
+  | 'flux-2-pro-image-to-image'
+  | 'flux-2-flex-image-to-image'
+  // Edit
+  | 'nano-banana-edit'
+  | 'seedream-v4-edit'
+  // Upscale
+  | 'topaz-image-upscale'
+
 export type VideoModel = 'veo-3.1'
 
 interface GenerateImageOptions {
@@ -12,7 +31,7 @@ interface GenerateImageOptions {
   style?: string
   aspectRatio?: string
   provider?: AIProvider
-  model?: ImageModel
+  model?: KieImageModel
   numVariants?: number
 }
 
@@ -123,23 +142,41 @@ async function callGeminiAPI(
   return data.candidates?.[0]?.content?.parts?.[0]?.text || ''
 }
 
+// KIE.ai API Endpoints for different models
+const KIE_API_ENDPOINTS: Record<KieImageModel, string> = {
+  'nano-banana-pro': 'https://api.kie.ai/api/models/google/nano-banana-pro',
+  'flux-2-pro-text-to-image': 'https://api.kie.ai/api/models/flux-2/pro-text-to-image',
+  'flux-2-flex-text-to-image': 'https://api.kie.ai/api/models/flux-2/flex-text-to-image',
+  'seedream-v4-text-to-image': 'https://api.kie.ai/api/models/bytedance/seedream-v4-text-to-image',
+  'flux-2-pro-image-to-image': 'https://api.kie.ai/api/models/flux-2/pro-image-to-image',
+  'flux-2-flex-image-to-image': 'https://api.kie.ai/api/models/flux-2/flex-image-to-image',
+  'nano-banana-edit': 'https://api.kie.ai/api/models/google/nano-banana-edit',
+  'seedream-v4-edit': 'https://api.kie.ai/api/models/bytedance/seedream-v4-edit',
+  'topaz-image-upscale': 'https://api.kie.ai/api/models/topaz/image-upscale',
+}
+
 // KIE.ai API Integration for Images
 async function callKieImageAPI(
   apiKey: string,
   options: GenerateImageOptions
 ): Promise<GeneratedImage[]> {
-  const response = await fetch('https://api.kieai.xyz/v1/image/generations', {
+  const model = options.model || 'nano-banana-pro'
+  const endpoint = KIE_API_ENDPOINTS[model]
+  
+  if (!endpoint) {
+    throw new Error(`Unknown KIE.ai model: ${model}`)
+  }
+
+  const response = await fetch(endpoint, {
     method: 'POST',
     headers: {
       'Authorization': `Bearer ${apiKey}`,
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      model: options.model || 'nano-banana-pro',
       prompt: options.prompt,
       aspect_ratio: options.aspectRatio || '1:1',
-      n: options.numVariants || 4,
-      style: options.style,
+      resolution: '1K',
     }),
   })
 
@@ -150,15 +187,31 @@ async function callKieImageAPI(
 
   const data = await response.json()
   
-  return data.data.map((img: { url: string }) => ({
-    url: img.url,
+  // Handle various response formats
+  let imageUrl: string | undefined
+  if (data.images?.[0]?.url) {
+    imageUrl = data.images[0].url
+  } else if (data.data?.[0]?.url) {
+    imageUrl = data.data[0].url
+  } else if (data.output_url) {
+    imageUrl = data.output_url
+  } else if (data.url) {
+    imageUrl = data.url
+  }
+
+  if (!imageUrl) {
+    throw new Error('No image URL in KIE.ai response')
+  }
+
+  return [{
+    url: imageUrl,
     metadata: {
-      model: options.model || 'nano-banana-pro',
+      model,
       prompt: options.prompt,
       style: options.style,
       aspectRatio: options.aspectRatio,
     },
-  }))
+  }]
 }
 
 // KIE.ai API Integration for Videos

@@ -164,7 +164,7 @@ export default function ProjectsPage() {
             onClick={() => setFilterType("IMAGE")}
             className={filterType === "IMAGE" ? "bg-primary text-primary-foreground" : "bg-secondary/50 text-muted-foreground hover:text-foreground border-border"}
           >
-            <Image className="mr-2 h-4 w-4" alt="" />
+            <Image className="mr-2 h-4 w-4" />
             {t('filters.images')}
           </Button>
           <Button
@@ -220,7 +220,7 @@ export default function ProjectsPage() {
                     {project.type === "VIDEO" ? (
                       <Video className="h-12 w-12 text-muted-foreground/30" />
                     ) : (
-                      <Image className="h-12 w-12 text-muted-foreground/30" alt="" />
+                      <Image className="h-12 w-12 text-muted-foreground/30" />
                     )}
                   </div>
                 )}
@@ -258,7 +258,7 @@ export default function ProjectsPage() {
                     {project.type === "VIDEO" ? (
                       <><Video className="mr-1 h-3 w-3" /> {t('types.video')}</>
                     ) : (
-                      <><Image className="mr-1 h-3 w-3" alt="" /> {t('types.image')}</>
+                      <><Image className="mr-1 h-3 w-3" /> {t('types.image')}</>
                     )}
                   </span>
                 </div>

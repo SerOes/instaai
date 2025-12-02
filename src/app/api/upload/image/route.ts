@@ -134,7 +134,9 @@ export async function GET() {
       where: {
         userId: session.user.id,
         type: "IMAGE",
-        source: "UPLOADED",
+        source: {
+          in: ["UPLOADED", "GENERATED"]
+        },
       },
       orderBy: {
         createdAt: "desc",
@@ -147,6 +149,10 @@ export async function GET() {
         aspectRatio: true,
         createdAt: true,
         metadata: true,
+        source: true,
+        prompt: true,
+        model: true,
+        provider: true,
       },
     })
 

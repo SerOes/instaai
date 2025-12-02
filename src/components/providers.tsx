@@ -12,14 +12,11 @@ interface ProvidersProps {
 
 export function Providers({ children, locale, messages }: ProvidersProps) {
   return (
-    <SessionProvider>
-      <NextIntlClientProvider locale={locale} messages={messages}>
-        {children}
-      </NextIntlClientProvider>
-    </SessionProvider>
     <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
       <SessionProvider>
-        {children}
+        <NextIntlClientProvider locale={locale} messages={messages}>
+          {children}
+        </NextIntlClientProvider>
       </SessionProvider>
     </ThemeProvider>
   )

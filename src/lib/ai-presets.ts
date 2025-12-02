@@ -1,15 +1,17 @@
 // AI Presets for Image and Video Generation
 // Based on Nano Banana Pro and Veo 3.1 Guidelines
+// Prompting Guide: https://blog.google/products/gemini/prompting-tips-nano-banana-pro/
 
 export interface ImagePreset {
   id: string
   name: string
   description: string
-  category: 'product' | 'lifestyle' | 'story' | 'carousel' | 'brand'
+  category: 'product' | 'lifestyle' | 'story' | 'carousel' | 'brand' | 'portrait' | 'enhancement'
   promptTemplate: string
   style: string
-  aspectRatio: '1:1' | '4:5' | '9:16' | '16:9'
+  aspectRatio: '1:1' | '4:5' | '9:16' | '16:9' | '3:4' | '2:3'
   tags: string[]
+  requiresImage?: boolean // For image editing/enhancement presets
 }
 
 export interface VideoPreset {
@@ -218,6 +220,312 @@ Text im Bild: Optional "Das perfekte Geschenk" oder ähnlich.`,
     aspectRatio: '4:5',
     tags: ['gift', 'wrapping', 'present', 'celebration', 'festive'],
   },
+  
+  // ========== NEUE PRODUKT-PRESETS (Basierend auf Google Nano Banana Pro Guideline) ==========
+  
+  {
+    id: 'hero-product-shot',
+    name: 'Hero Product Shot',
+    description: 'Premium Hauptproduktbild für Website/Shop - maximale Qualität',
+    category: 'product',
+    promptTemplate: `Subject: Ein einzelnes [PRODUKTNAME] als Hero-Shot, absolut perfekt präsentiert.
+Composition: Zentrierte, frontale Aufnahme mit leichtem Winkel, Produkt füllt 60-70% des Frames.
+Action: Statisch, das Produkt steht oder schwebt leicht erhöht.
+Location: Premium Studio-Setting mit nahtlosem, neutralen Hintergrund mit sanftem Gradient.
+Style: Ultra-hochauflösende kommerzielle Produktfotografie, drei-Punkt-Beleuchtung, perfekte Reflexionen, f/8 Schärfentiefe für maximale Details.
+Camera: Medium shot, 85mm Objektiv-Look, leichte Perspektive von vorne-oben.
+Lighting: Professionelles Studiolicht mit Softboxen, dezente Rim-Lights für Konturierung.
+Markenbezug: Farben und Material des Produkts im Fokus, keine Ablenkung.`,
+    style: 'premium',
+    aspectRatio: '1:1',
+    tags: ['hero', 'product', 'premium', 'ecommerce', 'shop', 'professional'],
+  },
+  {
+    id: 'product-detail-macro',
+    name: 'Produkt-Detail Makro',
+    description: 'Extreme Nahaufnahme für Texturen, Nähte, Details',
+    category: 'product',
+    promptTemplate: `Subject: Extreme Nahaufnahme eines Details von [PRODUKTNAME] - zeige Qualität und Handwerkskunst.
+Composition: Extreme close-up / Makro-Shot, Detail füllt den ganzen Frame, shallow depth of field.
+Action: Statisch, fokussiert auf Textur, Naht, Material oder besonderes Detail.
+Location: Neutral, das Detail steht im absoluten Fokus.
+Style: Makro-Produktfotografie, f/2.8 für selektive Schärfe, sichtbare Materialstruktur.
+Camera: Makro-Objektiv-Look, sehr nah, Bokeh im Hintergrund.
+Lighting: Weiches Seitenlicht um Texturen hervorzuheben, keine harten Schatten.
+Markenbezug: Zeige die Qualität und Liebe zum Detail, die in das Produkt gesteckt wurde.`,
+    style: 'macro',
+    aspectRatio: '1:1',
+    tags: ['detail', 'macro', 'texture', 'quality', 'craftsmanship', 'close-up'],
+  },
+  {
+    id: 'product-in-use',
+    name: 'Produkt in Benutzung',
+    description: 'Zeigt das Produkt während der aktiven Nutzung',
+    category: 'lifestyle',
+    promptTemplate: `Subject: [PRODUKTNAME] wird aktiv von einer Person benutzt - zeige den praktischen Nutzen.
+Composition: Medium shot, Person und Produkt beide sichtbar, natürlicher Blickwinkel.
+Action: Aktive, natürliche Nutzung des Produkts - greifen, halten, verwenden, interagieren.
+Location: Passende Alltagsumgebung zur Zielgruppe - Zuhause, Büro, Unterwegs, je nach Produkt.
+Style: Lifestyle-Fotografie mit dokumentarischem Touch, authentisch, nicht gestellt wirkend.
+Camera: 35-50mm Look, natürliche Perspektive, leichte Bewegungsunschärfe erlaubt.
+Lighting: Natürliches Tageslicht oder warme Innenbeleuchtung, keine Studio-Perfektion.
+Markenbezug: Das Produkt löst ein Problem oder bereichert den Alltag der Person.`,
+    style: 'lifestyle',
+    aspectRatio: '4:5',
+    tags: ['in-use', 'action', 'lifestyle', 'practical', 'authentic', 'user'],
+  },
+  {
+    id: 'product-collection',
+    name: 'Produkt-Kollektion',
+    description: 'Mehrere Produkte/Varianten elegant arrangiert',
+    category: 'product',
+    promptTemplate: `Subject: Eine Kollektion von [PRODUKTNAME] in verschiedenen Farben oder Varianten, kunstvoll arrangiert.
+Composition: Gruppenbild mit klarer Hierarchie, Hauptprodukt zentral, Varianten drumherum angeordnet.
+Action: Statisch, perfekt arrangiert, jedes Produkt sichtbar.
+Location: Premium Studio mit nahtlosem Hintergrund oder eleganter Oberfläche (Marmor, Holz).
+Style: High-end Katalog-Fotografie, perfekte Abstände, harmonische Farbbalance.
+Camera: Leicht erhöhter Winkel (15-20°), genug Abstand um alles zu zeigen, f/11 für Schärfe überall.
+Lighting: Even lighting across all products, soft shadows, professional product lighting.
+Markenbezug: Zeige die Vielfalt und Konsistenz der Marke, einheitlicher Look über alle Produkte.`,
+    style: 'collection',
+    aspectRatio: '16:9',
+    tags: ['collection', 'variants', 'colors', 'group', 'catalog', 'range'],
+  },
+  {
+    id: 'product-scale-context',
+    name: 'Produkt mit Größenvergleich',
+    description: 'Zeigt die tatsächliche Größe des Produkts im Kontext',
+    category: 'product',
+    promptTemplate: `Subject: [PRODUKTNAME] neben bekannten Objekten für Größenkontext - Hand, Tasse, Stift, Münze.
+Composition: Produkt im Zentrum mit Referenzobjekten, die die Größe verdeutlichen.
+Action: Statisch, vergleichend.
+Location: Sauberer, neutraler Hintergrund oder einfacher Tisch.
+Style: Informativer Produktfoto-Stil, klar und verständlich, gute Beleuchtung.
+Camera: Straight-on oder leicht erhöht, alles scharf im Fokus.
+Lighting: Helles, gleichmäßiges Licht ohne ablenkende Schatten.
+Markenbezug: Ehrliche Darstellung, der Kunde soll wissen was er bekommt.`,
+    style: 'informative',
+    aspectRatio: '1:1',
+    tags: ['scale', 'size', 'comparison', 'context', 'informative', 'honest'],
+  },
+  {
+    id: 'product-packaging',
+    name: 'Produkt mit Verpackung',
+    description: 'Zeigt Produkt und Originalverpackung zusammen',
+    category: 'product',
+    promptTemplate: `Subject: [PRODUKTNAME] elegant neben oder vor seiner Verpackung präsentiert.
+Composition: Produkt leicht im Vordergrund, Verpackung dahinter oder daneben, beide gut sichtbar.
+Action: Statisch, wie frisch ausgepackt oder zum Verschenken bereit.
+Location: Premium Oberfläche - Holz, Marmor oder sauberer Gradient-Hintergrund.
+Style: Unboxing-Ready Look, premium, einladend, professionelle Produktfotografie.
+Camera: Medium shot, leichter Winkel, f/5.6 für Tiefenschärfe.
+Lighting: Hauptlicht auf dem Produkt, Verpackung gut ausgeleuchtet aber nicht dominant.
+Markenbezug: Verpackungsdesign und Produkt ergänzen sich, Brand-Konsistenz sichtbar.`,
+    style: 'premium',
+    aspectRatio: '4:5',
+    tags: ['packaging', 'box', 'unboxing', 'premium', 'gift-ready', 'presentation'],
+  },
+  {
+    id: 'floating-product',
+    name: 'Schwebendes Produkt',
+    description: 'Dynamischer Look mit schwebendem Produkt und Schatten',
+    category: 'product',
+    promptTemplate: `Subject: [PRODUKTNAME] schwebt elegant in der Luft mit realistischem Schatten darunter.
+Composition: Produkt zentriert, schwebt ca. 20cm über einer Oberfläche, perfekter Schatten darunter.
+Action: Schwebend, leichte Dynamik, als würde es gerade aufsteigen oder sanft fallen.
+Location: Sauberer, heller Hintergrund mit subtiler Oberfläche für den Schatten.
+Style: Moderner E-Commerce Style, clean, dynamisch, eye-catching.
+Camera: Frontal oder leicht von unten für dramatischen Effekt.
+Lighting: Drei-Punkt-Beleuchtung, Hauptlicht von oben, Schatten weich aber definiert.
+Markenbezug: Moderner, innovativer Look passend zu einer zeitgemäßen Marke.`,
+    style: 'dynamic',
+    aspectRatio: '1:1',
+    tags: ['floating', 'levitation', 'dynamic', 'modern', 'creative', 'shadow'],
+  },
+  {
+    id: 'product-360-angle',
+    name: 'Produkt 3/4 Ansicht',
+    description: 'Klassische 3/4 Ansicht zeigt Vorder- und Seitenansicht',
+    category: 'product',
+    promptTemplate: `Subject: [PRODUKTNAME] in klassischer 3/4 Ansicht - zeigt sowohl Front als auch Seite.
+Composition: Produkt im 45° Winkel gedreht, Front und eine Seite sichtbar.
+Action: Statisch, klassische Produktpose.
+Location: Nahtloser Hintergrund in neutraler Farbe oder passend zur Marke.
+Style: Klassische kommerzielle Produktfotografie, zeitlos, professionell.
+Camera: Medium shot, 70-85mm Look, f/8 für durchgängige Schärfe.
+Lighting: Klassisches Drei-Punkt-Licht, Hauptlicht 45° von vorne-rechts, Fill-Light links, Rim-Light von hinten.
+Markenbezug: Zeige das Produkt von seiner besten Seite, alle wichtigen Details sichtbar.`,
+    style: 'classic',
+    aspectRatio: '1:1',
+    tags: ['angle', '3/4-view', 'classic', 'professional', 'commercial', 'multi-angle'],
+  },
+  {
+    id: 'product-lifestyle-table',
+    name: 'Lifestyle Tisch-Szene',
+    description: 'Produkt auf einem stilvollen Tisch mit passenden Accessoires',
+    category: 'lifestyle',
+    promptTemplate: `Subject: [PRODUKTNAME] als Teil einer kurierten Tisch-Szene mit passenden Lifestyle-Accessoires.
+Composition: Produkt als Hauptelement, umgeben von thematisch passenden Objekten (Pflanzen, Bücher, Kaffee, etc.).
+Action: Statisch, arrangiert aber natürlich wirkend, als würde jemand gleich zugreifen.
+Location: Stilvoller Tisch oder Arbeitsfläche in einer einladenden Umgebung.
+Style: Instagram-worthy Lifestyle-Flatlay oder erhöhte Tischperspektive, warm und einladend.
+Camera: Leicht erhöhter Winkel oder Vogelperspektive, 35mm Look.
+Lighting: Warmes, natürliches Tageslicht von der Seite, sanfte Schatten.
+Markenbezug: Accessoires passen zur Zielgruppe und verstärken die Markenbotschaft.`,
+    style: 'lifestyle',
+    aspectRatio: '1:1',
+    tags: ['lifestyle', 'table', 'accessories', 'styled', 'curated', 'instagram'],
+  },
+  {
+    id: 'seasonal-product-spring',
+    name: 'Frühlings-Produktszene',
+    description: 'Produkt in frischer Frühlingsatmosphäre',
+    category: 'brand',
+    promptTemplate: `Subject: [PRODUKTNAME] umgeben von frischen Frühlingsblumen und hellem, frischem Ambiente.
+Composition: Produkt im Vordergrund, Frühlingsblumen (Tulpen, Narzissen, Kirschblüten) als Rahmen.
+Action: Statisch, frisch und einladend.
+Location: Heller, luftiger Hintergrund mit natürlichem Licht und Frühlingsdekor.
+Style: Frische, lebendige Frühlingsfarben, Pastelle und Weiß dominant, optimistische Stimmung.
+Camera: Medium shot, helle, überbelichtete Ästhetik (high-key).
+Lighting: Helles, weiches Tageslicht, Frühlingssonne-Effekt.
+Markenbezug: Saisonale Frische, Neuanfang, perfekt für Frühjahrs-Kampagnen.`,
+    style: 'seasonal',
+    aspectRatio: '1:1',
+    tags: ['spring', 'seasonal', 'flowers', 'fresh', 'bright', 'pastel'],
+  },
+  
+  // ========== PORTRAIT / PERSONENBILD PRESETS ==========
+  
+  {
+    id: 'portrait-enhancement',
+    name: 'Portrait Verbesserung',
+    description: 'Verbessere Beleuchtung, Hauttöne und Hintergrund eines Portraits',
+    category: 'portrait',
+    requiresImage: true,
+    promptTemplate: `Editing Instructions: Verbessere dieses Portrait-Foto mit folgenden Anpassungen:
+- Optimiere die Hautbeleuchtung für einen natürlichen, schmeichelhaften Look
+- Balanciere Hauttöne für ein gesundes, warmes Erscheinungsbild
+- Verstärke Augendetails für mehr Ausdruckskraft
+- Sanfte Glättung bei Beibehaltung natürlicher Textur
+- Leichte Aufhellung unter den Augen
+- Verbessere den Hintergrund für einen professionelleren Look
+Style: Professionelle Portrait-Retusche, natürlich, nicht übertrieben.
+Erhalte: Natürliche Gesichtszüge, Charakter und Persönlichkeit der Person.`,
+    style: 'enhancement',
+    aspectRatio: '4:5',
+    tags: ['portrait', 'enhancement', 'retouch', 'skin', 'lighting', 'professional'],
+  },
+  {
+    id: 'portrait-background-change',
+    name: 'Portrait Hintergrund ändern',
+    description: 'Ersetze den Hintergrund durch professionellen Studio-Look',
+    category: 'portrait',
+    requiresImage: true,
+    promptTemplate: `Editing Instructions: Ersetze den Hintergrund dieses Portraits durch einen professionellen Studio-Hintergrund:
+- Nahtloser Gradient-Hintergrund in neutralem Grau oder warmem Beige
+- Sanfter Vignetten-Effekt Richtung Ränder
+- Perfekte Kantentrennung zwischen Person und Hintergrund
+- Haare natürlich freigestellt, keine harten Kanten
+- Schatten der Person auf neuem Hintergrund realistisch
+Style: Professionelles Studio-Portrait, clean und zeitlos.
+Erhalte: Alle Details der Person, natürliche Beleuchtung auf der Person.`,
+    style: 'studio',
+    aspectRatio: '4:5',
+    tags: ['portrait', 'background', 'studio', 'professional', 'clean', 'gradient'],
+  },
+  {
+    id: 'portrait-headshot-business',
+    name: 'Business Headshot',
+    description: 'Transformiere ein Foto in ein professionelles Business-Portrait',
+    category: 'portrait',
+    requiresImage: true,
+    promptTemplate: `Editing Instructions: Transformiere dieses Foto in ein professionelles Business-Headshot:
+- Professioneller, neutraler Hintergrund (Grau oder Navy-Gradient)
+- Business-appropriate Beleuchtung mit professionellen Catchlights in den Augen
+- Subtile Hautverbesserung für sauberen, professionellen Look
+- Schärfe auf Augen und Gesicht optimiert
+- Kleidung und Haltung professionell erscheinen lassen
+- LinkedIn/Corporate Website-ready Qualität
+Style: Corporate Headshot, vertrauenserweckend, kompetent, approachable.
+Erhalte: Authentischer Gesichtsausdruck, natürliche Züge.`,
+    style: 'business',
+    aspectRatio: '1:1',
+    tags: ['headshot', 'business', 'corporate', 'linkedin', 'professional', 'portrait'],
+  },
+  {
+    id: 'portrait-artistic-style',
+    name: 'Künstlerisches Portrait',
+    description: 'Verwandle ein Foto in ein stilisiertes, künstlerisches Portrait',
+    category: 'portrait',
+    requiresImage: true,
+    promptTemplate: `Editing Instructions: Transformiere dieses Portrait in ein künstlerisches, stilisiertes Bild:
+- Wähle einen einzigartigen künstlerischen Stil (inspiriert von klassischer Malerei oder modernen Illustration)
+- Behalte die erkennbare Ähnlichkeit der Person
+- Verstärke dramatische Beleuchtung und Kontraste
+- Füge künstlerische Textur oder Pinselstrich-Effekte hinzu
+- Harmonische, ausdrucksstarke Farbpalette
+Style: Künstlerisches Portrait, expressiv, einzigartig, gallery-worthy.
+Erhalte: Erkennbarkeit der Person, Charakter und Ausdruck.`,
+    style: 'artistic',
+    aspectRatio: '4:5',
+    tags: ['portrait', 'artistic', 'stylized', 'creative', 'painting', 'unique'],
+  },
+  {
+    id: 'portrait-lighting-fix',
+    name: 'Portrait Beleuchtung korrigieren',
+    description: 'Korrigiere schlechte Beleuchtung in einem Portrait',
+    category: 'portrait',
+    requiresImage: true,
+    promptTemplate: `Editing Instructions: Korrigiere die Beleuchtung in diesem Portrait:
+- Entferne harte Schatten unter Augen und Nase
+- Gleiche überbelichtete oder unterbelichtete Bereiche aus
+- Füge sanftes Fill-Light hinzu wo nötig
+- Erstelle schmeichelhafte Catchlights in den Augen
+- Balanciere Gesichtsbeleuchtung für natürlichen, gleichmäßigen Look
+- Erhalte Tiefe und Dimension ohne flach zu wirken
+Style: Natürliche, schmeichelhafte Porträtbeleuchtung wie von einem Profi fotografiert.
+Erhalte: Alle natürlichen Details und Texturen.`,
+    style: 'correction',
+    aspectRatio: '4:5',
+    tags: ['portrait', 'lighting', 'fix', 'correction', 'shadows', 'enhancement'],
+  },
+  
+  // ========== WEITERE PRODUKTFOTO-PRESETS ==========
+  
+  {
+    id: 'product-instagram-ready',
+    name: 'Instagram-Ready Produkt',
+    description: 'Optimiert für Instagram Feed mit perfektem Cropping und Filter',
+    category: 'product',
+    promptTemplate: `Subject: [PRODUKTNAME] perfekt für Instagram optimiert mit trendiger Ästhetik.
+Composition: Instagram-optimiertes 1:1 oder 4:5 Format, Produkt perfekt im Frame, negative space für Text-Overlays.
+Action: Statisch oder mit subtiler Dynamik (Schatten, Reflexionen).
+Location: Trendy, Instagram-worthy Hintergrund - Terrazzo, bunter Gradient, oder minimalistisch clean.
+Style: Social-Media-Native Look, leicht entsättigte Farben oder warme Töne, modern und ansprechend.
+Camera: Smartphone-Ästhetik oder polierter Instagram-Influencer-Style.
+Lighting: Natürliches Licht-Look, soft und schmeichelhaft.
+Markenbezug: Perfekt shareable, löst Engagement aus, passt zur Instagram-Ästhetik der Marke.`,
+    style: 'instagram',
+    aspectRatio: '1:1',
+    tags: ['instagram', 'social-media', 'trendy', 'feed', 'engagement', 'shareable'],
+  },
+  {
+    id: 'product-white-background',
+    name: 'Produkt auf Weiß',
+    description: 'Klassisches E-Commerce Foto auf reinweißem Hintergrund',
+    category: 'product',
+    promptTemplate: `Subject: [PRODUKTNAME] freigestellt auf absolut reinem Weiß (#FFFFFF Hintergrund).
+Composition: Produkt zentriert, genug Rand rundherum, perfekt für E-Commerce Listings.
+Action: Statisch, frontal oder leichte 3/4 Ansicht.
+Location: Nahtloser, reinweißer Hintergrund ohne jegliche Textur oder Schatten.
+Style: Amazon/eBay/Shop-ready, clean, professionell, hohe Auflösung.
+Camera: Produktfotografie-Standard, gleichmäßige Schärfe, keine Verzerrung.
+Lighting: Helles, schattenfreies Licht, Produkt vollständig ausgeleuchtet.
+Markenbezug: Neutraler Standard, lässt das Produkt für sich sprechen.`,
+    style: 'ecommerce',
+    aspectRatio: '1:1',
+    tags: ['white-background', 'ecommerce', 'amazon', 'shop', 'listing', 'clean'],
+  },
 ]
 
 // ================== VIDEO PRESETS ==================
@@ -415,3 +723,185 @@ export function applyQuoteToTemplate(template: string, quote: string, author?: s
   }
   return result
 }
+
+// ================== PROMPT ENHANCEMENT SYSTEM ==================
+// Based on Google's Nano Banana Pro Prompting Guide
+// https://blog.google/products/gemini/prompting-tips-nano-banana-pro/
+
+/**
+ * Structure for an optimized image prompt based on Google's guidelines
+ */
+export interface OptimizedPromptStructure {
+  subject: string          // Who or what is in the image
+  composition: string      // How is the shot framed
+  action: string           // What is happening
+  location: string         // Where does the scene take place
+  style: string            // What is the overall aesthetic
+  camera?: string          // Camera settings and angle
+  lighting?: string        // Lighting details
+  editingInstructions?: string  // For modifying existing images
+}
+
+/**
+ * Prompt enhancement guidelines based on Google's official Nano Banana Pro guide
+ */
+export const PROMPT_ENHANCEMENT_GUIDE = {
+  // Core Elements (Always include)
+  coreElements: [
+    'Subject: Who or what is in the image - be specific',
+    'Composition: How the shot is framed (close-up, wide shot, portrait, etc.)',
+    'Action: What is happening in the scene',
+    'Location: Where does the scene take place',
+    'Style: Overall aesthetic (photorealistic, watercolor, cinematic, etc.)',
+  ],
+  
+  // Advanced refinements for professional results
+  advancedElements: [
+    'Aspect Ratio: Define the canvas (9:16 vertical, 16:9 widescreen, 1:1 square)',
+    'Camera Details: Angle, depth of field, lens type (f/1.8, 85mm, etc.)',
+    'Lighting: Golden hour, studio lighting, soft shadows, rim light',
+    'Text Integration: Specify fonts, placement, and styling for any text',
+    'Reference Role: When using images, define each image\'s role clearly',
+  ],
+  
+  // Style keywords that improve results
+  styleKeywords: {
+    photography: ['photorealistic', 'professional photography', 'studio lighting', 'high resolution', 'sharp focus'],
+    product: ['product photography', 'commercial', 'catalog style', 'e-commerce ready', 'clean background'],
+    lifestyle: ['authentic', 'natural light', 'candid moment', 'warm tones', 'lifestyle photography'],
+    artistic: ['digital art', 'illustration', 'painterly', 'stylized', 'creative'],
+    cinematic: ['cinematic', 'film grain', 'anamorphic', 'dramatic lighting', 'movie still'],
+    minimal: ['minimalist', 'clean', 'negative space', 'simple', 'modern'],
+  },
+  
+  // Common improvements for weak prompts
+  improvements: {
+    addSpecificity: 'Add specific details about the subject, environment, and style',
+    addComposition: 'Define the framing: close-up, medium shot, wide shot, overhead',
+    addLighting: 'Specify lighting: soft, dramatic, golden hour, studio',
+    addMood: 'Include emotional/atmospheric descriptors',
+    addTechnical: 'Add camera/technical details for professional look',
+  },
+}
+
+/**
+ * Enhance a user's basic prompt to follow Google's Nano Banana Pro guidelines
+ * This function structures the prompt for optimal AI image generation results
+ */
+export function enhancePromptForAI(
+  userPrompt: string,
+  options?: {
+    productName?: string
+    style?: 'photography' | 'product' | 'lifestyle' | 'artistic' | 'cinematic' | 'minimal'
+    aspectRatio?: string
+    includeRefImage?: boolean
+    brandContext?: string
+  }
+): string {
+  // If prompt is already well-structured (contains key markers), return with minimal changes
+  const structuredMarkers = ['Subject:', 'Composition:', 'Style:', 'Location:', 'Action:']
+  const isAlreadyStructured = structuredMarkers.some(marker => 
+    userPrompt.toLowerCase().includes(marker.toLowerCase())
+  )
+  
+  if (isAlreadyStructured) {
+    // Just add brand context if provided
+    if (options?.brandContext) {
+      return `Brand Context:\n${options.brandContext}\n\n${userPrompt}`
+    }
+    return userPrompt
+  }
+  
+  // Build enhanced prompt structure
+  const styleKeywords = options?.style 
+    ? PROMPT_ENHANCEMENT_GUIDE.styleKeywords[options.style] 
+    : PROMPT_ENHANCEMENT_GUIDE.styleKeywords.photography
+  
+  const enhancedParts: string[] = []
+  
+  // Add brand context first if provided
+  if (options?.brandContext) {
+    enhancedParts.push(`Brand Context:\n${options.brandContext}`)
+  }
+  
+  // Subject
+  if (options?.productName) {
+    enhancedParts.push(`Subject: ${options.productName} - ${userPrompt}`)
+  } else {
+    enhancedParts.push(`Subject: ${userPrompt}`)
+  }
+  
+  // Add style enhancement
+  enhancedParts.push(`Style: ${styleKeywords.join(', ')}`)
+  
+  // Add technical defaults for professional results
+  enhancedParts.push('Quality: High resolution, sharp details, professional quality')
+  
+  // Add aspect ratio context if specified
+  if (options?.aspectRatio) {
+    const ratioDescriptions: Record<string, string> = {
+      '1:1': 'Square format, centered composition',
+      '4:5': 'Portrait format, ideal for Instagram feed',
+      '9:16': 'Vertical format, perfect for Stories and Reels',
+      '16:9': 'Widescreen format, cinematic composition',
+      '3:4': 'Classic portrait format',
+      '2:3': 'Traditional portrait format',
+    }
+    enhancedParts.push(`Composition: ${ratioDescriptions[options.aspectRatio] || 'Balanced composition'}`)
+  }
+  
+  // Add reference image instructions if applicable
+  if (options?.includeRefImage) {
+    enhancedParts.push('Reference: Use the provided reference image as the base, maintaining its key elements while applying the requested changes')
+  }
+  
+  return enhancedParts.join('\n')
+}
+
+/**
+ * Generate improvement suggestions for a user's prompt
+ */
+export function getPromptImprovementSuggestions(userPrompt: string): string[] {
+  const suggestions: string[] = []
+  const promptLower = userPrompt.toLowerCase()
+  
+  // Check for missing core elements
+  if (!promptLower.includes('subject') && promptLower.length < 50) {
+    suggestions.push('📝 Beschreibe das Hauptmotiv genauer (Was genau soll im Bild sein?)')
+  }
+  
+  if (!/(close-up|wide shot|portrait|overhead|macro|medium shot)/i.test(promptLower)) {
+    suggestions.push('📐 Füge Kompositionsdetails hinzu (Nahaufnahme, Weitwinkel, Portrait...)')
+  }
+  
+  if (!/(light|lighting|shadow|bright|dark|golden hour|studio)/i.test(promptLower)) {
+    suggestions.push('💡 Beschreibe die Beleuchtung (Weiches Licht, Studioblitz, Tageslicht...)')
+  }
+  
+  if (!/(style|aesthetic|realistic|artistic|cinematic|minimal)/i.test(promptLower)) {
+    suggestions.push('🎨 Definiere den Stil (Fotorealistisch, Künstlerisch, Minimalistisch...)')
+  }
+  
+  if (!/(background|location|setting|environment|scene)/i.test(promptLower)) {
+    suggestions.push('🏠 Beschreibe den Hintergrund/Ort (Studio, Natur, Wohnzimmer...)')
+  }
+  
+  if (promptLower.length < 30) {
+    suggestions.push('✨ Längere, detailliertere Prompts führen zu besseren Ergebnissen')
+  }
+  
+  return suggestions
+}
+
+/**
+ * Categories for preset filtering in UI
+ */
+export const IMAGE_PRESET_CATEGORIES = [
+  { id: 'brand', label: 'Branding', icon: '✨', description: 'Marken-Posts und Ankündigungen' },
+  { id: 'lifestyle', label: 'Lifestyle', icon: '🏠', description: 'Authentische Alltagsszenen' },
+  { id: 'product', label: 'Produkt', icon: '📦', description: 'Professionelle Produktfotos' },
+  { id: 'portrait', label: 'Portrait', icon: '👤', description: 'Personen und Portraits' },
+  { id: 'carousel', label: 'Karussell', icon: '🎠', description: 'Multi-Slide Content' },
+  { id: 'story', label: 'Story', icon: '📱', description: 'Instagram Stories' },
+  { id: 'enhancement', label: 'Verbesserung', icon: '🔧', description: 'Bildoptimierung' },
+] as const

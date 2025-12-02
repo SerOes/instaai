@@ -153,10 +153,10 @@ export async function POST(request: NextRequest) {
               aspectRatio: data.aspectRatio,
               model: data.model,
               provider: "KIE",
-              metadata: {
+              metadata: JSON.stringify({
                 duration: data.duration,
                 motion: data.motion,
-              },
+              }),
               updatedAt: new Date(),
             },
           })
