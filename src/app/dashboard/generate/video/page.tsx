@@ -20,7 +20,10 @@ import {
   Zap,
   Info,
   AlertCircle,
-  CheckCircle2
+  CheckCircle2,
+  Layers,
+  Plus,
+  Trash2
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -42,6 +45,7 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { Progress } from "@/components/ui/progress"
+import { Switch } from "@/components/ui/switch"
 
 // Video Model type from API
 interface VideoModelInfo {
@@ -129,13 +133,79 @@ export default function GenerateVideoPage() {
   const [isAnalyzing, setIsAnalyzing] = useState(false)
   const [imageAnalysis, setImageAnalysis] = useState<ImageAnalysis | null>(null)
 
+  // Storyboard Mode State
+  const [storyboardMode, setStoryboardMode] = useState(false)
+  const [storyboardImages, setStoryboardImages] = useState<string[]>([])
+  const maxStoryboardImages = 5
+  const storyboardFileInputRef = useRef<HTMLInputElement>(null)
+
   // Gallery Dialog State
   const [showGalleryPicker, setShowGalleryPicker] = useState(false)
   const [galleryImages, setGalleryImages] = useState<GalleryImage[]>([])
   const [isLoadingGallery, setIsLoadingGallery] = useState(false)
+  const [galleryPickerMode, setGalleryPickerMode] = useState<'single' | 'storyboard'>('single')
 
   // Get current selected model
   const selectedModel = videoModels.find(m => m.id === selectedModelId)
+
+  // Auto-select storyboard model when storyboard mode is enabled
+  useEffect(() => {
+    if (storyboardMode) {
+      // Auto-select sora-2-storyboard if available
+      const storyboardModel = videoModels.find(m => m.features.storyboard)
+      if (storyboardModel && selectedModelId !== storyboardModel.id) {
+        setSelectedModelId(storyboardModel.id)
+      }
+      // Set landscape aspect ratio for storyboard
+      setAspectRatio('16:9')
+    }
+  }, [storyboardMode, videoModels, selectedModelId])
+
+  // Handle storyboard image upload
+  const handleStoryboardFileUpload = async (event: ChangeEvent<HTMLInputElement>) => {
+    const files = event.target.files
+    if (!files) return
+
+    for (const file of Array.from(files)) {
+      if (storyboardImages.length >= maxStoryboardImages) break
+      
+      try {
+        const formData = new FormData()
+        formData.append("file", file)
+
+        const response = await fetch("/api/upload/image", {
+          method: "POST",
+          body: formData,
+        })
+
+        if (response.ok) {
+          const data = await response.json()
+          setStoryboardImages(prev => [...prev, data.url].slice(0, maxStoryboardImages))
+        }
+      } catch (error) {
+        console.error("Error uploading storyboard image:", error)
+      }
+    }
+    // Reset file input
+    if (storyboardFileInputRef.current) {
+      storyboardFileInputRef.current.value = ''
+    }
+  }
+
+  // Remove storyboard image
+  const removeStoryboardImage = (index: number) => {
+    setStoryboardImages(prev => prev.filter((_, i) => i !== index))
+  }
+
+  // Handle gallery image select for storyboard
+  const handleGalleryImageSelectForStoryboard = (img: GalleryImage) => {
+    if (storyboardImages.length < maxStoryboardImages) {
+      setStoryboardImages(prev => [...prev, img.url])
+    }
+    if (storyboardImages.length >= maxStoryboardImages - 1) {
+      setShowGalleryPicker(false)
+    }
+  }
 
   // Fetch available video models
   const fetchVideoModels = async () => {
@@ -369,8 +439,14 @@ export default function GenerateVideoPage() {
   }
 
   const handleGenerate = async () => {
-    if (!prompt.trim()) {
+    // Validation
+    if (!prompt.trim() && !storyboardMode) {
       setError("Bitte gib einen Prompt ein")
+      return
+    }
+
+    if (storyboardMode && storyboardImages.length < 2) {
+      setError("Storyboard-Modus benötigt mindestens 2 Bilder")
       return
     }
 
@@ -381,21 +457,30 @@ export default function GenerateVideoPage() {
     setGeneratedVideo(null)
 
     try {
+      // Build request body based on mode
+      const requestBody: Record<string, unknown> = {
+        prompt: prompt || (storyboardMode ? "Create a smooth video transition between these scenes" : ""),
+        aspectRatio,
+        duration,
+        modelId: selectedModelId,
+        resolution: resolution || undefined,
+        presetId: selectedPreset || undefined,
+        projectId: projectId || undefined,
+      }
+
+      // Add image(s) based on mode
+      if (storyboardMode && storyboardImages.length >= 2) {
+        requestBody.imageUrls = storyboardImages
+      } else if (imageUrl || sourceImage) {
+        requestBody.imageUrl = imageUrl || sourceImage
+      }
+
       const response = await fetch("/api/generate/video", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          prompt,
-          imageUrl: imageUrl || undefined,
-          aspectRatio,
-          duration,
-          modelId: selectedModelId,
-          resolution: resolution || undefined,
-          presetId: selectedPreset || undefined,
-          projectId: projectId || undefined,
-        }),
+        body: JSON.stringify(requestBody),
       })
 
       const data = await response.json()
@@ -444,7 +529,7 @@ export default function GenerateVideoPage() {
 
   return (
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
-      {/* Hidden File Input */}
+      {/* Hidden File Inputs */}
       <input
         ref={fileInputRef}
         type="file"
@@ -452,14 +537,30 @@ export default function GenerateVideoPage() {
         className="hidden"
         onChange={handleFileUpload}
       />
+      <input
+        ref={storyboardFileInputRef}
+        type="file"
+        accept="image/*"
+        multiple
+        className="hidden"
+        onChange={handleStoryboardFileUpload}
+      />
 
       {/* Gallery Picker Dialog */}
       <Dialog open={showGalleryPicker} onOpenChange={setShowGalleryPicker}>
         <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>Wähle ein Ausgangsbild für Image-to-Video</DialogTitle>
+            <DialogTitle>
+              {galleryPickerMode === 'storyboard' 
+                ? `Storyboard-Bilder wählen (${storyboardImages.length}/${maxStoryboardImages})`
+                : 'Wähle ein Ausgangsbild für Image-to-Video'
+              }
+            </DialogTitle>
             <DialogDescription>
-              Wähle ein Bild aus deiner Galerie, das zum Video animiert werden soll
+              {galleryPickerMode === 'storyboard'
+                ? 'Wähle 2-5 Bilder als Szenen-Keyframes für dein Storyboard-Video'
+                : 'Wähle ein Bild aus deiner Galerie, das zum Video animiert werden soll'
+              }
             </DialogDescription>
           </DialogHeader>
           {isLoadingGallery ? (
@@ -473,19 +574,35 @@ export default function GenerateVideoPage() {
             </div>
           ) : (
             <div className="grid grid-cols-3 md:grid-cols-4 gap-4">
-              {galleryImages.map((img) => (
-                <button
-                  key={img.id}
-                  onClick={() => handleGalleryImageSelect(img)}
-                  className="aspect-square rounded-lg overflow-hidden border-2 border-transparent hover:border-blue-500 transition-all"
-                >
-                  <img
-                    src={img.url}
-                    alt={img.title || "Bild"}
-                    className="w-full h-full object-cover"
-                  />
-                </button>
-              ))}
+              {galleryImages.map((img) => {
+                const isSelected = storyboardImages.includes(img.url)
+                return (
+                  <button
+                    key={img.id}
+                    onClick={() => galleryPickerMode === 'storyboard' 
+                      ? handleGalleryImageSelectForStoryboard(img)
+                      : handleGalleryImageSelect(img)
+                    }
+                    disabled={galleryPickerMode === 'storyboard' && isSelected}
+                    className={`aspect-square rounded-lg overflow-hidden border-2 transition-all relative ${
+                      isSelected 
+                        ? 'border-green-500 opacity-60' 
+                        : 'border-transparent hover:border-blue-500'
+                    }`}
+                  >
+                    <img
+                      src={img.url}
+                      alt={img.title || "Bild"}
+                      className="w-full h-full object-cover"
+                    />
+                    {isSelected && (
+                      <div className="absolute inset-0 flex items-center justify-center bg-green-500/20">
+                        <Check className="h-8 w-8 text-green-500" />
+                      </div>
+                    )}
+                  </button>
+                )
+              })}
             </div>
           )}
         </DialogContent>
@@ -663,6 +780,117 @@ export default function GenerateVideoPage() {
             </CardContent>
           </Card>
 
+          {/* Storyboard Mode Card */}
+          <Card className={`border-border/50 backdrop-blur-xl transition-all ${
+            storyboardMode ? 'border-pink-500/30 bg-gradient-to-br from-pink-500/5 to-transparent' : 'bg-card/50'
+          }`}>
+            <CardHeader className="pb-3">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <Layers className={`h-5 w-5 ${storyboardMode ? 'text-pink-500' : 'text-muted-foreground'}`} />
+                  <div>
+                    <CardTitle className="text-base text-foreground">Storyboard-Modus</CardTitle>
+                    <CardDescription className="text-xs">
+                      Multi-Bild zu Video mit Szenen-Keyframes
+                    </CardDescription>
+                  </div>
+                </div>
+                <Switch
+                  checked={storyboardMode}
+                  onCheckedChange={setStoryboardMode}
+                  className="data-[state=checked]:bg-pink-500"
+                />
+              </div>
+            </CardHeader>
+            {storyboardMode && (
+              <CardContent className="space-y-4">
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-muted-foreground">
+                    {storyboardImages.length}/{maxStoryboardImages} Szenen-Bilder
+                  </span>
+                  <span className="text-xs text-pink-400">
+                    Min. 2, Max. 5 Bilder
+                  </span>
+                </div>
+
+                {/* Storyboard Images Grid */}
+                <div className="grid grid-cols-5 gap-2">
+                  {storyboardImages.map((img, index) => (
+                    <div key={index} className="relative aspect-video rounded-lg overflow-hidden border border-pink-500/30 group">
+                      <img src={img} alt={`Szene ${index + 1}`} className="w-full h-full object-cover" />
+                      <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                        <button
+                          onClick={() => removeStoryboardImage(index)}
+                          className="p-1 rounded-full bg-red-500 text-white hover:bg-red-600"
+                        >
+                          <Trash2 className="h-3 w-3" />
+                        </button>
+                      </div>
+                      <span className="absolute bottom-1 left-1 text-[10px] bg-black/70 text-white px-1 rounded">
+                        {index + 1}
+                      </span>
+                    </div>
+                  ))}
+                  
+                  {/* Add More Button */}
+                  {storyboardImages.length < maxStoryboardImages && (
+                    <button
+                      onClick={() => storyboardFileInputRef.current?.click()}
+                      className="aspect-video rounded-lg border-2 border-dashed border-pink-500/30 flex flex-col items-center justify-center gap-1 hover:border-pink-500 hover:bg-pink-500/5 transition-all"
+                    >
+                      <Plus className="h-4 w-4 text-pink-500" />
+                      <span className="text-[10px] text-muted-foreground">Hinzufügen</span>
+                    </button>
+                  )}
+                </div>
+
+                {/* Upload Buttons */}
+                <div className="flex gap-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="flex-1 border-pink-500/30 text-pink-500 hover:bg-pink-500/10"
+                    onClick={() => storyboardFileInputRef.current?.click()}
+                    disabled={storyboardImages.length >= maxStoryboardImages}
+                  >
+                    <Upload className="h-3 w-3 mr-1" />
+                    Hochladen
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="flex-1 border-pink-500/30 text-pink-500 hover:bg-pink-500/10"
+                    onClick={() => {
+                      setGalleryPickerMode('storyboard')
+                      setShowGalleryPicker(true)
+                      fetchGalleryImages()
+                    }}
+                    disabled={storyboardImages.length >= maxStoryboardImages}
+                  >
+                    <FolderOpen className="h-3 w-3 mr-1" />
+                    Aus Galerie
+                  </Button>
+                </div>
+
+                {/* Storyboard Tip */}
+                <div className="flex items-start gap-2 text-xs text-muted-foreground bg-pink-500/5 rounded-lg p-2">
+                  <Info className="h-3 w-3 mt-0.5 text-pink-400 flex-shrink-0" />
+                  <p>
+                    Bilder werden als Keyframes verwendet. Die KI animiert die Übergänge zwischen den Szenen.
+                    Prompt ist optional – die Bilder erzählen die Geschichte.
+                  </p>
+                </div>
+
+                {storyboardImages.length > 0 && storyboardImages.length < 2 && (
+                  <div className="flex items-center gap-2 text-xs text-amber-400">
+                    <AlertCircle className="h-3 w-3" />
+                    <span>Mindestens 2 Bilder für Storyboard benötigt</span>
+                  </div>
+                )}
+              </CardContent>
+            )}
+          </Card>
+
           {/* Settings */}
           <Card className="border-border/50 bg-card/50 backdrop-blur-xl">
             <CardHeader>
@@ -685,34 +913,70 @@ export default function GenerateVideoPage() {
                     <SelectTrigger className="bg-secondary/20 border-border/50">
                       <SelectValue placeholder="Modell wählen" />
                     </SelectTrigger>
-                    <SelectContent>
-                      {videoModels.map((model) => (
-                        <SelectItem key={model.id} value={model.id}>
-                          <div className="flex items-center gap-2">
-                            <span>{model.name}</span>
-                            <span className={`text-xs px-1.5 py-0.5 rounded-full ${
-                              model.pricing === 'premium' ? 'bg-purple-500/20 text-purple-400' :
-                              model.pricing === 'high' ? 'bg-amber-500/20 text-amber-400' :
-                              model.pricing === 'medium' ? 'bg-blue-500/20 text-blue-400' :
-                              'bg-green-500/20 text-green-400'
-                            }`}>
-                              {model.pricing}
-                            </span>
+                    <SelectContent className="max-h-80">
+                      {/* Group by Provider */}
+                      {['gemini', 'kie'].map(providerGroup => {
+                        const providerModels = videoModels.filter(m => m.provider === providerGroup)
+                        if (providerModels.length === 0) return null
+                        return (
+                          <div key={providerGroup}>
+                            <div className="px-2 py-1.5 text-xs font-semibold text-muted-foreground bg-secondary/50 sticky top-0">
+                              {providerGroup === 'gemini' ? '🔮 Gemini Direct' : '⚡ KIE.AI'}
+                            </div>
+                            {providerModels.map((model) => (
+                              <SelectItem key={model.id} value={model.id}>
+                                <div className="flex flex-col gap-1">
+                                  <div className="flex items-center gap-2">
+                                    <span>{model.name}</span>
+                                    <span className={`text-xs px-1.5 py-0.5 rounded-full ${
+                                      model.pricing === 'premium' ? 'bg-purple-500/20 text-purple-400' :
+                                      model.pricing === 'high' ? 'bg-amber-500/20 text-amber-400' :
+                                      model.pricing === 'medium' ? 'bg-blue-500/20 text-blue-400' :
+                                      'bg-green-500/20 text-green-400'
+                                    }`}>
+                                      {model.pricing}
+                                    </span>
+                                  </div>
+                                  {/* Feature Badges */}
+                                  <div className="flex flex-wrap gap-1">
+                                    {model.features.textToVideo && (
+                                      <span className="text-[10px] px-1.5 py-0.5 rounded bg-cyan-500/20 text-cyan-400">Text→Video</span>
+                                    )}
+                                    {model.features.imageToVideo && (
+                                      <span className="text-[10px] px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-400">Img→Video</span>
+                                    )}
+                                    {model.features.storyboard && (
+                                      <span className="text-[10px] px-1.5 py-0.5 rounded bg-pink-500/20 text-pink-400">Storyboard</span>
+                                    )}
+                                    {model.features.tailImage && (
+                                      <span className="text-[10px] px-1.5 py-0.5 rounded bg-orange-500/20 text-orange-400">Tail-Image</span>
+                                    )}
+                                    {model.provider === 'gemini' && (
+                                      <span className="text-[10px] px-1.5 py-0.5 rounded bg-violet-500/20 text-violet-400">Extension</span>
+                                    )}
+                                  </div>
+                                </div>
+                              </SelectItem>
+                            ))}
                           </div>
-                        </SelectItem>
-                      ))}
+                        )
+                      })}
                     </SelectContent>
                   </Select>
                 )}
                 {selectedModel && (
-                  <p className="text-xs text-muted-foreground">
-                    {selectedModel.description}
-                    {selectedModel.features.textToVideo && selectedModel.features.imageToVideo 
-                      ? " • Text & Image-to-Video" 
-                      : selectedModel.features.imageToVideo 
-                        ? " • Image-to-Video" 
-                        : " • Text-to-Video"}
-                  </p>
+                  <div className="space-y-2">
+                    <p className="text-xs text-muted-foreground">
+                      {selectedModel.description}
+                    </p>
+                    {/* Provider-specific hints */}
+                    {selectedModel.provider === 'gemini' && (
+                      <div className="flex items-center gap-1 text-xs text-violet-400">
+                        <Sparkles className="h-3 w-3" />
+                        <span>Exklusiv: Video-Extension, Reference-Images, First/Last Frame</span>
+                      </div>
+                    )}
+                  </div>
                 )}
               </div>
 
@@ -791,15 +1055,24 @@ export default function GenerateVideoPage() {
 
           {/* Generate Button */}
           <Button 
-            className="w-full shadow-lg shadow-blue-500/20 bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-white border-0" 
+            className={`w-full shadow-lg text-white border-0 ${
+              storyboardMode 
+                ? 'shadow-pink-500/20 bg-gradient-to-r from-pink-500 to-purple-500 hover:from-pink-600 hover:to-purple-600'
+                : 'shadow-blue-500/20 bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600'
+            }`}
             size="lg" 
             onClick={handleGenerate}
-            disabled={isGenerating || !prompt.trim()}
+            disabled={isGenerating || (!prompt.trim() && !storyboardMode) || (storyboardMode && storyboardImages.length < 2)}
           >
             {isGenerating ? (
               <>
                 <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin mr-2" />
                 Generiere...
+              </>
+            ) : storyboardMode ? (
+              <>
+                <Layers className="mr-2 h-5 w-5" />
+                Storyboard-Video erstellen ({storyboardImages.length} Szenen)
               </>
             ) : (
               <>
