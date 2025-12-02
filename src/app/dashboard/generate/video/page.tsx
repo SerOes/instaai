@@ -79,12 +79,15 @@ interface Preset {
 
 interface ImageAnalysis {
   productName: string
-  productDescription: string
+  productType?: string
+  productDescription?: string
+  description?: string
   colors: string[]
   mood: string
-  style: string
-  suggestedAspectRatio: string
-  tags: string[]
+  style?: string
+  suggestedStyle?: string
+  suggestedAspectRatio?: string
+  tags?: string[]
 }
 
 interface GalleryImage {
@@ -394,8 +397,8 @@ export default function GenerateVideoPage() {
     if (!preset) return
     
     let filledPrompt = preset.promptTemplate
-    filledPrompt = filledPrompt.replace(/\[PRODUKTNAME\]/gi, imageAnalysis.productName)
-    filledPrompt = filledPrompt.replace(/\[PRODUKTBESCHREIBUNG\]/gi, imageAnalysis.productDescription)
+    filledPrompt = filledPrompt.replace(/\[PRODUKTNAME\]/gi, imageAnalysis.productName || '')
+    filledPrompt = filledPrompt.replace(/\[PRODUKTBESCHREIBUNG\]/gi, imageAnalysis.productDescription || imageAnalysis.description || '')
     setPrompt(filledPrompt)
   }
 
@@ -1220,8 +1223,8 @@ export default function GenerateVideoPage() {
                       <div className="space-y-2 text-xs text-muted-foreground">
                         <p><strong className="text-foreground">Produkt:</strong> {imageAnalysis.productName}</p>
                         <p><strong className="text-foreground">Stimmung:</strong> {imageAnalysis.mood}</p>
-                        <p><strong className="text-foreground">Stil:</strong> {imageAnalysis.style}</p>
-                        {imageAnalysis.tags.length > 0 && (
+                        <p><strong className="text-foreground">Stil:</strong> {imageAnalysis.style || imageAnalysis.suggestedStyle || '-'}</p>
+                        {imageAnalysis.tags && imageAnalysis.tags.length > 0 && (
                           <div className="flex flex-wrap gap-1 mt-2">
                             {imageAnalysis.tags.slice(0, 5).map((tag, i) => (
                               <span key={i} className="px-2 py-0.5 bg-secondary rounded-full text-xs">
