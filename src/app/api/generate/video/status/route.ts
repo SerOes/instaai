@@ -28,7 +28,31 @@ export async function GET(request: NextRequest) {
     // Handle Gemini Direct provider
     if (provider === "gemini") {
       try {
-        const result = await pollGeminiVideoStatus(taskId)
+        // Get Gemini API key from database first, fall back to env
+        const { decryptApiKey } = await import("@/lib/utils")
+        
+        const geminiApiKeyRecord = await prisma.apiKey.findFirst({
+          where: {
+            userId: session.user.id,
+            provider: "GEMINI",
+            isActive: true,
+          },
+        })
+
+        const geminiApiKey = geminiApiKeyRecord 
+          ? decryptApiKey(geminiApiKeyRecord.keyEncrypted)
+          : process.env.GEMINI_API_KEY
+
+        if (!geminiApiKey) {
+          return NextResponse.json({
+            taskId,
+            status: "failed",
+            error: "Kein Gemini API-Key gefunden",
+            provider: "gemini",
+          })
+        }
+
+        const result = await pollGeminiVideoStatus(taskId, geminiApiKey)
 
         if (result.error === "in_progress") {
           return NextResponse.json({

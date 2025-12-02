@@ -114,11 +114,25 @@ export async function POST(request: NextRequest) {
 
     // Check if this is a Gemini Direct model
     if (isGeminiDirectModel(data.modelId)) {
-      // Use Gemini Direct API
-      const geminiApiKey = process.env.GEMINI_API_KEY
+      // Use Gemini Direct API - get key from database first, fall back to env
+      const { decryptApiKey } = await import("@/lib/utils")
+      
+      // Try to get Gemini API key from database
+      const geminiApiKeyRecord = await prisma.apiKey.findFirst({
+        where: {
+          userId: session.user.id,
+          provider: "GEMINI",
+          isActive: true,
+        },
+      })
+
+      const geminiApiKey = geminiApiKeyRecord 
+        ? decryptApiKey(geminiApiKeyRecord.keyEncrypted)
+        : process.env.GEMINI_API_KEY
+
       if (!geminiApiKey) {
         return NextResponse.json({
-          error: "GEMINI_API_KEY nicht konfiguriert. Bitte in .env hinzufügen.",
+          error: "Kein Gemini API-Key gefunden. Bitte in den Einstellungen hinzufügen oder GEMINI_API_KEY in .env setzen.",
         }, { status: 400 })
       }
 
@@ -158,6 +172,7 @@ export async function POST(request: NextRequest) {
           imageBase64,
           imageMimeType,
           config: geminiConfig,
+          apiKey: geminiApiKey,
         })
 
         return NextResponse.json({

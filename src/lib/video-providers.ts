@@ -426,12 +426,12 @@ export interface GeminiVideoResult {
 }
 
 // Initialize Gemini client
-function getGeminiClient(): GoogleGenAI {
-  const apiKey = process.env.GEMINI_API_KEY
-  if (!apiKey) {
-    throw new Error('GEMINI_API_KEY environment variable is required')
+function getGeminiClient(apiKey?: string): GoogleGenAI {
+  const key = apiKey || process.env.GEMINI_API_KEY
+  if (!key) {
+    throw new Error('GEMINI_API_KEY is required - either pass it as parameter or set environment variable')
   }
-  return new GoogleGenAI({ apiKey })
+  return new GoogleGenAI({ apiKey: key })
 }
 
 // Start video generation with Gemini Direct
@@ -442,9 +442,10 @@ export async function startGeminiVideoGeneration(
     imageBase64?: string
     imageMimeType?: string
     config?: GeminiVideoConfig
+    apiKey?: string
   }
 ): Promise<{ operationName: string }> {
-  const ai = getGeminiClient()
+  const ai = getGeminiClient(options.apiKey)
   
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const generateOptions: any = {
@@ -481,9 +482,10 @@ export async function startGeminiVideoGeneration(
 
 // Poll for video generation completion
 export async function pollGeminiVideoStatus(
-  operationName: string
+  operationName: string,
+  apiKey?: string
 ): Promise<GeminiVideoResult> {
-  const ai = getGeminiClient()
+  const ai = getGeminiClient(apiKey)
   
   // Reconstruct operation object from name
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
