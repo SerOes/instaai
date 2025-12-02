@@ -130,6 +130,7 @@ export default function GenerateVideoPage() {
   const [isGenerating, setIsGenerating] = useState(false)
   const [generatedVideo, setGeneratedVideo] = useState<string | null>(null)
   const [taskId, setTaskId] = useState<string | null>(null)
+  const [taskProvider, setTaskProvider] = useState<string>('kie')
   const [generationStatus, setGenerationStatus] = useState<GenerationStatus | null>(null)
   const [error, setError] = useState<string | null>(null)
 
@@ -244,9 +245,9 @@ export default function GenerateVideoPage() {
   }
 
   // Poll for generation status
-  const pollStatus = useCallback(async (taskIdToPoll: string) => {
+  const pollStatus = useCallback(async (taskIdToPoll: string, provider: string) => {
     try {
-      const response = await fetch(`/api/generate/video/status?taskId=${encodeURIComponent(taskIdToPoll)}`)
+      const response = await fetch(`/api/generate/video/status?taskId=${encodeURIComponent(taskIdToPoll)}&provider=${provider}`)
       if (response.ok) {
         const status: GenerationStatus = await response.json()
         setGenerationStatus(status)
@@ -278,11 +279,11 @@ export default function GenerateVideoPage() {
   useEffect(() => {
     if (taskId && isGenerating) {
       // Initial poll
-      pollStatus(taskId)
+      pollStatus(taskId, taskProvider)
       
       // Poll every 5 seconds
       pollingIntervalRef.current = setInterval(() => {
-        pollStatus(taskId)
+        pollStatus(taskId, taskProvider)
       }, 5000)
     }
 
@@ -292,7 +293,7 @@ export default function GenerateVideoPage() {
         pollingIntervalRef.current = null
       }
     }
-  }, [taskId, isGenerating, pollStatus])
+  }, [taskId, taskProvider, isGenerating, pollStatus])
 
   // Analyze source image with Gemini
   const analyzeSourceImage = async (imageUrlToAnalyze: string) => {
@@ -525,6 +526,7 @@ export default function GenerateVideoPage() {
         setIsGenerating(false)
       } else if (data.status === "processing" && data.taskId) {
         setTaskId(data.taskId)
+        setTaskProvider(data.provider || 'kie')
         setGenerationStatus({
           status: 'processing',
           progress: 0

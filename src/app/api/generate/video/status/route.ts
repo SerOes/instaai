@@ -114,6 +114,8 @@ export async function GET(request: NextRequest) {
     // Query task status from KIE.ai
     const statusUrl = `${KIE_API.queryStatus}?taskId=${encodeURIComponent(taskId)}`
     
+    console.log("Querying KIE status:", statusUrl)
+    
     const response = await fetch(statusUrl, {
       method: "GET",
       headers: {
@@ -121,23 +123,50 @@ export async function GET(request: NextRequest) {
       },
     })
 
+    const responseText = await response.text()
+    console.log("KIE Status Response:", response.status, responseText.substring(0, 500))
+
     if (!response.ok) {
-      const errorText = await response.text()
-      console.error("KIE Status API Error:", response.status, errorText)
+      console.error("KIE Status API Error:", response.status, responseText)
       return NextResponse.json({
-        error: `Statusabfrage fehlgeschlagen: ${response.status}`,
-      }, { status: response.status })
+        taskId,
+        status: "failed",
+        error: `Statusabfrage fehlgeschlagen: ${response.status} - ${responseText.substring(0, 200)}`,
+      }, { status: 200 }) // Return 200 to prevent frontend crash
     }
 
-    const data: KieQueryStatusResponse = await response.json()
+    let data: KieQueryStatusResponse
+    try {
+      data = JSON.parse(responseText)
+    } catch (parseError) {
+      console.error("KIE Status JSON Parse Error:", parseError)
+      return NextResponse.json({
+        taskId,
+        status: "failed", 
+        error: "Ungültige API-Antwort",
+      }, { status: 200 })
+    }
 
     if (data.code !== 200) {
+      console.error("KIE API returned error code:", data.code, data.msg)
       return NextResponse.json({
+        taskId,
+        status: "failed",
         error: `KIE API Fehler: ${data.msg}`,
-      }, { status: 400 })
+      }, { status: 200 }) // Return 200 to allow frontend to handle gracefully
     }
 
     const taskData = data.data
+    
+    if (!taskData) {
+      console.error("KIE API returned no task data")
+      return NextResponse.json({
+        taskId,
+        status: "processing",
+        progress: 10,
+        error: "Warte auf Task-Daten...",
+      }, { status: 200 })
+    }
 
     // Map status to our format
     type TaskStatus = "processing" | "completed" | "failed"
@@ -187,6 +216,14 @@ export async function GET(request: NextRequest) {
 
   } catch (error) {
     console.error("Error checking video status:", error)
-    return NextResponse.json({ error: "Fehler bei der Statusabfrage" }, { status: 500 })
+    // Return 200 with error info to allow frontend to handle gracefully
+    const { searchParams } = new URL(request.url)
+    const taskId = searchParams.get("taskId") || "unknown"
+    return NextResponse.json({ 
+      taskId,
+      status: "processing",
+      progress: 5,
+      error: error instanceof Error ? error.message : "Fehler bei der Statusabfrage",
+    }, { status: 200 })
   }
 }

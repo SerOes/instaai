@@ -297,6 +297,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       status: "processing",
       taskId,
+      provider: model.provider, // Top-level for easy access in frontend
       message: "Video wird generiert. Nutzen Sie die Task-ID um den Status abzufragen.",
       model: {
         id: model.id,
