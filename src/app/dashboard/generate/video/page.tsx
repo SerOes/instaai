@@ -23,7 +23,8 @@ import {
   CheckCircle2,
   Layers,
   Plus,
-  Trash2
+  Trash2,
+  ChevronRight
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -144,6 +145,22 @@ export default function GenerateVideoPage() {
   const [galleryImages, setGalleryImages] = useState<GalleryImage[]>([])
   const [isLoadingGallery, setIsLoadingGallery] = useState(false)
   const [galleryPickerMode, setGalleryPickerMode] = useState<'single' | 'storyboard'>('single')
+
+  // Preset category expansion state
+  const [expandedCategories, setExpandedCategories] = useState<Set<string>>(new Set())
+
+  // Toggle category expansion
+  const toggleCategory = (category: string) => {
+    setExpandedCategories(prev => {
+      const next = new Set(prev)
+      if (next.has(category)) {
+        next.delete(category)
+      } else {
+        next.add(category)
+      }
+      return next
+    })
+  }
 
   // Get current selected model
   const selectedModel = videoModels.find(m => m.id === selectedModelId)
@@ -619,7 +636,7 @@ export default function GenerateVideoPage() {
       <div className="grid gap-6 lg:grid-cols-2">
         {/* Input Panel */}
         <div className="space-y-6">
-          {/* Presets - Now First and Prominent */}
+          {/* Presets - Collapsible Categories like Image Generation */}
           {presets.length > 0 && (
             <Card className="border-blue-500/20 bg-gradient-to-br from-blue-500/5 to-transparent backdrop-blur-xl">
               <CardHeader>
@@ -628,58 +645,91 @@ export default function GenerateVideoPage() {
                   1. Wähle ein Preset
                 </CardTitle>
                 <CardDescription className="text-muted-foreground">
-                  Starte mit einer optimierten Video-Vorlage
+                  Starte mit einer optimierten Vorlage - du kannst sie anpassen
                 </CardDescription>
               </CardHeader>
-              <CardContent className="space-y-4">
-                {Array.from(getPresetCategories()).map(([category, categoryPresets]) => (
-                  <div key={category} className="space-y-2">
-                    <p className="text-sm font-medium text-muted-foreground">
-                      {categoryLabels[category] || category}
-                    </p>
-                    <div className="grid grid-cols-1 gap-2">
-                      {categoryPresets.map((preset) => (
-                        <button
-                          key={preset.id}
-                          onClick={() => handlePresetSelect(preset.id)}
-                          className={`group relative flex flex-col items-start rounded-xl border p-4 text-left transition-all duration-200 ${
-                            selectedPreset === preset.id
-                              ? "border-blue-500 bg-blue-500/10 shadow-lg shadow-blue-500/20 ring-2 ring-blue-500/20"
-                              : "border-border/50 bg-secondary/20 hover:bg-secondary/40 hover:border-blue-500/30"
-                          }`}
-                        >
-                          <div className="flex items-center gap-2">
-                            <span className={`font-medium ${
-                              selectedPreset === preset.id ? "text-blue-500" : "text-foreground"
-                            }`}>
-                              {preset.name}
-                            </span>
-                            {preset.duration && (
-                              <span className="text-xs px-2 py-0.5 rounded-full bg-secondary text-muted-foreground">
-                                {preset.duration}s
-                              </span>
-                            )}
-                          </div>
-                          {preset.description && (
-                            <span className="text-xs text-muted-foreground mt-1">
-                              {preset.description}
-                            </span>
-                          )}
-                          {selectedPreset === preset.id && (
-                            <div className="absolute -right-1 -top-1 rounded-full bg-blue-500 p-1">
-                              <Check className="h-3 w-3 text-white" />
-                            </div>
-                          )}
-                        </button>
-                      ))}
+              <CardContent className="space-y-2">
+                {Array.from(getPresetCategories()).map(([category, categoryPresets]) => {
+                  const isExpanded = expandedCategories.has(category)
+                  const hasSelectedPreset = categoryPresets.some(p => p.id === selectedPreset)
+                  
+                  return (
+                    <div key={category} className="rounded-lg border border-border/50 overflow-hidden">
+                      {/* Category Header - Clickable */}
+                      <button
+                        onClick={() => toggleCategory(category)}
+                        className={`w-full flex items-center justify-between p-3 text-left transition-all duration-200 ${
+                          isExpanded || hasSelectedPreset
+                            ? 'bg-secondary/40'
+                            : 'bg-secondary/20 hover:bg-secondary/30'
+                        }`}
+                      >
+                        <div className="flex items-center gap-2">
+                          <ChevronRight className={`h-4 w-4 text-muted-foreground transition-transform duration-200 ${
+                            isExpanded ? 'rotate-90' : ''
+                          }`} />
+                          <span className="font-medium text-foreground">
+                            {categoryLabels[category] || category}
+                          </span>
+                          <span className="text-xs text-muted-foreground">
+                            ({categoryPresets.length})
+                          </span>
+                        </div>
+                        {hasSelectedPreset && !isExpanded && (
+                          <span className="text-xs px-2 py-0.5 rounded-full bg-blue-500/20 text-blue-400">
+                            Ausgewählt
+                          </span>
+                        )}
+                      </button>
+                      
+                      {/* Category Content - Collapsible */}
+                      {isExpanded && (
+                        <div className="p-2 space-y-2 bg-background/50">
+                          {categoryPresets.map((preset) => (
+                            <button
+                              key={preset.id}
+                              onClick={() => handlePresetSelect(preset.id)}
+                              className={`group relative w-full flex flex-col items-start rounded-lg border p-3 text-left transition-all duration-200 ${
+                                selectedPreset === preset.id
+                                  ? "border-blue-500 bg-blue-500/10 shadow-lg shadow-blue-500/20 ring-2 ring-blue-500/20"
+                                  : "border-border/50 bg-secondary/20 hover:bg-secondary/40 hover:border-blue-500/30"
+                              }`}
+                            >
+                              <div className="flex items-center gap-2 w-full">
+                                <span className={`font-medium ${
+                                  selectedPreset === preset.id ? "text-blue-500" : "text-foreground"
+                                }`}>
+                                  {preset.name}
+                                </span>
+                                {preset.duration && (
+                                  <span className="text-xs px-2 py-0.5 rounded-full bg-secondary text-muted-foreground">
+                                    {preset.duration}s
+                                  </span>
+                                )}
+                                {selectedPreset === preset.id && (
+                                  <Check className="h-4 w-4 text-blue-500 ml-auto" />
+                                )}
+                              </div>
+                              {preset.description && (
+                                <span className="text-xs text-muted-foreground mt-1">
+                                  {preset.description}
+                                </span>
+                              )}
+                            </button>
+                          ))}
+                        </div>
+                      )}
                     </div>
-                  </div>
-                ))}
+                  )
+                })}
+                
                 <Button
                   variant="ghost"
                   size="sm"
                   onClick={() => handlePresetSelect(null)}
-                  className={`w-full mt-2 ${!selectedPreset ? "text-blue-500" : "text-muted-foreground"}`}
+                  className={`w-full mt-2 ${
+                    !selectedPreset ? "text-blue-500" : "text-muted-foreground"
+                  }`}
                 >
                   Oder starte ohne Preset →
                 </Button>
