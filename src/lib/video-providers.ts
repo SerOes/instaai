@@ -466,7 +466,10 @@ export async function startGeminiVideoGeneration(
     generateOptions.config = {
       aspectRatio: options.config.aspectRatio || '16:9',
       negativePrompt: options.config.negativePrompt,
-      personGeneration: options.config.personGeneration || 'allow_all',
+      // Note: 'allow_all' is not supported, use 'allow_adult' instead
+      personGeneration: options.config.personGeneration === 'allow_all' 
+        ? 'allow_adult' 
+        : (options.config.personGeneration || 'allow_adult'),
     }
 
     // Note: durationSeconds and resolution are controlled by Gemini internally
