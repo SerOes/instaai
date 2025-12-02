@@ -18,9 +18,15 @@ import {
 // Extended schema for video generation
 const videoSchema = z.object({
   prompt: z.string().min(10, "Prompt muss mindestens 10 Zeichen haben"),
-  imageUrl: z.string().url().optional(),
-  tailImageUrl: z.string().url().optional(),
-  imageUrls: z.array(z.string().url()).max(3).optional(), // For Veo reference images
+  imageUrl: z.string().optional().refine(
+    (val) => !val || val.startsWith('/') || val.startsWith('http://') || val.startsWith('https://') || val.startsWith('data:'),
+    "Gültige Bild-URL oder relativer Pfad erforderlich"
+  ),
+  tailImageUrl: z.string().optional().refine(
+    (val) => !val || val.startsWith('/') || val.startsWith('http://') || val.startsWith('https://') || val.startsWith('data:'),
+    "Gültige Bild-URL oder relativer Pfad erforderlich"
+  ),
+  imageUrls: z.array(z.string()).max(3).optional(), // For Veo reference images
   presetId: z.string().optional(),
   aspectRatio: z.enum(["1:1", "9:16", "16:9"]).default("9:16"),
   duration: z.number().min(3).max(15).default(5),
@@ -32,6 +38,16 @@ const videoSchema = z.object({
   watermark: z.string().optional(),
   projectId: z.string().cuid().optional(),
 })
+
+// Helper to convert relative URLs to absolute URLs
+function toAbsoluteUrl(url: string | undefined): string | undefined {
+  if (!url) return undefined
+  if (url.startsWith('http://') || url.startsWith('https://') || url.startsWith('data:')) {
+    return url
+  }
+  const baseUrl = process.env.NEXTAUTH_URL || 'http://localhost:3000'
+  return `${baseUrl}${url.startsWith('/') ? '' : '/'}${url}`
+}
 
 export async function POST(request: NextRequest) {
   try {
@@ -112,7 +128,13 @@ export async function POST(request: NextRequest) {
 
       if (data.imageUrl) {
         try {
-          const imageResponse = await fetch(data.imageUrl)
+          // Convert relative URL to absolute URL
+          const baseUrl = process.env.NEXTAUTH_URL || 'http://localhost:3000'
+          const absoluteImageUrl = data.imageUrl.startsWith('/')
+            ? `${baseUrl}${data.imageUrl}`
+            : data.imageUrl
+          
+          const imageResponse = await fetch(absoluteImageUrl)
           const imageBuffer = await imageResponse.arrayBuffer()
           imageBase64 = Buffer.from(imageBuffer).toString('base64')
           imageMimeType = imageResponse.headers.get('content-type') || 'image/png'
@@ -170,7 +192,10 @@ export async function POST(request: NextRequest) {
 
     if (model.endpoint === KIE_API.veoGenerate) {
       // Veo models use special endpoint
-      const imageUrls = data.imageUrls || (data.imageUrl ? [data.imageUrl] : undefined)
+      // Convert relative URLs to absolute URLs for external API
+      const absoluteImageUrls = data.imageUrls?.map(url => toAbsoluteUrl(url)).filter(Boolean) as string[] | undefined
+      const absoluteImageUrl = toAbsoluteUrl(data.imageUrl)
+      const imageUrls = absoluteImageUrls || (absoluteImageUrl ? [absoluteImageUrl] : undefined)
       
       const payload = buildVeoPayload(model, {
         prompt: enhancedPrompt,
@@ -212,10 +237,11 @@ export async function POST(request: NextRequest) {
 
     } else {
       // Standard KIE.AI models
+      // Convert relative URLs to absolute URLs for external API
       const payload = buildKieStandardPayload(model, {
         prompt: enhancedPrompt,
-        imageUrl: data.imageUrl,
-        tailImageUrl: data.tailImageUrl,
+        imageUrl: toAbsoluteUrl(data.imageUrl),
+        tailImageUrl: toAbsoluteUrl(data.tailImageUrl),
         duration: data.duration,
         resolution: data.resolution,
         negativePrompt: data.negativePrompt,

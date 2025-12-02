@@ -306,7 +306,9 @@ export default function GenerateVideoPage() {
       })
       
       if (response.ok) {
-        const analysis = await response.json()
+        const data = await response.json()
+        // The API returns { analysis: {...}, message: "..." }
+        const analysis = data.analysis || data
         setImageAnalysis(analysis)
         
         // Auto-suggest aspect ratio based on analysis
