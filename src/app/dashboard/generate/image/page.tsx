@@ -22,7 +22,19 @@ import {
   ChevronRight,
   Save,
   Maximize2,
-  ExternalLink
+  ExternalLink,
+  Instagram,
+  Hash,
+  FileText,
+  Pencil,
+  Smile,
+  Minimize2,
+  Megaphone,
+  Heart,
+  Briefcase,
+  MessageCircle,
+  HelpCircle,
+  BookOpen
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -251,6 +263,17 @@ export default function GenerateImagePage() {
   const [isSaving, setIsSaving] = useState(false)
   const [showImagePreview, setShowImagePreview] = useState(false)
   const [savedSuccess, setSavedSuccess] = useState(false)
+  
+  // Instagram Content State
+  const [isGeneratingCaption, setIsGeneratingCaption] = useState(false)
+  const [instagramCaption, setInstagramCaption] = useState("")
+  const [instagramHashtags, setInstagramHashtags] = useState<string[]>([])
+  const [instagramFullText, setInstagramFullText] = useState("")
+  const [captionCopied, setCaptionCopied] = useState(false)
+  const [hashtagsCopied, setHashtagsCopied] = useState(false)
+  const [fullTextCopied, setFullTextCopied] = useState(false)
+  const [isRefiningCaption, setIsRefiningCaption] = useState(false)
+  const [captionEditMode, setCaptionEditMode] = useState(false)
   
   // Collapsible Categories State
   const [expandedCategories, setExpandedCategories] = useState<Set<string>>(new Set())
@@ -651,10 +674,160 @@ export default function GenerateImagePage() {
     }
   }
 
-  const handleCopyPrompt = () => {
-    navigator.clipboard.writeText(prompt)
-    setCopied(true)
-    setTimeout(() => setCopied(false), 2000)
+  const handleCopyPrompt = async () => {
+    const success = await copyToClipboard(prompt)
+    if (success) {
+      setCopied(true)
+      setTimeout(() => setCopied(false), 2000)
+    }
+  }
+
+  // Helper function to copy text to clipboard with fallback
+  const copyToClipboard = async (text: string): Promise<boolean> => {
+    if (!text) return false
+    
+    try {
+      // Try modern clipboard API first
+      if (navigator?.clipboard?.writeText) {
+        await navigator.clipboard.writeText(text)
+        return true
+      }
+      
+      // Fallback for older browsers or non-secure contexts
+      const textArea = document.createElement('textarea')
+      textArea.value = text
+      textArea.style.position = 'fixed'
+      textArea.style.left = '-999999px'
+      textArea.style.top = '-999999px'
+      document.body.appendChild(textArea)
+      textArea.focus()
+      textArea.select()
+      
+      const success = document.execCommand('copy')
+      document.body.removeChild(textArea)
+      return success
+    } catch (err) {
+      console.error('Copy failed:', err)
+      return false
+    }
+  }
+
+  // Generate Instagram caption and hashtags
+  const generateInstagramContent = async () => {
+    if (!generatedImage) {
+      setError("Bitte zuerst ein Bild generieren")
+      return
+    }
+    
+    setIsGeneratingCaption(true)
+    setError(null)
+    setInstagramCaption("")
+    setInstagramHashtags([])
+    setInstagramFullText("")
+    
+    try {
+      const response = await fetch("/api/generate/instagram-caption", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          imageUrl: generatedImage,
+          imageAnalysis: imageAnalysis || undefined,
+          prompt: prompt || undefined,
+          language: "de",
+        }),
+      })
+      
+      const data = await response.json()
+      
+      if (!response.ok) {
+        throw new Error(data.error || "Fehler bei der Caption-Generierung")
+      }
+      
+      setInstagramCaption(data.caption || "")
+      setInstagramHashtags(data.hashtags || [])
+      // Build fullText if not provided by API
+      const fullText = data.fullText || 
+        (data.caption + (data.hashtags?.length > 0 ? '\n\n' + data.hashtags.join(' ') : ''))
+      setInstagramFullText(fullText || "")
+      
+      if (data.brandContextUsed) {
+        console.log("Instagram-Text wurde mit deinem Marken-Kontext erstellt")
+      }
+    } catch (err) {
+      console.error("Instagram caption error:", err)
+      setError(err instanceof Error ? err.message : "Fehler bei der Caption-Generierung")
+    } finally {
+      setIsGeneratingCaption(false)
+    }
+  }
+  
+  // Copy functions for Instagram content
+  const handleCopyCaption = async () => {
+    if (!instagramCaption) return
+    const success = await copyToClipboard(instagramCaption)
+    if (success) {
+      setCaptionCopied(true)
+      setTimeout(() => setCaptionCopied(false), 2000)
+    }
+  }
+  
+  const handleCopyHashtags = async () => {
+    if (!instagramHashtags || instagramHashtags.length === 0) return
+    const success = await copyToClipboard(instagramHashtags.join(" "))
+    if (success) {
+      setHashtagsCopied(true)
+      setTimeout(() => setHashtagsCopied(false), 2000)
+    }
+  }
+  
+  const handleCopyFullText = async () => {
+    // Build full text from caption + hashtags if fullText is empty
+    const textToCopy = instagramFullText || 
+      (instagramCaption + (instagramHashtags.length > 0 ? '\n\n' + instagramHashtags.join(' ') : ''))
+    if (!textToCopy) return
+    const success = await copyToClipboard(textToCopy)
+    if (success) {
+      setFullTextCopied(true)
+      setTimeout(() => setFullTextCopied(false), 2000)
+    }
+  }
+
+  // Refine caption with AI tools
+  type RefineAction = "shorten" | "lengthen" | "more_emojis" | "less_emojis" | "more_cta" | "more_emotion" | "professional" | "casual" | "question" | "story"
+  
+  const refineCaption = async (action: RefineAction) => {
+    if (!instagramCaption) return
+    
+    setIsRefiningCaption(true)
+    
+    try {
+      const response = await fetch("/api/generate/instagram-caption/refine", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          caption: instagramCaption,
+          action,
+        }),
+      })
+      
+      const data = await response.json()
+      
+      if (!response.ok) {
+        throw new Error(data.error || "Fehler bei der Bearbeitung")
+      }
+      
+      setInstagramCaption(data.caption)
+      // Update full text with new caption
+      const newFullText = data.caption + "\n\n" + instagramHashtags.join(" ")
+      setInstagramFullText(newFullText)
+    } catch (err) {
+      console.error("Refine caption error:", err)
+      setError(err instanceof Error ? err.message : "Fehler bei der Bearbeitung")
+    } finally {
+      setIsRefiningCaption(false)
+    }
   }
 
   // All possible aspect ratios with descriptions
@@ -1511,6 +1684,276 @@ export default function GenerateImagePage() {
                   </Button>
                 </div>
               </div>
+            )}
+            
+            {/* Instagram Content Section */}
+            {generatedImage && (
+              <Card className="border-pink-500/30 bg-gradient-to-br from-pink-500/5 via-purple-500/5 to-transparent">
+                <CardHeader className="pb-3">
+                  <CardTitle className="flex items-center gap-2 text-base">
+                    <Instagram className="h-5 w-5 text-pink-500" />
+                    Instagram Content
+                  </CardTitle>
+                  <CardDescription className="text-xs">
+                    Generiere Caption & Hashtags basierend auf deinem Marken-Kontext
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  {/* Generate Button */}
+                  {!instagramCaption && !isGeneratingCaption && (
+                    <Button
+                      onClick={generateInstagramContent}
+                      className="w-full bg-gradient-to-r from-pink-500 to-purple-500 hover:from-pink-600 hover:to-purple-600 text-white"
+                      disabled={isGeneratingCaption}
+                    >
+                      <Instagram className="mr-2 h-4 w-4" />
+                      Für Instagram analysieren
+                    </Button>
+                  )}
+                  
+                  {/* Loading State */}
+                  {isGeneratingCaption && (
+                    <div className="flex flex-col items-center justify-center py-6">
+                      <div className="relative">
+                        <Loader2 className="h-8 w-8 text-pink-500 animate-spin" />
+                        <Instagram className="h-4 w-4 text-pink-500 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2" />
+                      </div>
+                      <p className="text-sm text-muted-foreground mt-3">
+                        Generiere Instagram-Content...
+                      </p>
+                      <p className="text-xs text-muted-foreground/70 mt-1">
+                        Mit deinem Marken-Kontext
+                      </p>
+                    </div>
+                  )}
+                  
+                  {/* Generated Content */}
+                  {instagramCaption && !isGeneratingCaption && (
+                    <div className="space-y-4">
+                      {/* Caption */}
+                      <div className="space-y-2">
+                        <div className="flex items-center justify-between">
+                          <Label className="text-sm flex items-center gap-1.5">
+                            <FileText className="h-3.5 w-3.5 text-pink-500" />
+                            Caption
+                          </Label>
+                          <div className="flex items-center gap-1">
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => setCaptionEditMode(!captionEditMode)}
+                              className="h-7 px-2 text-xs"
+                              title={captionEditMode ? "Bearbeitung beenden" : "Bearbeiten"}
+                            >
+                              <Pencil className={`h-3.5 w-3.5 ${captionEditMode ? 'text-pink-500' : ''}`} />
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={handleCopyCaption}
+                              className="h-7 px-2 text-xs"
+                            >
+                              {captionCopied ? (
+                                <Check className="h-3.5 w-3.5 text-green-500" />
+                              ) : (
+                                <Copy className="h-3.5 w-3.5" />
+                              )}
+                            </Button>
+                          </div>
+                        </div>
+                        
+                        {/* Editable or Static Caption */}
+                        {captionEditMode ? (
+                          <Textarea
+                            value={instagramCaption}
+                            onChange={(e) => {
+                              setInstagramCaption(e.target.value)
+                              setInstagramFullText(e.target.value + "\n\n" + instagramHashtags.join(" "))
+                            }}
+                            className="min-h-[120px] bg-secondary/30 border-pink-500/30 focus:border-pink-500/50 text-sm"
+                            placeholder="Caption bearbeiten..."
+                          />
+                        ) : (
+                          <div className="bg-secondary/30 rounded-lg p-3 text-sm whitespace-pre-wrap border border-border/30">
+                            {instagramCaption}
+                          </div>
+                        )}
+                        
+                        {/* AI Refine Tools */}
+                        <div className="space-y-2">
+                          <Label className="text-xs text-muted-foreground flex items-center gap-1.5">
+                            <Wand2 className="h-3 w-3" />
+                            KI-Werkzeuge
+                          </Label>
+                          <div className="flex flex-wrap gap-1.5">
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => refineCaption("shorten")}
+                              disabled={isRefiningCaption}
+                              className="h-7 text-xs px-2 border-border/50 hover:bg-pink-500/10 hover:border-pink-500/30"
+                            >
+                              <Minimize2 className="h-3 w-3 mr-1" />
+                              Kürzer
+                            </Button>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => refineCaption("lengthen")}
+                              disabled={isRefiningCaption}
+                              className="h-7 text-xs px-2 border-border/50 hover:bg-pink-500/10 hover:border-pink-500/30"
+                            >
+                              <Maximize2 className="h-3 w-3 mr-1" />
+                              Länger
+                            </Button>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => refineCaption("more_emojis")}
+                              disabled={isRefiningCaption}
+                              className="h-7 text-xs px-2 border-border/50 hover:bg-pink-500/10 hover:border-pink-500/30"
+                            >
+                              <Smile className="h-3 w-3 mr-1" />
+                              +Emoji
+                            </Button>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => refineCaption("more_cta")}
+                              disabled={isRefiningCaption}
+                              className="h-7 text-xs px-2 border-border/50 hover:bg-pink-500/10 hover:border-pink-500/30"
+                            >
+                              <Megaphone className="h-3 w-3 mr-1" />
+                              +CTA
+                            </Button>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => refineCaption("more_emotion")}
+                              disabled={isRefiningCaption}
+                              className="h-7 text-xs px-2 border-border/50 hover:bg-pink-500/10 hover:border-pink-500/30"
+                            >
+                              <Heart className="h-3 w-3 mr-1" />
+                              Emotionaler
+                            </Button>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => refineCaption("professional")}
+                              disabled={isRefiningCaption}
+                              className="h-7 text-xs px-2 border-border/50 hover:bg-pink-500/10 hover:border-pink-500/30"
+                            >
+                              <Briefcase className="h-3 w-3 mr-1" />
+                              Professioneller
+                            </Button>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => refineCaption("casual")}
+                              disabled={isRefiningCaption}
+                              className="h-7 text-xs px-2 border-border/50 hover:bg-pink-500/10 hover:border-pink-500/30"
+                            >
+                              <MessageCircle className="h-3 w-3 mr-1" />
+                              Lockerer
+                            </Button>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => refineCaption("question")}
+                              disabled={isRefiningCaption}
+                              className="h-7 text-xs px-2 border-border/50 hover:bg-pink-500/10 hover:border-pink-500/30"
+                            >
+                              <HelpCircle className="h-3 w-3 mr-1" />
+                              Als Frage
+                            </Button>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => refineCaption("story")}
+                              disabled={isRefiningCaption}
+                              className="h-7 text-xs px-2 border-border/50 hover:bg-pink-500/10 hover:border-pink-500/30"
+                            >
+                              <BookOpen className="h-3 w-3 mr-1" />
+                              Story
+                            </Button>
+                          </div>
+                          {isRefiningCaption && (
+                            <div className="flex items-center gap-2 text-xs text-pink-500">
+                              <Loader2 className="h-3 w-3 animate-spin" />
+                              Bearbeite Caption...
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                      
+                      {/* Hashtags */}
+                      {instagramHashtags.length > 0 && (
+                        <div className="space-y-2">
+                          <div className="flex items-center justify-between">
+                            <Label className="text-sm flex items-center gap-1.5">
+                              <Hash className="h-3.5 w-3.5 text-purple-500" />
+                              Hashtags ({instagramHashtags.length})
+                            </Label>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={handleCopyHashtags}
+                              className="h-7 px-2 text-xs"
+                            >
+                              {hashtagsCopied ? (
+                                <Check className="h-3.5 w-3.5 text-green-500" />
+                              ) : (
+                                <Copy className="h-3.5 w-3.5" />
+                              )}
+                            </Button>
+                          </div>
+                          <div className="bg-secondary/30 rounded-lg p-3 text-xs text-muted-foreground border border-border/30 flex flex-wrap gap-1">
+                            {instagramHashtags.map((tag, i) => (
+                              <span 
+                                key={i} 
+                                className="bg-purple-500/10 text-purple-400 px-1.5 py-0.5 rounded"
+                              >
+                                {tag}
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                      
+                      {/* Copy Full Text Button */}
+                      <div className="flex gap-2 pt-2">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={handleCopyFullText}
+                          className="flex-1 border-pink-500/30 hover:bg-pink-500/10"
+                        >
+                          {fullTextCopied ? (
+                            <>
+                              <Check className="mr-2 h-4 w-4 text-green-500" />
+                              Kopiert!
+                            </>
+                          ) : (
+                            <>
+                              <Copy className="mr-2 h-4 w-4" />
+                              Alles kopieren
+                            </>
+                          )}
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={generateInstagramContent}
+                          className="border-border/50 hover:bg-secondary/50"
+                        >
+                          <RefreshCw className="mr-2 h-4 w-4" />
+                          Neu
+                        </Button>
+                      </div>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
             )}
             
             {/* Hidden file input for preview upload */}
