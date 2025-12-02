@@ -2,23 +2,38 @@ import { NextRequest, NextResponse } from "next/server"
 import { auth } from "@/lib/auth"
 import prisma from "@/lib/prisma"
 import { z } from "zod"
+import {
+  getVideoModel,
+  VIDEO_MODELS,
+  KIE_API,
+  buildKieStandardPayload,
+  buildVeoPayload,
+  type KieCreateTaskResponse,
+  type VeoGenerateResponse,
+} from "@/lib/video-providers"
 
+// Extended schema for video generation
 const videoSchema = z.object({
   prompt: z.string().min(10, "Prompt muss mindestens 10 Zeichen haben"),
   imageUrl: z.string().url().optional(),
-  style: z.string().optional(),
+  tailImageUrl: z.string().url().optional(),
+  imageUrls: z.array(z.string().url()).max(3).optional(), // For Veo reference images
   presetId: z.string().optional(),
-  aspectRatio: z.enum(["1:1", "4:5", "9:16", "16:9"]).default("9:16"),
-  duration: z.enum(["3", "5", "10"]).default("5"),
-  model: z.enum(["kie-video-standard", "kie-video-premium"]).default("kie-video-standard"),
+  aspectRatio: z.enum(["1:1", "9:16", "16:9"]).default("9:16"),
+  duration: z.number().min(3).max(15).default(5),
+  modelId: z.string().default("veo-3-1-fast"),
+  resolution: z.enum(["480p", "720p", "1080p"]).optional(),
+  negativePrompt: z.string().optional(),
+  cfgScale: z.number().min(0).max(1).optional(),
+  enableTranslation: z.boolean().optional(),
+  watermark: z.string().optional(),
   projectId: z.string().cuid().optional(),
-  motion: z.enum(["subtle", "moderate", "dynamic"]).default("moderate"),
 })
 
 export async function POST(request: NextRequest) {
   try {
     const session = await auth()
-    
+
     if (!session?.user?.id) {
       return NextResponse.json({ error: "Nicht authentifiziert" }, { status: 401 })
     }
@@ -26,12 +41,21 @@ export async function POST(request: NextRequest) {
     const body = await request.json()
     const data = videoSchema.parse(body)
 
-    // Get user with systemPrompt and API key for KIE.ai
+    // Get the selected model
+    const model = getVideoModel(data.modelId)
+    if (!model) {
+      return NextResponse.json({
+        error: `Unbekanntes Video-Modell: ${data.modelId}. Verfügbare Modelle: ${VIDEO_MODELS.map(m => m.id).join(", ")}`,
+      }, { status: 400 })
+    }
+
+    // Get user with systemPrompt
     const user = await prisma.user.findUnique({
       where: { id: session.user.id },
       select: { systemPrompt: true },
     })
 
+    // Get API key for the provider
     const apiKey = await prisma.apiKey.findFirst({
       where: {
         userId: session.user.id,
@@ -41,8 +65,8 @@ export async function POST(request: NextRequest) {
     })
 
     if (!apiKey) {
-      return NextResponse.json({ 
-        error: "Kein aktiver KIE.ai API-Schlüssel gefunden. Bitte fügen Sie einen in den Einstellungen hinzu." 
+      return NextResponse.json({
+        error: "Kein aktiver KIE.ai API-Schlüssel gefunden. Bitte fügen Sie einen in den Einstellungen hinzu.",
       }, { status: 400 })
     }
 
@@ -50,19 +74,17 @@ export async function POST(request: NextRequest) {
     const { decryptApiKey } = await import("@/lib/utils")
     const kieKey = decryptApiKey(apiKey.keyEncrypted)
 
-    // Build enhanced prompt with preset and system prompt (Veo 3.1 style)
+    // Build enhanced prompt with preset and system prompt
     let enhancedPrompt = data.prompt
-    let styleUsed = data.style
 
     // Apply preset template if selected
     if (data.presetId) {
       const preset = await prisma.aiPreset.findUnique({
         where: { id: data.presetId },
       })
-      
-      if (preset && preset.promptTemplate) {
+
+      if (preset?.promptTemplate) {
         enhancedPrompt = `${preset.promptTemplate}\n\n${data.prompt}`
-        styleUsed = preset.name
       }
     }
 
@@ -71,135 +93,147 @@ export async function POST(request: NextRequest) {
       enhancedPrompt = `Brand Guidelines:\n${user.systemPrompt}\n\n${enhancedPrompt}`
     }
 
-    // Motion intensity descriptions for the prompt
-    const motionDescriptions = {
-      subtle: "with very subtle, gentle movements",
-      moderate: "with natural, flowing movements",
-      dynamic: "with dynamic, energetic movements",
-    }
+    // Build the appropriate payload based on model
+    let response: Response
+    let taskId: string
 
-    // Enhance prompt with motion description
-    enhancedPrompt = `${enhancedPrompt} ${motionDescriptions[data.motion]}`
+    if (model.endpoint === KIE_API.veoGenerate) {
+      // Veo models use special endpoint
+      const imageUrls = data.imageUrls || (data.imageUrl ? [data.imageUrl] : undefined)
+      
+      const payload = buildVeoPayload(model, {
+        prompt: enhancedPrompt,
+        imageUrls,
+        aspectRatio: data.aspectRatio,
+        duration: data.duration,
+        enableTranslation: data.enableTranslation,
+        watermark: data.watermark,
+      })
 
-    // Get resolution based on aspect ratio
-    const resolutions = {
-      "1:1": { width: 1024, height: 1024 },
-      "4:5": { width: 1024, height: 1280 },
-      "9:16": { width: 768, height: 1365 },
-      "16:9": { width: 1365, height: 768 },
-    }
+      console.log("Veo API Request:", JSON.stringify(payload, null, 2))
 
-    const resolution = resolutions[data.aspectRatio]
+      response = await fetch(KIE_API.veoGenerate, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${kieKey}`,
+        },
+        body: JSON.stringify(payload),
+      })
 
-    // Call KIE.ai API for video generation
-    // Note: This is a placeholder - actual KIE.ai API endpoint and format may vary
-    const kiePayload: Record<string, unknown> = {
-      prompt: enhancedPrompt,
-      model: data.model,
-      width: resolution.width,
-      height: resolution.height,
-      duration: parseInt(data.duration),
-      style: styleUsed,
-      motion_intensity: data.motion,
-    }
-
-    // If an image URL is provided, use image-to-video mode
-    if (data.imageUrl) {
-      kiePayload.image_url = data.imageUrl
-      kiePayload.mode = "image-to-video"
-    }
-
-    const kieResponse = await fetch("https://api.kie.ai/v1/videos/generate", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${kieKey}`,
-      },
-      body: JSON.stringify(kiePayload),
-    })
-
-    if (!kieResponse.ok) {
-      const errorData = await kieResponse.json().catch(() => ({}))
-      console.error("KIE.ai API Error:", errorData)
-      return NextResponse.json({ 
-        error: "Fehler bei der Videogenerierung. Bitte überprüfen Sie Ihren API-Schlüssel und versuchen Sie es erneut." 
-      }, { status: 500 })
-    }
-
-    const kieData = await kieResponse.json()
-    
-    // Video generation is typically async - return job ID for polling
-    const jobId = kieData.job_id || kieData.id
-    const videoUrl = kieData.video_url || kieData.data?.url
-
-    // If video is ready immediately
-    if (videoUrl) {
-      // Save to project if projectId is provided
-      if (data.projectId) {
-        const project = await prisma.mediaProject.findFirst({
-          where: {
-            id: data.projectId,
-            userId: session.user.id,
-          },
-        })
-
-        if (project) {
-          await prisma.mediaProject.update({
-            where: { id: data.projectId },
-            data: {
-              fileUrl: videoUrl,
-              prompt: data.prompt,
-              style: styleUsed,
-              aspectRatio: data.aspectRatio,
-              model: data.model,
-              provider: "KIE",
-              metadata: JSON.stringify({
-                duration: data.duration,
-                motion: data.motion,
-              }),
-              updatedAt: new Date(),
-            },
-          })
-        }
+      if (!response.ok) {
+        const errorText = await response.text()
+        console.error("Veo API Error:", response.status, errorText)
+        return NextResponse.json({
+          error: `Veo API Fehler: ${response.status} - ${errorText}`,
+        }, { status: response.status })
       }
 
-      return NextResponse.json({ 
-        status: "completed",
-        videoUrl,
-        prompt: data.prompt,
-        style: styleUsed,
-        aspectRatio: data.aspectRatio,
+      const veoData: VeoGenerateResponse = await response.json()
+      
+      if (veoData.code !== 200) {
+        return NextResponse.json({
+          error: `Veo API Fehler: ${veoData.msg}`,
+        }, { status: 400 })
+      }
+
+      taskId = veoData.data.taskId
+
+    } else {
+      // Standard KIE.AI models
+      const payload = buildKieStandardPayload(model, {
+        prompt: enhancedPrompt,
+        imageUrl: data.imageUrl,
+        tailImageUrl: data.tailImageUrl,
         duration: data.duration,
-        model: data.model,
-        resolution,
+        resolution: data.resolution,
+        negativePrompt: data.negativePrompt,
+        cfgScale: data.cfgScale,
       })
+
+      console.log("KIE API Request:", JSON.stringify(payload, null, 2))
+
+      response = await fetch(KIE_API.createTask, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${kieKey}`,
+        },
+        body: JSON.stringify(payload),
+      })
+
+      if (!response.ok) {
+        const errorText = await response.text()
+        console.error("KIE API Error:", response.status, errorText)
+        return NextResponse.json({
+          error: `KIE API Fehler: ${response.status} - ${errorText}`,
+        }, { status: response.status })
+      }
+
+      const kieData: KieCreateTaskResponse = await response.json()
+      
+      if (kieData.code !== 200) {
+        return NextResponse.json({
+          error: `KIE API Fehler: ${kieData.msg}`,
+        }, { status: 400 })
+      }
+
+      taskId = kieData.data.taskId
     }
 
-    // If video is being processed, return job ID
-    if (jobId) {
-      return NextResponse.json({ 
-        status: "processing",
-        jobId,
-        message: "Video wird generiert. Bitte warten Sie und überprüfen Sie den Status mit der Job-ID.",
+    // Return the task ID for polling
+    return NextResponse.json({
+      status: "processing",
+      taskId,
+      message: "Video wird generiert. Nutzen Sie die Task-ID um den Status abzufragen.",
+      model: {
+        id: model.id,
+        name: model.name,
+        provider: model.provider,
+      },
+      parameters: {
         prompt: data.prompt,
-        style: styleUsed,
         aspectRatio: data.aspectRatio,
         duration: data.duration,
-        model: data.model,
-        resolution,
-      })
-    }
+        resolution: data.resolution,
+      },
+      projectId: data.projectId,
+    })
 
-    return NextResponse.json({ 
-      error: "Unerwartete Antwort von der KIE.ai API" 
-    }, { status: 500 })
   } catch (error) {
     console.error("Error generating video:", error)
-    
+
     if (error instanceof z.ZodError) {
       return NextResponse.json({ error: error.issues[0].message }, { status: 400 })
     }
 
     return NextResponse.json({ error: "Fehler bei der Videogenerierung" }, { status: 500 })
+  }
+}
+
+// GET: List available video models
+export async function GET() {
+  try {
+    const session = await auth()
+
+    if (!session?.user?.id) {
+      return NextResponse.json({ error: "Nicht authentifiziert" }, { status: 401 })
+    }
+
+    // Return available models with their features
+    const models = VIDEO_MODELS.map(model => ({
+      id: model.id,
+      name: model.name,
+      description: model.description,
+      provider: model.provider,
+      features: model.features,
+      pricing: model.pricing,
+    }))
+
+    return NextResponse.json({ models })
+
+  } catch (error) {
+    console.error("Error fetching video models:", error)
+    return NextResponse.json({ error: "Fehler beim Laden der Modelle" }, { status: 500 })
   }
 }

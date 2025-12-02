@@ -529,169 +529,469 @@ Markenbezug: Neutraler Standard, lässt das Produkt für sich sprechen.`,
 ]
 
 // ================== VIDEO PRESETS ==================
+// Based on Veo 3.1 Prompt Guide from Google
+// Optimized for Instagram Reels, Stories, and Brand Content
 
 export const VIDEO_PRESETS: VideoPreset[] = [
+  // ========== TEASER CATEGORY (5) ==========
   {
-    id: 'product-teaser-reel',
-    name: 'Produkt-Teaser Reel',
-    description: '4-6 Sekunden, Close-ups, schnelle Cuts, CTA-Overlay',
+    id: 'product-reveal-teaser',
+    name: 'Produkt-Reveal',
+    description: 'Dramatische Enthüllung mit Spannung und Impact',
     category: 'teaser',
-    promptTemplate: `Cinematography: Schnelle Sequenz aus 3-4 schnellen Schnitten, beginnend mit einem Close-up des Produkts, dann ein kurzer Kameraschwenk und ein finaler hero shot.
-Subject: Ein [PRODUKTNAME] im Vordergrund.
-Action: Leichte Drehung des Produkts oder Zoom-in, um Details wie Textur oder Personalisierung zu zeigen.
-Context: Sauberer Hintergrund in Markenfarben mit leichtem Bokeh; eventuell ein kurzer Shot, wo das Produkt in einer Hand gehalten wird.
-Style & Ambiance: Moderner, hochwertiger Look, helle, freundliche Stimmung, leichte Glanzlichter auf dem Produkt, keine Unordnung.
-Audio: Treibende, moderne Hintergrundmusik ohne Text, Tempo passend zur Schnittgeschwindigkeit.`,
-    duration: 5,
-    format: '9:16',
-    audioType: 'music',
-    tags: ['reel', 'product', 'teaser', 'dynamic'],
-  },
-  {
-    id: 'before-after-reel',
-    name: 'Before/After Reel',
-    description: 'Split-Screen oder Sequenz für Transformationen',
-    category: 'beforeafter',
-    promptTemplate: `Cinematography: Side-by-side Split-Screen oder nacheinander; zuerst "Before", dann "After", mit einem sanften Übergang oder einem schnellen Wipe-Effekt.
-Subject: Dasselbe Produkt oder derselbe Raum in zwei Zuständen (vorher / nachher).
-Action: Langsame Kamerafahrt von links nach rechts oder ein leichtes Zoom-in bei beiden Szenen.
-Context: Konsistente Umgebung, damit der Unterschied zwischen Before und After klar sichtbar ist.
-Style & Ambiance: Deutlich sichtbarer Qualitätsunterschied: Before eher neutral/unscheinbar, After hell, aufgeräumt, professionell.
-Audio: Ruhige Musik, ein kleiner "Whoosh"-Sound beim Übergang von Before zu After.`,
+    promptTemplate: `Cinematography: Start with a tight close-up on a mysterious shadow or silhouette, slowly pulling back to reveal [PRODUKTNAME] in full glory. Final hero shot with subtle product rotation.
+Subject: [PRODUKTNAME] as the star, emerging from darkness or unveiling dramatically.
+Action: Slow reveal building anticipation - shadow to light transition, fabric drop, or fog clearing.
+Context: Dark, moody background transitioning to bright, clean product spotlight.
+Style & Ambiance: Cinematic, dramatic lighting, high contrast, premium commercial feel. Slow motion elements.
+Camera: Start macro/close-up, dolly back to medium shot, end with beauty shot.
+Audio: Building tension music, dramatic reveal sound, modern ambient beat after reveal.`,
     duration: 6,
     format: '9:16',
     audioType: 'music',
-    tags: ['reel', 'before-after', 'transformation', 'comparison'],
+    tags: ['reveal', 'dramatic', 'launch', 'premium', 'cinematic'],
   },
   {
-    id: 'story-teaser',
-    name: 'Story-Teaser',
-    description: 'Großer Text, emotionaler Shot für Stories',
-    category: 'story',
-    promptTemplate: `Cinematography: Langsamer Zoom oder subtile Kamerabewegung, fokussiert auf emotionalen Moment.
-Subject: Hauptperson oder Produkt in emotionaler Situation.
-Action: Subtile, ruhige Bewegung - ein Lächeln, eine sanfte Geste.
-Context: Warme, einladende Umgebung mit weichem Licht.
-Style & Ambiance: Emotional, warm, einladend, cinematischer Look mit shallow depth of field.
-Audio: Sanfte, emotionale Hintergrundmusik, keine Dialoge.
-Text Overlay: Große, gut lesbare Typografie mit emotionaler Botschaft.`,
+    id: 'coming-soon-teaser',
+    name: 'Coming Soon',
+    description: 'Geheimnisvoller Teaser für neue Produkte',
+    category: 'teaser',
+    promptTemplate: `Cinematography: Quick cuts between abstract shapes, blurred product glimpses, and typography reveals.
+Subject: Hints of [PRODUKTNAME] - partial views, silhouettes, colors, textures without full reveal.
+Action: Fleeting glimpses, quick zooms, mysterious movements creating curiosity.
+Context: Dark, atmospheric environment with strategic light beams highlighting hints.
+Style & Ambiance: Mysterious, intriguing, premium. Deep shadows, strategic lighting, film noir influence.
+Camera: Rapid cuts, shallow depth of field, rack focus effects, lens flares.
+Audio: Suspenseful ambient music, whoosh transitions, subtle bass drops.
+Text Overlay: "COMING SOON" reveal at the end with brand styling.`,
+    duration: 5,
+    format: '9:16',
+    audioType: 'music',
+    tags: ['teaser', 'mystery', 'launch', 'anticipation', 'coming-soon'],
+  },
+  {
+    id: 'launch-countdown',
+    name: 'Launch-Countdown',
+    description: 'Countdown-Animation für Produktlaunches',
+    category: 'teaser',
+    promptTemplate: `Cinematography: Dynamic countdown sequence with energetic transitions between numbers.
+Subject: Bold countdown numbers (3, 2, 1) transitioning to [PRODUKTNAME] reveal.
+Action: Numbers animate in dramatically, product appears on final beat.
+Context: Energetic, colorful background with particle effects and brand colors.
+Style & Ambiance: Exciting, urgent, celebratory. High energy, bold graphics, festival vibes.
+Camera: Quick zooms, rotation, dynamic angles on each number.
+Audio: Building beat drops on each number, explosive sound on reveal, celebratory music.
+Text Overlay: Countdown numbers large and animated, product name on reveal.`,
+    duration: 5,
+    format: '9:16',
+    audioType: 'music',
+    tags: ['countdown', 'launch', 'exciting', 'dynamic', 'celebration'],
+  },
+  {
+    id: 'feature-spotlight',
+    name: 'Feature-Spotlight',
+    description: 'Ein besonderes Feature dramatisch hervorheben',
+    category: 'teaser',
+    promptTemplate: `Cinematography: Extreme close-up on [FEATURE] with slow pull to context shot.
+Subject: Specific feature or detail of [PRODUKTNAME] - texture, mechanism, unique element.
+Action: Macro detail shot, slow rotation to show 3D quality, zoom out to full product.
+Context: Clean studio environment, spotlight on the feature, rest softly lit.
+Style & Ambiance: Technical but beautiful, Apple-style product photography, precision feel.
+Camera: Macro lens extreme close-up, rack focus, smooth dolly movement.
+Audio: Subtle ambient tones, soft click or mechanical sounds if relevant.
+Text Overlay: Feature name/benefit appearing subtly during reveal.`,
     duration: 4,
     format: '9:16',
-    audioType: 'music',
-    tags: ['story', 'emotional', 'teaser', 'branding'],
-  },
-  {
-    id: 'product-showcase',
-    name: 'Produkt-Showcase',
-    description: '360° Produktpräsentation mit Details',
-    category: 'brand',
-    promptTemplate: `Cinematography: Smooth 360-degree rotation around the product, with occasional close-up cuts to show details.
-Subject: [PRODUKTNAME] auf einem Präsentationstisch oder schwebendem Display.
-Action: Kontinuierliche, langsame Drehung mit Detailaufnahmen.
-Context: Sauberes Studio-Setting mit professioneller Beleuchtung.
-Style & Ambiance: Premium, professionell, produktfokussiert, elegantes Lighting.
-Audio: Elegante, dezente Hintergrundmusik.`,
-    duration: 8,
-    format: '1:1',
-    audioType: 'music',
-    tags: ['product', 'showcase', '360', 'premium'],
-  },
-  {
-    id: 'unboxing-teaser',
-    name: 'Unboxing-Teaser',
-    description: 'Kurzes Unboxing-Video für Spannung',
-    category: 'teaser',
-    promptTemplate: `Cinematography: Close-up auf Hände, die eine Verpackung öffnen, dann reveal shot des Produkts.
-Subject: Hands opening a branded package to reveal [PRODUKTNAME].
-Action: Langsames, bewusstes Auspacken mit Fokus auf der Spannung des Reveals.
-Context: Sauberer Tisch oder Oberfläche, neutraler Hintergrund.
-Style & Ambiance: ASMR-like quality, satisfying movements, premium feel.
-Audio: Leise ASMR-artige Geräusche (Papier, Verpackung), sanfte Hintergrundmusik.`,
-    duration: 6,
-    format: '9:16',
     audioType: 'ambient',
-    tags: ['unboxing', 'reveal', 'teaser', 'satisfying'],
+    tags: ['feature', 'detail', 'quality', 'premium', 'technical'],
   },
-  // ========== NEW VIDEO PRESETS ==========
   {
-    id: 'customer-review-reel',
-    name: 'Kunden-Review Reel',
-    description: 'Animierte Kundenbewertung als kurzes Reel',
-    category: 'brand',
-    promptTemplate: `Cinematography: Statische oder leichte Zoom-Bewegung, Text-Animationen im Fokus.
-Subject: Stilisierter Review-Screen mit Sternebewertung und Kundenzitat.
-Action: Text erscheint animiert, Sterne leuchten auf, Produkt-Shot am Ende.
-Context: Eleganter Hintergrund in Markenfarben, dezente Partikel oder Lichteffekte.
-Style & Ambiance: Modern, vertrauensbildend, professionell, cleane Typografie.
-Audio: Upbeat aber subtile Hintergrundmusik, optional Whoosh-Sounds bei Text-Animationen.`,
+    id: 'flash-sale-urgent',
+    name: 'Flash Sale',
+    description: 'Dringliche Sale-Ankündigung mit Countdown',
+    category: 'teaser',
+    promptTemplate: `Cinematography: Fast-paced cuts, pulsing zoom effects, flashing elements creating urgency.
+Subject: [PRODUKTNAME] with bold sale percentage, countdown timer graphic.
+Action: Products flash on screen, prices slash dramatically, timer ticks down.
+Context: Bold, high-contrast background with sale colors (red, yellow, black).
+Style & Ambiance: URGENT, exciting, can't-miss energy. High contrast, bold typography, retail energy.
+Camera: Quick zooms, screen shake on impact, rapid transitions.
+Audio: Urgent ticking clock, whoosh sounds, bass drops, energetic sale music.
+Text Overlay: "FLASH SALE", percentage off, "ENDS SOON" - all animated urgently.`,
     duration: 5,
     format: '9:16',
     audioType: 'music',
-    tags: ['review', 'testimonial', 'social-proof', 'animated', 'trust'],
+    tags: ['sale', 'urgent', 'discount', 'flash', 'limited-time'],
+  },
+
+  // ========== BEFORE/AFTER CATEGORY (3) ==========
+  {
+    id: 'transformation-split',
+    name: 'Transformation Split',
+    description: 'Side-by-side Vorher/Nachher Vergleich',
+    category: 'beforeafter',
+    promptTemplate: `Cinematography: Split-screen composition, before on left, after on right, with satisfying wipe transition.
+Subject: Same [PRODUKTNAME] or scenario in two states - before using product, after using product.
+Action: Synchronized camera movement on both sides, wipe reveals the difference dramatically.
+Context: Identical setting and lighting on both sides to maximize comparison clarity.
+Style & Ambiance: Clean, documentary-style, satisfying transformation reveal. High clarity, good contrast.
+Camera: Locked-off or synchronized dolly on both sides, smooth wipe transition.
+Audio: Soft ambient music, satisfying "whoosh" on the wipe transition.
+Text Overlay: "VORHER" on left, "NACHHER" on right, appearing with the content.`,
+    duration: 6,
+    format: '9:16',
+    audioType: 'music',
+    tags: ['before-after', 'transformation', 'comparison', 'results', 'split-screen'],
   },
   {
-    id: 'how-to-tutorial',
-    name: 'How-To Tutorial',
-    description: 'Schnelles Tutorial mit Schritt-für-Schritt Anleitung',
-    category: 'tutorial',
-    promptTemplate: `Cinematography: Top-down oder leicht schräge Perspektive, klare Schnitte zwischen Schritten.
-Subject: Hände demonstrieren die Verwendung/Pflege von [PRODUKTNAME].
-Action: Klare, nachvollziehbare Schritte: Schritt 1, 2, 3 mit Fokus auf die Handlung.
-Context: Aufgeräumter Arbeitsbereich, alle benötigten Materialien sichtbar.
-Style & Ambiance: Informativ, freundlich, leicht zu folgen, gute Beleuchtung.
-Audio: Klare Hintergrundmusik, optional Text-Overlays mit Schritt-Nummern.`,
+    id: 'progress-timelapse',
+    name: 'Progress-Timelapse',
+    description: 'Zeitraffer einer Transformation/Entwicklung',
+    category: 'beforeafter',
+    promptTemplate: `Cinematography: Timelapse sequence showing gradual transformation over time.
+Subject: [PRODUKTNAME] or result changing progressively from start to finish state.
+Action: Smooth timelapse of improvement, growth, or transformation process.
+Context: Consistent framing throughout to show clear progression.
+Style & Ambiance: Documentary feel, satisfying progression, inspiring transformation.
+Camera: Locked-off position for clean timelapse, occasional close-up inserts.
+Audio: Uplifting progression music, subtle time-passing sounds.
+Text Overlay: Optional time markers or stage labels.`,
     duration: 8,
     format: '9:16',
     audioType: 'music',
-    tags: ['tutorial', 'how-to', 'educational', 'step-by-step', 'diy'],
+    tags: ['timelapse', 'progress', 'transformation', 'growth', 'journey'],
   },
   {
-    id: 'mood-aesthetic',
-    name: 'Mood Aesthetic',
-    description: 'Atmosphärisches Stimmungsvideo für Brand Awareness',
-    category: 'brand',
-    promptTemplate: `Cinematography: Langsame, cinematische Kamerabewegungen, sanfte Übergänge, Slow-Motion-Elemente.
-Subject: [PRODUKTNAME] in verschiedenen stimmungsvollen Szenen.
-Action: Subtile Bewegungen - Lichtspiel, sanfter Wind, fließende Stoffe, Reflexionen.
-Context: Ästhetische, zur Marke passende Umgebung mit viel Atmosphäre.
-Style & Ambiance: Dreamy, aspirational, warm oder kühl je nach Markenidentität, cinematischer Look.
-Audio: Emotionale, atmosphärische Musik ohne Lyrics, Ambiente-Sounds.`,
-    duration: 6,
-    format: '9:16',
-    audioType: 'ambient',
-    tags: ['aesthetic', 'mood', 'cinematic', 'brand', 'atmospheric'],
-  },
-  {
-    id: 'countdown-sale',
-    name: 'Countdown Sale',
-    description: 'Dynamisches Sale-Ankündigungsvideo mit Countdown-Element',
-    category: 'teaser',
-    promptTemplate: `Cinematography: Schnelle Schnitte, dynamische Zooms, pulsierende Bewegungen zum Beat.
-Subject: Produkte im Sale-Spotlight, Countdown-Zahlen, Rabatt-Prozente.
-Action: Countdown-Animation (3, 2, 1, SALE!), Produkte flashen auf, CTA am Ende.
-Context: Bold, energetischer Hintergrund mit Markenfarben, Konfetti oder Partikel-Effekte.
-Style & Ambiance: Urgent, exciting, bold, hoher Kontrast, energiegeladen.
-Audio: Uptempo Beat, Countdown-Sounds, energetische Drops.`,
-    duration: 5,
+    id: 'makeover-reveal',
+    name: 'Makeover-Reveal',
+    description: 'Dramatischer Makeover mit Spannungsaufbau',
+    category: 'beforeafter',
+    promptTemplate: `Cinematography: Build anticipation with "before" shots, dramatic pause, then stunning "after" reveal.
+Subject: Person or object before and after using [PRODUKTNAME] - dramatic improvement.
+Action: Show underwhelming "before", building music, dramatic reveal of beautiful "after".
+Context: Same location, dramatically better lighting and presentation for "after".
+Style & Ambiance: Reality TV makeover energy, dramatic, feel-good, inspiring.
+Camera: Emotional close-ups before, wide dramatic reveal shot after.
+Audio: Building suspense music, dramatic pause, triumphant reveal music.
+Text Overlay: "THE TRANSFORMATION" or similar dramatic text at reveal.`,
+    duration: 8,
     format: '9:16',
     audioType: 'music',
-    tags: ['sale', 'countdown', 'urgent', 'discount', 'promotion', 'dynamic'],
+    tags: ['makeover', 'reveal', 'dramatic', 'transformation', 'inspiring'],
   },
+
+  // ========== STORY CATEGORY (5) ==========
   {
     id: 'day-in-life',
     name: 'Day in the Life',
-    description: 'Mini-Vlog Stil - Produkt im Alltag integriert',
+    description: 'Mini-Vlog mit Produkt im Alltag',
     category: 'story',
-    promptTemplate: `Cinematography: POV und Third-Person Mix, natürliche Handheld-Bewegungen, authentische Übergänge.
-Subject: Person im Alltag, die [PRODUKTNAME] natürlich verwendet.
-Action: Morgenroutine, Arbeit, Pause, Feierabend - Produkt als natürlicher Teil des Tages.
-Context: Realistische Alltagsumgebung - Zuhause, Büro, Café, unterwegs.
-Style & Ambiance: Authentic, relatable, warm, natürliches Licht, Social-Media-native Look.
-Audio: Trendy Hintergrundmusik, optional ASMR-Sounds bei Produktnutzung.`,
+    promptTemplate: `Cinematography: POV and third-person mix, authentic handheld movement, natural transitions.
+Subject: Person going through their day naturally using [PRODUKTNAME] at key moments.
+Action: Morning routine, work/activity, break time, evening - product integrated naturally.
+Context: Real-life locations - bedroom, kitchen, office, café, commute.
+Style & Ambiance: Authentic, relatable, warm, golden-hour lighting when possible.
+Camera: Handheld for authenticity, occasional smooth gimbal shots, smartphone-native look.
+Audio: Trendy background music, ASMR moments when using product, ambient life sounds.
+Text Overlay: Optional time stamps or day markers.`,
     duration: 8,
     format: '9:16',
     audioType: 'music',
     tags: ['vlog', 'day-in-life', 'authentic', 'lifestyle', 'relatable'],
+  },
+  {
+    id: 'behind-the-scenes',
+    name: 'Behind the Scenes',
+    description: 'Authentischer Einblick hinter die Kulissen',
+    category: 'story',
+    promptTemplate: `Cinematography: Documentary-style, raw and authentic, candid moments captured naturally.
+Subject: The making process of [PRODUKTNAME] - workshop, studio, creative process.
+Action: Hands working, team collaborating, mistakes and wins, real moments.
+Context: Actual workspace - messy allowed, authentic environment, real people.
+Style & Ambiance: Honest, transparent, humanizing the brand, documentary feel.
+Camera: Handheld, observational, candid shots, occasional close-ups on details.
+Audio: Natural ambient sounds, optional soft music, real conversations snippets.
+Text Overlay: "BEHIND THE SCENES" intro, occasional context labels.`,
+    duration: 8,
+    format: '9:16',
+    audioType: 'ambient',
+    tags: ['bts', 'authentic', 'process', 'handmade', 'transparent'],
+  },
+  {
+    id: 'quick-tip-hack',
+    name: 'Quick-Tip',
+    description: 'Schneller Hack oder Tipp in unter 10 Sekunden',
+    category: 'story',
+    promptTemplate: `Cinematography: Fast-paced, punchy cuts, get straight to the point.
+Subject: Quick demonstration of a useful tip using [PRODUKTNAME].
+Action: Problem shown briefly, solution demonstrated quickly, result shown.
+Context: Relevant environment where the tip would be used.
+Style & Ambiance: Informative, valuable, shareable, no fluff content.
+Camera: Close-up on action, clear view of technique, fast transitions.
+Audio: Upbeat, short music loop, satisfying sound effects on key moments.
+Text Overlay: "QUICK TIP" hook, step labels if needed, "SAVE THIS" call-to-action.`,
+    duration: 5,
+    format: '9:16',
+    audioType: 'music',
+    tags: ['tip', 'hack', 'quick', 'valuable', 'shareable'],
+  },
+  {
+    id: 'unboxing-experience',
+    name: 'Unboxing Experience',
+    description: 'ASMR-style Unboxing für maximale Satisfaktion',
+    category: 'story',
+    promptTemplate: `Cinematography: Close-up focus on hands and packaging, slow deliberate movements, ASMR quality.
+Subject: Hands carefully unboxing [PRODUKTNAME], revealing layers and details.
+Action: Slow, intentional unboxing - opening, unwrapping, discovering, admiring.
+Context: Clean surface, soft lighting, focus entirely on the unboxing experience.
+Style & Ambiance: Satisfying, premium, ASMR-like, sensory experience.
+Camera: Extreme close-ups, shallow depth of field, smooth slow movements.
+Audio: ASMR sounds - paper crinkling, box opening, product sounds. Soft ambient music.
+Text Overlay: Minimal - let the experience speak. Maybe "UNBOX WITH ME" intro.`,
+    duration: 8,
+    format: '9:16',
+    audioType: 'ambient',
+    tags: ['unboxing', 'asmr', 'satisfying', 'premium', 'experience'],
+  },
+  {
+    id: 'get-ready-with-me',
+    name: 'Get Ready With Me',
+    description: 'GRWM Format mit Produktintegration',
+    category: 'story',
+    promptTemplate: `Cinematography: Selfie-style perspective, mirror shots, personal and intimate feel.
+Subject: Person getting ready for their day/event, using [PRODUKTNAME] as part of routine.
+Action: Step-by-step getting ready process, product integrated naturally.
+Context: Bathroom, vanity, bedroom - personal getting-ready space.
+Style & Ambiance: Personal, intimate, relatable, influencer-style content.
+Camera: Front-facing perspective, mirror reflections, close-ups on product use.
+Audio: Chatty voiceover or trending music, ASMR application sounds.
+Text Overlay: "GRWM" intro, product callouts, routine steps if needed.`,
+    duration: 8,
+    format: '9:16',
+    audioType: 'music',
+    tags: ['grwm', 'routine', 'personal', 'relatable', 'influencer'],
+  },
+
+  // ========== TUTORIAL CATEGORY (4) ==========
+  {
+    id: 'step-by-step-guide',
+    name: 'Step-by-Step Guide',
+    description: 'Nummerierte Anleitung mit klaren Schritten',
+    category: 'tutorial',
+    promptTemplate: `Cinematography: Clear, well-lit shots of each step, numbered sequence, clean transitions.
+Subject: Step-by-step demonstration of using [PRODUKTNAME] correctly.
+Action: Each step clearly shown - Step 1, Step 2, Step 3 - with focus on the action.
+Context: Clean, organized workspace with good visibility of all steps.
+Style & Ambiance: Educational, clear, professional but approachable, helpful.
+Camera: Overhead or 45-degree angle for clear view, close-ups on details.
+Audio: Clear background music, optional voiceover, step transition sounds.
+Text Overlay: Step numbers prominently displayed, key instructions as text.`,
+    duration: 10,
+    format: '9:16',
+    audioType: 'music',
+    tags: ['tutorial', 'step-by-step', 'how-to', 'educational', 'guide'],
+  },
+  {
+    id: 'how-to-quick',
+    name: 'How-To Quick',
+    description: 'Schnelle How-To Anleitung unter 30 Sekunden',
+    category: 'tutorial',
+    promptTemplate: `Cinematography: Fast-paced but clear, essential steps only, punchy editing.
+Subject: Quick demonstration of how to use [PRODUKTNAME] effectively.
+Action: Problem → Solution → Result in rapid succession.
+Context: Relevant real-world environment where skill would be used.
+Style & Ambiance: Efficient, valuable, TikTok-native pacing, no wasted time.
+Camera: Dynamic angles, quick cuts, focus on key actions.
+Audio: Trending audio or upbeat music, satisfying sound on completion.
+Text Overlay: "HOW TO" hook, key steps as quick text, "DONE!" ending.`,
+    duration: 6,
+    format: '9:16',
+    audioType: 'music',
+    tags: ['how-to', 'quick', 'efficient', 'hack', 'tiktok'],
+  },
+  {
+    id: 'diy-tutorial',
+    name: 'DIY Tutorial',
+    description: 'Do-It-Yourself Anleitung mit Ergebnis',
+    category: 'tutorial',
+    promptTemplate: `Cinematography: Process-focused shots, hands-on crafting, satisfying progression.
+Subject: Creating or customizing something using [PRODUKTNAME].
+Action: Materials shown, process demonstrated, beautiful result revealed.
+Context: Craft workspace, kitchen, or relevant DIY environment.
+Style & Ambiance: Creative, inspiring, achievable, satisfying crafting content.
+Camera: Overhead for work surface, close-ups on technique, reveal shot at end.
+Audio: Crafting ASMR sounds, soft background music, satisfying completion sound.
+Text Overlay: Materials list, key technique tips, "YOU MADE THIS!" at end.`,
+    duration: 10,
+    format: '9:16',
+    audioType: 'ambient',
+    tags: ['diy', 'craft', 'creative', 'make', 'satisfying'],
+  },
+  {
+    id: 'recipe-cooking',
+    name: 'Rezept-Video',
+    description: 'Food-Content mit Schritt-für-Schritt Kochen',
+    category: 'tutorial',
+    promptTemplate: `Cinematography: Appetizing food shots, overhead cooking perspective, sizzling action shots.
+Subject: Cooking or preparing [REZEPT] with focus on delicious results.
+Action: Ingredients prep, cooking process, plating, final beauty shot.
+Context: Kitchen environment, clean cooking setup, good lighting on food.
+Style & Ambiance: Mouth-watering, warm, homey, food-porn aesthetic.
+Camera: Overhead cooking shots, 45-degree for serving, close-ups on textures.
+Audio: Cooking ASMR (sizzling, chopping), soft music, optional voiceover.
+Text Overlay: Recipe name, ingredient callouts, cooking tips, "BON APPÉTIT" ending.`,
+    duration: 10,
+    format: '9:16',
+    audioType: 'ambient',
+    tags: ['recipe', 'food', 'cooking', 'delicious', 'yummy'],
+  },
+
+  // ========== BRAND CATEGORY (4) ==========
+  {
+    id: 'about-us-story',
+    name: 'Über Uns',
+    description: 'Emotionale Markengeschichte in Kurzform',
+    category: 'brand',
+    promptTemplate: `Cinematography: Cinematic brand film style, emotional storytelling, professional production value.
+Subject: The story of [MARKE] - founding, mission, values, people behind the brand.
+Action: Founder/team moments, product creation, customer impact, brand journey.
+Context: Mix of workspace, product shots, team interactions, customer moments.
+Style & Ambiance: Emotional, inspiring, authentic, premium brand documentary.
+Camera: Cinematic shots, interviews, b-roll, emotional close-ups.
+Audio: Emotional brand music, optional founder voiceover, inspiring soundtrack.
+Text Overlay: Brand name, founding year, mission statement, "OUR STORY" intro.`,
+    duration: 10,
+    format: '9:16',
+    audioType: 'music',
+    tags: ['brand', 'story', 'about-us', 'emotional', 'values'],
+  },
+  {
+    id: 'team-introduction',
+    name: 'Team-Vorstellung',
+    description: 'Meet the Team Vorstellungsvideo',
+    category: 'brand',
+    promptTemplate: `Cinematography: Individual portraits transitioning between team members, friendly and approachable.
+Subject: Team members of [MARKE] - faces, names, roles, personalities.
+Action: Each person waves, smiles, does a signature gesture, or says one line.
+Context: Consistent background (office, studio) or each in their workspace.
+Style & Ambiance: Friendly, professional, human, welcoming, diverse.
+Camera: Medium portrait shots, consistent framing, occasional candid b-roll.
+Audio: Upbeat, friendly music, optional quick audio intros from each person.
+Text Overlay: Name and role for each person, "MEET THE TEAM" intro.`,
+    duration: 8,
+    format: '9:16',
+    audioType: 'music',
+    tags: ['team', 'people', 'faces', 'culture', 'introduction'],
+  },
+  {
+    id: 'company-culture',
+    name: 'Firmenkultur',
+    description: 'Workplace Culture und Teamspirit zeigen',
+    category: 'brand',
+    promptTemplate: `Cinematography: Documentary-style candid moments, office life, team interactions.
+Subject: Day in the life at [MARKE] - workspace, collaboration, fun moments, work ethic.
+Action: Team meetings, creative sessions, lunch together, celebrations, focused work.
+Context: Office/workspace environment, natural and authentic moments.
+Style & Ambiance: Authentic, energetic, inviting, "we're hiring" energy.
+Camera: Candid handheld, observational style, mix of wide and close-up shots.
+Audio: Upbeat company culture music, ambient office sounds, laughter.
+Text Overlay: "LIFE AT [MARKE]" intro, culture value highlights.`,
+    duration: 8,
+    format: '9:16',
+    audioType: 'music',
+    tags: ['culture', 'workplace', 'team', 'hiring', 'authentic'],
+  },
+  {
+    id: 'customer-testimonial',
+    name: 'Kunden-Testimonial',
+    description: 'Echte Kundenstimme als Video-Review',
+    category: 'brand',
+    promptTemplate: `Cinematography: Interview-style with customer, intercut with product/result shots.
+Subject: Real customer sharing their experience with [PRODUKTNAME].
+Action: Customer speaking authentically, showing product, demonstrating results.
+Context: Customer's real environment (home, workspace), natural setting.
+Style & Ambiance: Authentic, trustworthy, relatable, social proof.
+Camera: Interview framing, cutaway b-roll of product use, genuine expressions.
+Audio: Customer voice clear and prominent, subtle background music.
+Text Overlay: Customer name/location, key quote highlight, star rating.`,
+    duration: 10,
+    format: '9:16',
+    audioType: 'dialog',
+    tags: ['testimonial', 'review', 'customer', 'social-proof', 'authentic'],
+  },
+
+  // ========== CINEMATIC CATEGORY (4) ==========
+  {
+    id: 'product-lifestyle-film',
+    name: 'Produkt-Lifestyle Film',
+    description: 'Aspirational Lifestyle mit Produkt im Fokus',
+    category: 'brand',
+    promptTemplate: `Cinematography: High-end commercial style, aspirational lifestyle, beautiful cinematography.
+Subject: [PRODUKTNAME] integrated into a desirable, aspirational lifestyle.
+Action: Beautiful people using product naturally in stunning environments.
+Context: Aspirational locations - modern home, travel destination, premium venue.
+Style & Ambiance: Luxury, aspirational, dream-life aesthetic, commercial quality.
+Camera: Cinematic shots, drone aerials, golden hour, slow motion moments.
+Audio: Premium brand music, cinematic soundtrack, lifestyle sounds.
+Text Overlay: Minimal - brand logo subtle, tagline at end.`,
+    duration: 8,
+    format: '16:9',
+    audioType: 'music',
+    tags: ['lifestyle', 'aspirational', 'premium', 'cinematic', 'commercial'],
+  },
+  {
+    id: 'mood-film-aesthetic',
+    name: 'Mood Film',
+    description: 'Atmosphärisches Stimmungsvideo ohne harten Verkauf',
+    category: 'brand',
+    promptTemplate: `Cinematography: Slow, dreamy, atmospheric shots focused on feeling rather than information.
+Subject: [PRODUKTNAME] as part of a mood, feeling, aesthetic rather than feature focus.
+Action: Slow, contemplative movements, light play, textures, abstract beauty.
+Context: Atmospheric environment matching brand mood - cozy, energetic, minimal, luxe.
+Style & Ambiance: Artistic, moody, evocative, brand-feeling rather than brand-telling.
+Camera: Slow dolly, abstract angles, selective focus, light leaks, film grain.
+Audio: Atmospheric ambient music, nature sounds, artistic soundscape.
+Text Overlay: Minimal or none - mood speaks for itself. Brand logo only.`,
+    duration: 6,
+    format: '9:16',
+    audioType: 'ambient',
+    tags: ['mood', 'aesthetic', 'artistic', 'atmospheric', 'brand-feel'],
+  },
+  {
+    id: 'nature-product-shot',
+    name: 'Natur-Produktszene',
+    description: 'Produkt in atemberaubender Naturkulisse',
+    category: 'brand',
+    promptTemplate: `Cinematography: Epic nature footage with product elegantly placed within the scene.
+Subject: [PRODUKTNAME] in a breathtaking natural environment - mountains, ocean, forest, desert.
+Action: Nature in motion (waves, wind, clouds), product as beautiful element within.
+Context: Stunning natural location that matches brand values (sustainability, adventure, peace).
+Style & Ambiance: Epic, beautiful, eco-conscious, adventure or peace depending on brand.
+Camera: Wide landscape shots, drone aerials, golden hour, product detail inserts.
+Audio: Nature sounds prominent, subtle cinematic music, wind/water sounds.
+Text Overlay: Minimal - location name optional, brand tagline about nature/sustainability.`,
+    duration: 8,
+    format: '16:9',
+    audioType: 'ambient',
+    tags: ['nature', 'landscape', 'epic', 'sustainability', 'outdoor'],
+  },
+  {
+    id: 'urban-vibes-city',
+    name: 'Urban Vibes',
+    description: 'Städtische Ästhetik mit Street-Style Energie',
+    category: 'brand',
+    promptTemplate: `Cinematography: Street-level urban footage, city energy, modern metropolitan vibes.
+Subject: [PRODUKTNAME] as part of urban life - city streets, subways, rooftops, cafés.
+Action: City life in motion, people walking, traffic, urban rhythm with product naturally present.
+Context: Vibrant city environment - downtown, trendy neighborhoods, urban landmarks.
+Style & Ambiance: Modern, energetic, street-style, contemporary, gen-z appeal.
+Camera: Dynamic handheld, street-level shots, reflections, neon lights, city motion.
+Audio: Urban beats, city sounds, modern music, traffic and people ambient.
+Text Overlay: City name, street-style typography, brand presence subtle but cool.`,
+    duration: 8,
+    format: '9:16',
+    audioType: 'music',
+    tags: ['urban', 'city', 'street', 'modern', 'metropolitan'],
   },
 ]
 

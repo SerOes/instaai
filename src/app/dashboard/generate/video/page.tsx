@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect, useRef, ChangeEvent } from "react"
+import { useState, useEffect, useRef, ChangeEvent, useCallback } from "react"
 import { useSearchParams } from "next/navigation"
 import { 
   Sparkles, 
@@ -18,7 +18,9 @@ import {
   Loader2,
   X,
   Zap,
-  Info
+  Info,
+  AlertCircle,
+  CheckCircle2
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -39,11 +41,25 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
+import { Progress } from "@/components/ui/progress"
 
-// Provider and Model Types
-type AIProvider = "kieai" | "gemini"
-type KieVideoModel = "veo-3.1" | "veo-3.1-fast" | "kling-1.6" | "minimax-video-01"
-type GeminiVideoModel = "veo-2" | "veo-2.5-flash"
+// Video Model type from API
+interface VideoModelInfo {
+  id: string
+  name: string
+  description: string
+  provider: string
+  features: {
+    imageToVideo: boolean
+    textToVideo: boolean
+    tailImage?: boolean
+    storyboard?: boolean
+    resolution?: string[]
+    durations: number[]
+    aspectRatios: string[]
+  }
+  pricing: 'low' | 'medium' | 'high' | 'premium'
+}
 
 interface Preset {
   id: string
@@ -74,29 +90,39 @@ interface GalleryImage {
   createdAt: string
 }
 
+// Status polling state
+interface GenerationStatus {
+  status: 'processing' | 'completed' | 'failed'
+  progress: number
+  videoUrl?: string
+  error?: string
+}
+
 export default function GenerateVideoPage() {
   const searchParams = useSearchParams()
   const projectId = searchParams.get("projectId")
   const fileInputRef = useRef<HTMLInputElement>(null)
+  const pollingIntervalRef = useRef<NodeJS.Timeout | null>(null)
 
-  // Provider and Model State
-  const [provider, setProvider] = useState<AIProvider>("kieai")
-  const [kieModel, setKieModel] = useState<KieVideoModel>("veo-3.1")
-  const [geminiModel, setGeminiModel] = useState<GeminiVideoModel>("veo-2")
+  // Video Models State
+  const [videoModels, setVideoModels] = useState<VideoModelInfo[]>([])
+  const [selectedModelId, setSelectedModelId] = useState<string>("veo-3-1-fast")
+  const [isLoadingModels, setIsLoadingModels] = useState(true)
 
   const [prompt, setPrompt] = useState("")
   const [imageUrl, setImageUrl] = useState("")
   const [sourceImage, setSourceImage] = useState<string | null>(null)
-  const [aspectRatio, setAspectRatio] = useState<"1:1" | "4:5" | "9:16" | "16:9">("9:16")
-  const [duration, setDuration] = useState<"3" | "5" | "10">("5")
-  const [motion, setMotion] = useState<"subtle" | "moderate" | "dynamic">("moderate")
+  const [aspectRatio, setAspectRatio] = useState<"1:1" | "9:16" | "16:9">("9:16")
+  const [duration, setDuration] = useState<number>(5)
+  const [resolution, setResolution] = useState<string | null>(null)
   const [selectedPreset, setSelectedPreset] = useState<string | null>(null)
   const [presets, setPresets] = useState<Preset[]>([])
   const [showAdvanced, setShowAdvanced] = useState(false)
   
   const [isGenerating, setIsGenerating] = useState(false)
   const [generatedVideo, setGeneratedVideo] = useState<string | null>(null)
-  const [jobId, setJobId] = useState<string | null>(null)
+  const [taskId, setTaskId] = useState<string | null>(null)
+  const [generationStatus, setGenerationStatus] = useState<GenerationStatus | null>(null)
   const [error, setError] = useState<string | null>(null)
 
   // Image Analysis State (for Image-to-Video)
@@ -107,6 +133,76 @@ export default function GenerateVideoPage() {
   const [showGalleryPicker, setShowGalleryPicker] = useState(false)
   const [galleryImages, setGalleryImages] = useState<GalleryImage[]>([])
   const [isLoadingGallery, setIsLoadingGallery] = useState(false)
+
+  // Get current selected model
+  const selectedModel = videoModels.find(m => m.id === selectedModelId)
+
+  // Fetch available video models
+  const fetchVideoModels = async () => {
+    try {
+      setIsLoadingModels(true)
+      const response = await fetch("/api/generate/video")
+      if (response.ok) {
+        const data = await response.json()
+        setVideoModels(data.models || [])
+      }
+    } catch (error) {
+      console.error("Error fetching video models:", error)
+    } finally {
+      setIsLoadingModels(false)
+    }
+  }
+
+  // Poll for generation status
+  const pollStatus = useCallback(async (taskIdToPoll: string) => {
+    try {
+      const response = await fetch(`/api/generate/video/status?taskId=${encodeURIComponent(taskIdToPoll)}`)
+      if (response.ok) {
+        const status: GenerationStatus = await response.json()
+        setGenerationStatus(status)
+
+        if (status.status === 'completed' && status.videoUrl) {
+          setGeneratedVideo(status.videoUrl)
+          setIsGenerating(false)
+          // Stop polling
+          if (pollingIntervalRef.current) {
+            clearInterval(pollingIntervalRef.current)
+            pollingIntervalRef.current = null
+          }
+        } else if (status.status === 'failed') {
+          setError(status.error || 'Video-Generierung fehlgeschlagen')
+          setIsGenerating(false)
+          // Stop polling
+          if (pollingIntervalRef.current) {
+            clearInterval(pollingIntervalRef.current)
+            pollingIntervalRef.current = null
+          }
+        }
+      }
+    } catch (error) {
+      console.error("Error polling status:", error)
+    }
+  }, [])
+
+  // Start polling when taskId changes
+  useEffect(() => {
+    if (taskId && isGenerating) {
+      // Initial poll
+      pollStatus(taskId)
+      
+      // Poll every 5 seconds
+      pollingIntervalRef.current = setInterval(() => {
+        pollStatus(taskId)
+      }, 5000)
+    }
+
+    return () => {
+      if (pollingIntervalRef.current) {
+        clearInterval(pollingIntervalRef.current)
+        pollingIntervalRef.current = null
+      }
+    }
+  }, [taskId, isGenerating, pollStatus])
 
   // Analyze source image with Gemini
   const analyzeSourceImage = async (imageUrlToAnalyze: string) => {
@@ -129,7 +225,6 @@ export default function GenerateVideoPage() {
             "square": "1:1",
             "portrait": "9:16",
             "landscape": "16:9",
-            "feed": "4:5"
           }
           const suggestedRatio = ratioMap[analysis.suggestedAspectRatio.toLowerCase()]
           if (suggestedRatio) setAspectRatio(suggestedRatio)
@@ -214,6 +309,11 @@ export default function GenerateVideoPage() {
     fetchPresets()
   }, [])
 
+  // Also fetch video models on mount
+  useEffect(() => {
+    fetchVideoModels()
+  }, [])
+
   const fetchPresets = async () => {
     try {
       const response = await fetch("/api/presets?type=VIDEO&includePublic=true")
@@ -236,11 +336,8 @@ export default function GenerateVideoPage() {
           setPrompt(preset.promptTemplate)
         }
         // Auto-set duration if preset has one
-        if (preset.duration) {
-          const durationStr = preset.duration.toString() as typeof duration
-          if (['3', '5', '10'].includes(durationStr)) {
-            setDuration(durationStr)
-          }
+        if (preset.duration && selectedModel?.features.durations.includes(preset.duration)) {
+          setDuration(preset.duration)
         }
         // Auto-set aspect ratio if preset has one
         if (preset.aspectRatio) {
@@ -279,7 +376,9 @@ export default function GenerateVideoPage() {
 
     setIsGenerating(true)
     setError(null)
-    setJobId(null)
+    setTaskId(null)
+    setGenerationStatus(null)
+    setGeneratedVideo(null)
 
     try {
       const response = await fetch("/api/generate/video", {
@@ -292,9 +391,8 @@ export default function GenerateVideoPage() {
           imageUrl: imageUrl || undefined,
           aspectRatio,
           duration,
-          motion,
-          provider,
-          model: provider === "kieai" ? kieModel : geminiModel,
+          modelId: selectedModelId,
+          resolution: resolution || undefined,
           presetId: selectedPreset || undefined,
           projectId: projectId || undefined,
         }),
@@ -304,18 +402,23 @@ export default function GenerateVideoPage() {
 
       if (!response.ok) {
         setError(data.error || "Fehler bei der Videogenerierung")
+        setIsGenerating(false)
         return
       }
 
-      if (data.status === "completed") {
+      if (data.status === "completed" && data.videoUrl) {
         setGeneratedVideo(data.videoUrl)
-      } else if (data.status === "processing") {
-        setJobId(data.jobId)
-        // In a real app, you would poll for status updates
+        setIsGenerating(false)
+      } else if (data.status === "processing" && data.taskId) {
+        setTaskId(data.taskId)
+        setGenerationStatus({
+          status: 'processing',
+          progress: 0
+        })
+        // Polling will be triggered by useEffect
       }
     } catch {
       setError("Ein Fehler ist aufgetreten. Bitte versuchen Sie es erneut.")
-    } finally {
       setIsGenerating(false)
     }
   }
@@ -338,25 +441,6 @@ export default function GenerateVideoPage() {
       console.error("Error downloading video")
     }
   }
-
-  const aspectRatios = [
-    { value: "1:1", label: "1:1", description: "Quadratisch" },
-    { value: "4:5", label: "4:5", description: "Feed Post" },
-    { value: "9:16", label: "9:16", description: "Reel/Story" },
-    { value: "16:9", label: "16:9", description: "Landscape" },
-  ]
-
-  const durations = [
-    { value: "3", label: "3s", description: "Kurz" },
-    { value: "5", label: "5s", description: "Standard" },
-    { value: "10", label: "10s", description: "Lang" },
-  ]
-
-  const motionOptions = [
-    { value: "subtle", label: "Dezent", description: "Sanfte Bewegungen" },
-    { value: "moderate", label: "Moderat", description: "Natürliche Bewegungen" },
-    { value: "dynamic", label: "Dynamisch", description: "Energetische Bewegungen" },
-  ]
 
   return (
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
@@ -588,22 +672,68 @@ export default function GenerateVideoPage() {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-6">
+              {/* Video Model Selection */}
+              <div className="space-y-3">
+                <Label className="text-foreground">Video-Modell</Label>
+                {isLoadingModels ? (
+                  <div className="flex items-center gap-2 text-muted-foreground">
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                    Lade Modelle...
+                  </div>
+                ) : (
+                  <Select value={selectedModelId} onValueChange={setSelectedModelId}>
+                    <SelectTrigger className="bg-secondary/20 border-border/50">
+                      <SelectValue placeholder="Modell wählen" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {videoModels.map((model) => (
+                        <SelectItem key={model.id} value={model.id}>
+                          <div className="flex items-center gap-2">
+                            <span>{model.name}</span>
+                            <span className={`text-xs px-1.5 py-0.5 rounded-full ${
+                              model.pricing === 'premium' ? 'bg-purple-500/20 text-purple-400' :
+                              model.pricing === 'high' ? 'bg-amber-500/20 text-amber-400' :
+                              model.pricing === 'medium' ? 'bg-blue-500/20 text-blue-400' :
+                              'bg-green-500/20 text-green-400'
+                            }`}>
+                              {model.pricing}
+                            </span>
+                          </div>
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                )}
+                {selectedModel && (
+                  <p className="text-xs text-muted-foreground">
+                    {selectedModel.description}
+                    {selectedModel.features.textToVideo && selectedModel.features.imageToVideo 
+                      ? " • Text & Image-to-Video" 
+                      : selectedModel.features.imageToVideo 
+                        ? " • Image-to-Video" 
+                        : " • Text-to-Video"}
+                  </p>
+                )}
+              </div>
+
               {/* Aspect Ratio */}
               <div className="space-y-3">
                 <Label className="text-foreground">Seitenverhältnis</Label>
-                <div className="grid grid-cols-4 gap-2">
-                  {aspectRatios.map((ar) => (
+                <div className="grid grid-cols-3 gap-2">
+                  {(selectedModel?.features.aspectRatios || ['9:16', '16:9', '1:1']).map((ar) => (
                     <button
-                      key={ar.value}
-                      onClick={() => setAspectRatio(ar.value as typeof aspectRatio)}
+                      key={ar}
+                      onClick={() => setAspectRatio(ar as typeof aspectRatio)}
                       className={`flex flex-col items-center rounded-xl border p-3 transition-all duration-200 ${
-                        aspectRatio === ar.value
+                        aspectRatio === ar
                           ? "border-blue-500 bg-blue-500/10 text-blue-500 shadow-lg shadow-blue-500/10"
                           : "border-border/50 bg-secondary/20 text-muted-foreground hover:bg-secondary/40 hover:text-foreground"
                       }`}
                     >
-                      <span className="font-medium text-sm">{ar.label}</span>
-                      <span className="text-xs opacity-70">{ar.description}</span>
+                      <span className="font-medium text-sm">{ar}</span>
+                      <span className="text-xs opacity-70">
+                        {ar === '9:16' ? 'Reel/Story' : ar === '16:9' ? 'Landscape' : 'Quadrat'}
+                      </span>
                     </button>
                   ))}
                 </div>
@@ -616,88 +746,46 @@ export default function GenerateVideoPage() {
                   Dauer
                 </Label>
                 <div className="grid grid-cols-3 gap-2">
-                  {durations.map((d) => (
+                  {(selectedModel?.features.durations || [5, 10]).map((d) => (
                     <button
-                      key={d.value}
-                      onClick={() => setDuration(d.value as typeof duration)}
+                      key={d}
+                      onClick={() => setDuration(d)}
                       className={`flex flex-col items-center rounded-xl border p-3 transition-all duration-200 ${
-                        duration === d.value
+                        duration === d
                           ? "border-blue-500 bg-blue-500/10 text-blue-500 shadow-lg shadow-blue-500/10"
                           : "border-border/50 bg-secondary/20 text-muted-foreground hover:bg-secondary/40 hover:text-foreground"
                       }`}
                     >
-                      <span className="font-medium text-sm">{d.label}</span>
-                      <span className="text-xs opacity-70">{d.description}</span>
+                      <span className="font-medium text-sm">{d}s</span>
+                      <span className="text-xs opacity-70">
+                        {d <= 5 ? 'Kurz' : d <= 8 ? 'Standard' : 'Lang'}
+                      </span>
                     </button>
                   ))}
                 </div>
               </div>
 
-              {/* Motion */}
-              <div className="space-y-3">
-                <Label className="text-foreground">Bewegungsintensität</Label>
-                <div className="grid grid-cols-3 gap-2">
-                  {motionOptions.map((m) => (
-                    <button
-                      key={m.value}
-                      onClick={() => setMotion(m.value as typeof motion)}
-                      className={`flex flex-col items-center rounded-xl border p-3 transition-all duration-200 ${
-                        motion === m.value
-                          ? "border-blue-500 bg-blue-500/10 text-blue-500 shadow-lg shadow-blue-500/10"
-                          : "border-border/50 bg-secondary/20 text-muted-foreground hover:bg-secondary/40 hover:text-foreground"
-                      }`}
-                    >
-                      <span className="font-medium text-sm">{m.label}</span>
-                      <span className="text-xs opacity-70 text-center">{m.description}</span>
-                    </button>
-                  ))}
+              {/* Resolution (if model supports it) */}
+              {selectedModel?.features.resolution && (
+                <div className="space-y-3">
+                  <Label className="text-foreground">Auflösung</Label>
+                  <div className="grid grid-cols-3 gap-2">
+                    {selectedModel.features.resolution.map((res) => (
+                      <button
+                        key={res}
+                        onClick={() => setResolution(res)}
+                        className={`flex flex-col items-center rounded-xl border p-3 transition-all duration-200 ${
+                          resolution === res
+                            ? "border-blue-500 bg-blue-500/10 text-blue-500 shadow-lg shadow-blue-500/10"
+                            : "border-border/50 bg-secondary/20 text-muted-foreground hover:bg-secondary/40 hover:text-foreground"
+                        }`}
+                      >
+                        <span className="font-medium text-sm">{res}</span>
+                      </button>
+                    ))}
+                  </div>
                 </div>
-              </div>
-
-              {/* Provider & Model Selection */}
-              <div className="space-y-3">
-                <Label className="text-foreground">Provider & Modell</Label>
-                <div className="grid grid-cols-2 gap-3">
-                  <Select value={provider} onValueChange={(v) => setProvider(v as AIProvider)}>
-                    <SelectTrigger className="bg-secondary/20 border-border/50">
-                      <SelectValue placeholder="Provider" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="kieai">🤖 KIE.ai</SelectItem>
-                      <SelectItem value="gemini">✨ Google Gemini</SelectItem>
-                    </SelectContent>
-                  </Select>
-
-                  {provider === "kieai" ? (
-                    <Select value={kieModel} onValueChange={(v) => setKieModel(v as KieVideoModel)}>
-                      <SelectTrigger className="bg-secondary/20 border-border/50">
-                        <SelectValue placeholder="Modell" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="veo-3.1">Veo 3.1 (Premium)</SelectItem>
-                        <SelectItem value="veo-3.1-fast">Veo 3.1 Fast</SelectItem>
-                        <SelectItem value="kling-1.6">Kling 1.6</SelectItem>
-                        <SelectItem value="minimax-video-01">Minimax Video</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  ) : (
-                    <Select value={geminiModel} onValueChange={(v) => setGeminiModel(v as GeminiVideoModel)}>
-                      <SelectTrigger className="bg-secondary/20 border-border/50">
-                        <SelectValue placeholder="Modell" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="veo-2">Veo 2</SelectItem>
-                        <SelectItem value="veo-2.5-flash">Veo 2.5 Flash</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  )}
-                </div>
-                <p className="text-xs text-muted-foreground">
-                  {provider === "kieai" 
-                    ? "KIE.ai bietet hochwertige Videomodelle wie Veo 3.1 und Kling"
-                    : "Google Gemini mit Veo 2 für fortgeschrittene Videoerstellung"}
-                </p>
-              </div>
+              )}
             </CardContent>
           </Card>
 
@@ -722,7 +810,8 @@ export default function GenerateVideoPage() {
           </Button>
 
           {error && (
-            <div className="rounded-lg bg-red-500/10 border border-red-500/20 p-4 text-sm text-red-500">
+            <div className="rounded-lg bg-red-500/10 border border-red-500/20 p-4 text-sm text-red-500 flex items-center gap-2">
+              <AlertCircle className="h-4 w-4" />
               {error}
             </div>
           )}
@@ -834,40 +923,75 @@ export default function GenerateVideoPage() {
                 onClick={() => !generatedVideo && !isGenerating && fileInputRef.current?.click()}
               >
                 {isGenerating ? (
-                  <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/40 backdrop-blur-sm">
+                  <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/40 backdrop-blur-sm p-4">
                     <div className="w-12 h-12 border-4 border-blue-500/30 border-t-blue-500 rounded-full animate-spin mb-4" />
                     <p className="text-sm text-muted-foreground animate-pulse">
                       Generiere dein Video...
                     </p>
-                    <p className="mt-2 text-xs text-muted-foreground/70">
-                      Dies kann einige Minuten dauern
+                    {generationStatus && (
+                      <div className="w-full mt-4 space-y-2">
+                        <Progress value={generationStatus.progress} className="h-2" />
+                        <p className="text-xs text-center text-muted-foreground/70">
+                          {generationStatus.progress}% - {generationStatus.status === 'processing' ? 'In Bearbeitung' : generationStatus.status}
+                        </p>
+                        {taskId && (
+                          <p className="text-xs text-center text-muted-foreground/50 font-mono">
+                            Task: {taskId.slice(0, 12)}...
+                          </p>
+                        )}
+                      </div>
+                    )}
+                    <p className="mt-4 text-xs text-muted-foreground/70">
+                      Dies kann 1-3 Minuten dauern
                     </p>
                   </div>
-                ) : jobId && !generatedVideo ? (
-                  <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/40 backdrop-blur-sm">
-                    <Clock className="h-16 w-16 text-blue-500 animate-pulse mb-4" />
-                    <p className="text-sm text-muted-foreground">
-                      Video wird verarbeitet
+                ) : generationStatus?.status === 'failed' ? (
+                  <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/40 backdrop-blur-sm p-4">
+                    <AlertCircle className="h-16 w-16 text-red-500 mb-4" />
+                    <p className="text-sm text-red-400">
+                      Video-Generierung fehlgeschlagen
                     </p>
-                    <p className="mt-2 text-xs text-muted-foreground/70">
-                      Job ID: {jobId}
+                    <p className="mt-2 text-xs text-muted-foreground/70 text-center">
+                      {generationStatus.error || 'Unbekannter Fehler'}
                     </p>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="mt-4 border-red-500/30 text-red-400"
+                      onClick={handleGenerate}
+                    >
+                      <RefreshCw className="h-3 w-3 mr-1" />
+                      Erneut versuchen
+                    </Button>
                   </div>
                 ) : generatedVideo ? (
-                  <video
-                    src={generatedVideo}
-                    controls
-                    className="h-full w-full object-cover"
-                  />
+                  <>
+                    <video
+                      src={generatedVideo}
+                      controls
+                      className="h-full w-full object-cover"
+                    />
+                    <div className="absolute top-2 right-2">
+                      <div className="flex items-center gap-1 px-2 py-1 rounded-full bg-green-500/20 text-green-400 text-xs">
+                        <CheckCircle2 className="h-3 w-3" />
+                        Fertig
+                      </div>
+                    </div>
+                  </>
                 ) : (
                   <div className="flex flex-col items-center justify-center text-muted-foreground/50 group-hover:text-muted-foreground transition-colors">
                     <Play className="h-16 w-16 mb-4 opacity-50 group-hover:opacity-70" />
                     <p className="text-sm">
                       {sourceImage ? "Dein generiertes Video erscheint hier" : "Klicke hier um ein Bild hochzuladen"}
                     </p>
-                    {!sourceImage && (
+                    {!sourceImage && selectedModel?.features.textToVideo && (
                       <p className="text-xs mt-2 opacity-70">
                         oder starte ohne Bild für Text-to-Video
+                      </p>
+                    )}
+                    {!sourceImage && !selectedModel?.features.textToVideo && (
+                      <p className="text-xs mt-2 opacity-70 text-amber-400">
+                        Dieses Modell benötigt ein Ausgangsbild
                       </p>
                     )}
                   </div>

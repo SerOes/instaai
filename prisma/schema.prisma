@@ -147,6 +147,11 @@ model MediaProject {
   provider     String?       // AI provider used
   presetId     String?       // Reference to AI preset
   
+  // Video-specific metadata
+  videoDuration    Int?      // Duration in seconds
+  videoResolution  String?   // "720p" | "1080p"
+  videoProvider    String?   // "kieai" | "gemini-direct" for video generation
+  
   // Additional metadata as JSON string for SQLite
   metadata     String?
   
