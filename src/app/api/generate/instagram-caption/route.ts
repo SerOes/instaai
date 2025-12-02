@@ -12,6 +12,9 @@ interface BrandContext {
   contentGoals: string[]
 }
 
+// Content type: IMAGE or VIDEO (Reel)
+type ContentType = "IMAGE" | "VIDEO"
+
 export async function POST(request: NextRequest) {
   try {
     const session = await auth()
@@ -21,10 +24,24 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json()
-    const { imageUrl, imageAnalysis, prompt: originalPrompt, language = "de" } = body
+    const { 
+      imageUrl, 
+      videoUrl,
+      contentType = "IMAGE", // "IMAGE" or "VIDEO"
+      imageAnalysis, 
+      videoAnalysis,
+      prompt: originalPrompt, 
+      language = "de",
+      duration, // Video duration in seconds
+      aspectRatio, // e.g., "9:16" for Reels
+    } = body
 
-    if (!imageUrl) {
+    // Validate input based on content type
+    if (contentType === "IMAGE" && !imageUrl) {
       return NextResponse.json({ error: "Bild-URL erforderlich" }, { status: 400 })
+    }
+    if (contentType === "VIDEO" && !videoUrl && !originalPrompt) {
+      return NextResponse.json({ error: "Video-URL oder Prompt erforderlich" }, { status: 400 })
     }
 
     // Get user's Gemini API key
@@ -76,35 +93,41 @@ export async function POST(request: NextRequest) {
       brandContext.contentGoals = typeof user?.contentGoals === 'string' ? JSON.parse(user.contentGoals) : []
     } catch { brandContext.contentGoals = [] }
 
-    // Build the system prompt for Instagram caption generation
-    const systemPrompt = buildInstagramCaptionSystemPrompt(brandContext, language)
+    // Build the system prompt based on content type
+    const systemPrompt = contentType === "VIDEO" 
+      ? buildReelsCaptionSystemPrompt(brandContext, language)
+      : buildInstagramCaptionSystemPrompt(brandContext, language)
 
     // Build the user prompt with context
-    const userPrompt = buildUserPrompt(imageAnalysis, originalPrompt, language)
+    const userPrompt = contentType === "VIDEO"
+      ? buildVideoUserPrompt(videoAnalysis, originalPrompt, language, duration, aspectRatio)
+      : buildUserPrompt(imageAnalysis, originalPrompt, language)
 
-    // Fetch the image and convert to base64
+    // Fetch the image and convert to base64 (for images only)
     let imageBase64: string | null = null
     let mimeType = "image/png"
     
-    try {
-      // Convert relative URL to absolute URL
-      const baseUrl = process.env.NEXTAUTH_URL || 'http://localhost:3000'
-      const absoluteImageUrl = imageUrl.startsWith('/')
-        ? `${baseUrl}${imageUrl}`
-        : imageUrl
+    if (contentType === "IMAGE" && imageUrl) {
+      try {
+        // Convert relative URL to absolute URL
+        const baseUrl = process.env.NEXTAUTH_URL || 'http://localhost:3000'
+        const absoluteImageUrl = imageUrl.startsWith('/')
+          ? `${baseUrl}${imageUrl}`
+          : imageUrl
 
-      const imageResponse = await fetch(absoluteImageUrl)
-      if (imageResponse.ok) {
-        const contentType = imageResponse.headers.get("content-type")
-        if (contentType) {
-          mimeType = contentType
+        const imageResponse = await fetch(absoluteImageUrl)
+        if (imageResponse.ok) {
+          const contentTypeHeader = imageResponse.headers.get("content-type")
+          if (contentTypeHeader) {
+            mimeType = contentTypeHeader
+          }
+          const arrayBuffer = await imageResponse.arrayBuffer()
+          imageBase64 = Buffer.from(arrayBuffer).toString("base64")
         }
-        const arrayBuffer = await imageResponse.arrayBuffer()
-        imageBase64 = Buffer.from(arrayBuffer).toString("base64")
+      } catch (error) {
+        console.error("Error fetching image:", error)
+        // Continue without image if it fails
       }
-    } catch (error) {
-      console.error("Error fetching image:", error)
-      // Continue without image if it fails
     }
 
     // Call Gemini 2.5 Flash API
@@ -168,6 +191,8 @@ export async function POST(request: NextRequest) {
       hashtags: result.hashtags,
       fullText: result.fullText,
       brandContextUsed: !!brandContext.systemPrompt || !!brandContext.brandName,
+      contentType,
+      isReel: contentType === "VIDEO",
     })
   } catch (error) {
     console.error("Instagram caption generation error:", error)
@@ -444,4 +469,179 @@ function parseInstagramResponse(text: string): {
   const fullText = caption + (hashtags.length > 0 ? '\n\n' + hashtags.join(' ') : '')
 
   return { caption, hashtags, fullText }
+}
+
+// ============ VIDEO/REELS SPECIFIC FUNCTIONS ============
+
+function buildReelsCaptionSystemPrompt(brandContext: BrandContext, language: string): string {
+  const isGerman = language === "de"
+  
+  let systemPrompt = isGerman
+    ? `Du bist ein erfahrener Social-Media-Copywriter, spezialisiert auf Instagram Reels und Videoformate.
+Du verstehst die Besonderheiten von Kurzvideos und wie man maximale Engagement-Raten erzielt.`
+    : `You are an experienced social media copywriter, specialized in Instagram Reels and video formats.
+You understand the nuances of short-form video and how to achieve maximum engagement rates.`
+
+  // Add brand context if available
+  if (brandContext.systemPrompt) {
+    systemPrompt += `\n\n### MARKEN-KONTEXT:\n${brandContext.systemPrompt}`
+  } else {
+    if (brandContext.brandName) {
+      systemPrompt += `\n\n### MARKEN-KONTEXT:`
+      systemPrompt += `\nMarke: ${brandContext.brandName}`
+    }
+    if (brandContext.industry) {
+      systemPrompt += `\nBranche: ${brandContext.industry}`
+    }
+    if (brandContext.targetAudience) {
+      systemPrompt += `\nZielgruppe: ${brandContext.targetAudience}`
+    }
+    if (brandContext.brandStyle.length > 0) {
+      systemPrompt += `\nMarkenstil: ${brandContext.brandStyle.join(", ")}`
+    }
+    if (brandContext.contentGoals.length > 0) {
+      systemPrompt += `\nContent-Ziele: ${brandContext.contentGoals.join(", ")}`
+    }
+  }
+
+  // Add Reels-specific instructions
+  systemPrompt += isGerman
+    ? `\n\n### AUFGABE:
+Erstelle eine optimierte Instagram Reels Caption für das beschriebene Video.
+
+### REELS-SPEZIFISCHE ANFORDERUNGEN:
+1. **Caption**: Schreibe eine kurze, punchy Caption (80-150 Zeichen ideal)
+   - **Hook in den ersten 2-3 Wörtern** - muss sofort neugierig machen
+   - Nutze Trend-Referenzen wenn passend (POV:, Wait for it, etc.)
+   - Frage oder Cliffhanger für Watch-Through-Rate
+   - Kein langer Fließtext - Reels Captions werden oft nicht gelesen
+   - Call-to-Action: "Folgen für mehr", "Speichern", "Teilen mit..."
+   
+2. **Hashtags für Reels**: Erstelle 15-30 relevante Hashtags
+   - PRIORISIERE Reels-spezifische Tags: #reels #reelsinstagram #reelsviral #explorepage
+   - Trend-Hashtags der aktuellen Zeit
+   - Nischen-Hashtags für Reichweite
+   - Mische deutsche UND englische Hashtags (englische haben mehr Reichweite)
+   - Füge audio-bezogene Tags hinzu wenn relevant: #trendingreels #viralsound
+
+### FORMAT:
+Antworte EXAKT in diesem Format:
+
+---CAPTION---
+[Kurze, punchy Caption mit Emoji Hook]
+
+---HASHTAGS---
+#reels #reelsinstagram #hashtag3 ...
+
+---ENDE---`
+    : `\n\n### TASK:
+Create an optimized Instagram Reels caption for the described video.
+
+### REELS-SPECIFIC REQUIREMENTS:
+1. **Caption**: Write a short, punchy caption (80-150 characters ideal)
+   - **Hook in the first 2-3 words** - must immediately spark curiosity
+   - Use trend references when fitting (POV:, Wait for it, etc.)
+   - Question or cliffhanger for watch-through-rate
+   - No long paragraphs - Reels captions are often not read
+   - Call-to-action: "Follow for more", "Save this", "Share with..."
+   
+2. **Hashtags for Reels**: Create 15-30 relevant hashtags
+   - PRIORITIZE Reels-specific tags: #reels #reelsinstagram #reelsviral #explorepage
+   - Trending hashtags of the current time
+   - Niche hashtags for reach
+   - Mix English and German hashtags (English has more reach)
+   - Add audio-related tags if relevant: #trendingreels #viralsound
+
+### FORMAT:
+Reply EXACTLY in this format:
+
+---CAPTION---
+[Short, punchy caption with emoji hook]
+
+---HASHTAGS---
+#reels #reelsinstagram #hashtag3 ...
+
+---END---`
+
+  return systemPrompt
+}
+
+function buildVideoUserPrompt(
+  videoAnalysis: { 
+    content?: string; 
+    mood?: string; 
+    style?: string; 
+    action?: string;
+    audio?: string;
+    targetEmotion?: string;
+  } | null,
+  originalPrompt: string | null,
+  language: string,
+  duration?: number,
+  aspectRatio?: string
+): string {
+  const isGerman = language === "de"
+  
+  let userPrompt = isGerman 
+    ? "Erstelle eine Instagram Reels Caption für folgendes Video:"
+    : "Create an Instagram Reels caption for the following video:"
+
+  // Add video metadata
+  if (duration || aspectRatio) {
+    userPrompt += isGerman ? "\n\n### VIDEO-DETAILS:" : "\n\n### VIDEO DETAILS:"
+    if (duration) {
+      userPrompt += `\n- Länge: ${duration} Sekunden`
+    }
+    if (aspectRatio) {
+      const formatName = aspectRatio === "9:16" ? "Hochformat (Reel)" : 
+                         aspectRatio === "16:9" ? "Querformat" : "Quadrat"
+      userPrompt += `\n- Format: ${formatName} (${aspectRatio})`
+    }
+  }
+
+  // Add context from video analysis
+  if (videoAnalysis) {
+    userPrompt += isGerman ? "\n\n### VIDEO-ANALYSE:" : "\n\n### VIDEO ANALYSIS:"
+    
+    if (videoAnalysis.content) {
+      userPrompt += `\n- Inhalt: ${videoAnalysis.content}`
+    }
+    if (videoAnalysis.mood) {
+      userPrompt += `\n- Stimmung: ${videoAnalysis.mood}`
+    }
+    if (videoAnalysis.style) {
+      userPrompt += `\n- Stil: ${videoAnalysis.style}`
+    }
+    if (videoAnalysis.action) {
+      userPrompt += `\n- Aktion/Handlung: ${videoAnalysis.action}`
+    }
+    if (videoAnalysis.audio) {
+      userPrompt += `\n- Audio/Sound: ${videoAnalysis.audio}`
+    }
+    if (videoAnalysis.targetEmotion) {
+      userPrompt += `\n- Ziel-Emotion: ${videoAnalysis.targetEmotion}`
+    }
+  }
+
+  // Add original prompt context if available (this is the video generation prompt)
+  if (originalPrompt) {
+    userPrompt += isGerman 
+      ? `\n\n### VIDEO-BESCHREIBUNG/PROMPT:\n${originalPrompt}`
+      : `\n\n### VIDEO DESCRIPTION/PROMPT:\n${originalPrompt}`
+  }
+
+  // Add Reels-specific tips
+  userPrompt += isGerman
+    ? `\n\n### WICHTIG FÜR REELS:
+- Der erste Satz muss SOFORT fesseln (Hook)
+- Kürze ist Trumpf - weniger ist mehr
+- Hashtags sind bei Reels wichtiger als bei Posts
+- Nutze trending Sounds/Audio wenn relevant`
+    : `\n\n### IMPORTANT FOR REELS:
+- First sentence must IMMEDIATELY captivate (Hook)
+- Brevity is key - less is more
+- Hashtags are more important for Reels than for posts
+- Use trending sounds/audio when relevant`
+
+  return userPrompt
 }

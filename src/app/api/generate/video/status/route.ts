@@ -4,6 +4,7 @@ import prisma from "@/lib/prisma"
 import {
   KIE_API,
   parseKieResult,
+  pollGeminiVideoStatus,
   type KieQueryStatusResponse,
 } from "@/lib/video-providers"
 
@@ -15,13 +16,57 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: "Nicht authentifiziert" }, { status: 401 })
     }
 
-    // Get taskId from query params
+    // Get taskId and provider from query params
     const { searchParams } = new URL(request.url)
     const taskId = searchParams.get("taskId")
+    const provider = searchParams.get("provider") || "kie"
 
     if (!taskId) {
       return NextResponse.json({ error: "taskId ist erforderlich" }, { status: 400 })
     }
+
+    // Handle Gemini Direct provider
+    if (provider === "gemini") {
+      try {
+        const result = await pollGeminiVideoStatus(taskId)
+
+        if (result.error === "in_progress") {
+          return NextResponse.json({
+            taskId: result.operationName || taskId,
+            status: "processing",
+            progress: 50, // Gemini doesn't provide progress, so estimate
+            provider: "gemini",
+          })
+        }
+
+        if (!result.success) {
+          return NextResponse.json({
+            taskId,
+            status: "failed",
+            error: result.error || "Unbekannter Fehler",
+            provider: "gemini",
+          })
+        }
+
+        return NextResponse.json({
+          taskId,
+          status: "completed",
+          progress: 100,
+          videoUrl: result.videoUrl,
+          provider: "gemini",
+        })
+      } catch (geminiError) {
+        console.error("Gemini status error:", geminiError)
+        return NextResponse.json({
+          taskId,
+          status: "failed",
+          error: geminiError instanceof Error ? geminiError.message : "Gemini Statusabfrage fehlgeschlagen",
+          provider: "gemini",
+        })
+      }
+    }
+
+    // KIE.AI status check (existing logic)
 
     // Get API key for KIE.ai
     const apiKey = await prisma.apiKey.findFirst({

@@ -1,6 +1,8 @@
 // Video Generation Provider Configuration
 // Supports KIE.AI models and Gemini Direct (Veo 3.1)
 
+import { GoogleGenAI } from '@google/genai'
+
 export type VideoProvider = 'kie' | 'gemini'
 
 export interface VideoModel {
@@ -166,6 +168,59 @@ export const VIDEO_MODELS: VideoModel[] = [
       resolution: ['720p', '1080p'],
     },
     maxPromptLength: 5000,
+    pricing: 'high',
+  },
+
+  // ============ GEMINI DIRECT MODELS ============
+  {
+    id: 'gemini-veo-3-1',
+    name: 'Gemini Veo 3.1 (Direct)',
+    description: 'Direkter Google API Zugang - Höchste Qualität mit Audio',
+    provider: 'gemini',
+    modelId: 'veo-3.1-generate-preview',
+    endpoint: 'direct', // Uses SDK, not HTTP endpoint
+    features: {
+      imageToVideo: true,
+      textToVideo: true,
+      durations: [4, 6, 8],
+      aspectRatios: ['9:16', '16:9'],
+      resolution: ['720p', '1080p'],
+    },
+    maxPromptLength: 1024,
+    pricing: 'premium',
+  },
+  {
+    id: 'gemini-veo-3-1-fast',
+    name: 'Gemini Veo 3.1 Fast (Direct)',
+    description: 'Direkter Google API Zugang - Schnell mit Audio',
+    provider: 'gemini',
+    modelId: 'veo-3.1-fast-generate-preview',
+    endpoint: 'direct', // Uses SDK, not HTTP endpoint
+    features: {
+      imageToVideo: true,
+      textToVideo: true,
+      durations: [4, 6, 8],
+      aspectRatios: ['9:16', '16:9'],
+      resolution: ['720p', '1080p'],
+    },
+    maxPromptLength: 1024,
+    pricing: 'high',
+  },
+  {
+    id: 'gemini-veo-3',
+    name: 'Gemini Veo 3 (Direct)',
+    description: 'Stabiles Veo 3 Modell mit Audio',
+    provider: 'gemini',
+    modelId: 'veo-3.0-generate-001',
+    endpoint: 'direct',
+    features: {
+      imageToVideo: true,
+      textToVideo: true,
+      durations: [8],
+      aspectRatios: ['9:16', '16:9'],
+      resolution: ['720p', '1080p'],
+    },
+    maxPromptLength: 1024,
     pricing: 'high',
   },
 ]
@@ -350,4 +405,141 @@ export function parseKieResult(resultJson: string): { videoUrls: string[] } {
   } catch {
     return { videoUrls: [] }
   }
+}
+
+// ============ GEMINI DIRECT INTEGRATION ============
+
+export interface GeminiVideoConfig {
+  aspectRatio?: '16:9' | '9:16'
+  resolution?: '720p' | '1080p'
+  durationSeconds?: 4 | 6 | 8
+  negativePrompt?: string
+  personGeneration?: 'allow_all' | 'allow_adult' | 'dont_allow'
+}
+
+export interface GeminiVideoResult {
+  success: boolean
+  operationName?: string
+  videoUrl?: string
+  videoBytes?: Buffer
+  error?: string
+}
+
+// Initialize Gemini client
+function getGeminiClient(): GoogleGenAI {
+  const apiKey = process.env.GEMINI_API_KEY
+  if (!apiKey) {
+    throw new Error('GEMINI_API_KEY environment variable is required')
+  }
+  return new GoogleGenAI({ apiKey })
+}
+
+// Start video generation with Gemini Direct
+export async function startGeminiVideoGeneration(
+  model: VideoModel,
+  options: {
+    prompt: string
+    imageBase64?: string
+    imageMimeType?: string
+    config?: GeminiVideoConfig
+  }
+): Promise<{ operationName: string }> {
+  const ai = getGeminiClient()
+  
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const generateOptions: any = {
+    model: model.modelId,
+    prompt: options.prompt.slice(0, model.maxPromptLength),
+  }
+
+  // Add image if provided (for image-to-video)
+  if (options.imageBase64 && options.imageMimeType) {
+    generateOptions.image = {
+      imageBytes: options.imageBase64,
+      mimeType: options.imageMimeType,
+    }
+  }
+
+  // Add configuration
+  if (options.config) {
+    generateOptions.config = {
+      aspectRatio: options.config.aspectRatio || '16:9',
+      negativePrompt: options.config.negativePrompt,
+      personGeneration: options.config.personGeneration || 'allow_all',
+    }
+
+    // Note: durationSeconds and resolution are controlled by Gemini internally
+    // for preview models, but we can set them if supported
+  }
+
+  const operation = await ai.models.generateVideos(generateOptions)
+  
+  return {
+    operationName: operation.name || '',
+  }
+}
+
+// Poll for video generation completion
+export async function pollGeminiVideoStatus(
+  operationName: string
+): Promise<GeminiVideoResult> {
+  const ai = getGeminiClient()
+  
+  // Reconstruct operation object from name
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const operation: any = { name: operationName, done: false }
+  
+  try {
+    const updatedOperation = await ai.operations.getVideosOperation({ 
+      operation 
+    })
+    
+    if (!updatedOperation.done) {
+      return {
+        success: false,
+        operationName: updatedOperation.name,
+        error: 'in_progress',
+      }
+    }
+
+    // Video is ready
+    const generatedVideo = updatedOperation.response?.generatedVideos?.[0]
+    if (!generatedVideo?.video) {
+      return {
+        success: false,
+        error: 'No video generated',
+      }
+    }
+
+    // The video URI is available in the response
+    // Note: The URI can be used directly to download the video
+    const videoUri = generatedVideo.video.uri
+    
+    return {
+      success: true,
+      videoUrl: videoUri,
+      operationName: updatedOperation.name,
+    }
+  } catch (error) {
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Unknown error',
+    }
+  }
+}
+
+// Helper to check if model is Gemini Direct
+export function isGeminiDirectModel(modelId: string): boolean {
+  const model = getVideoModel(modelId)
+  return model?.provider === 'gemini'
+}
+
+// Helper to get Gemini models only
+export function getGeminiModels(): VideoModel[] {
+  return VIDEO_MODELS.filter(m => m.provider === 'gemini')
+}
+
+// Helper to get KIE models only
+export function getKieModels(): VideoModel[] {
+  return VIDEO_MODELS.filter(m => m.provider === 'kie')
 }

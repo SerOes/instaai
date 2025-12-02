@@ -8,8 +8,11 @@ import {
   KIE_API,
   buildKieStandardPayload,
   buildVeoPayload,
+  startGeminiVideoGeneration,
+  isGeminiDirectModel,
   type KieCreateTaskResponse,
   type VeoGenerateResponse,
+  type GeminiVideoConfig,
 } from "@/lib/video-providers"
 
 // Extended schema for video generation
@@ -93,7 +96,75 @@ export async function POST(request: NextRequest) {
       enhancedPrompt = `Brand Guidelines:\n${user.systemPrompt}\n\n${enhancedPrompt}`
     }
 
-    // Build the appropriate payload based on model
+    // Check if this is a Gemini Direct model
+    if (isGeminiDirectModel(data.modelId)) {
+      // Use Gemini Direct API
+      const geminiApiKey = process.env.GEMINI_API_KEY
+      if (!geminiApiKey) {
+        return NextResponse.json({
+          error: "GEMINI_API_KEY nicht konfiguriert. Bitte in .env hinzufügen.",
+        }, { status: 400 })
+      }
+
+      // Prepare image if provided (base64 conversion needed)
+      let imageBase64: string | undefined
+      let imageMimeType: string | undefined
+
+      if (data.imageUrl) {
+        try {
+          const imageResponse = await fetch(data.imageUrl)
+          const imageBuffer = await imageResponse.arrayBuffer()
+          imageBase64 = Buffer.from(imageBuffer).toString('base64')
+          imageMimeType = imageResponse.headers.get('content-type') || 'image/png'
+        } catch (imgError) {
+          console.error("Error fetching image for Gemini:", imgError)
+        }
+      }
+
+      // Build Gemini config
+      const geminiConfig: GeminiVideoConfig = {
+        aspectRatio: data.aspectRatio === '1:1' ? '16:9' : data.aspectRatio as '16:9' | '9:16',
+        resolution: data.resolution as '720p' | '1080p' | undefined,
+        durationSeconds: [4, 6, 8].includes(data.duration) ? data.duration as 4 | 6 | 8 : 8,
+        negativePrompt: data.negativePrompt,
+        personGeneration: 'allow_all',
+      }
+
+      try {
+        const result = await startGeminiVideoGeneration(model, {
+          prompt: enhancedPrompt,
+          imageBase64,
+          imageMimeType,
+          config: geminiConfig,
+        })
+
+        return NextResponse.json({
+          status: "processing",
+          taskId: result.operationName,
+          provider: "gemini",
+          message: "Video wird mit Gemini Direct generiert. Polling erforderlich.",
+          model: {
+            id: model.id,
+            name: model.name,
+            provider: model.provider,
+          },
+          parameters: {
+            prompt: data.prompt,
+            aspectRatio: data.aspectRatio,
+            duration: data.duration,
+            resolution: data.resolution,
+          },
+          projectId: data.projectId,
+        })
+      } catch (geminiError) {
+        console.error("Gemini Direct Error:", geminiError)
+        return NextResponse.json({
+          error: `Gemini API Fehler: ${geminiError instanceof Error ? geminiError.message : 'Unknown error'}`,
+        }, { status: 500 })
+      }
+    }
+
+    // Build the appropriate payload based on model (KIE.AI path)
     let response: Response
     let taskId: string
 
