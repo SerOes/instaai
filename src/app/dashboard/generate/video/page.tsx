@@ -353,10 +353,17 @@ export default function GenerateVideoPage() {
   const fetchGalleryImages = async () => {
     setIsLoadingGallery(true)
     try {
-      const response = await fetch("/api/media?type=IMAGE&limit=50")
+      const response = await fetch("/api/upload/image")
       if (response.ok) {
         const data = await response.json()
-        setGalleryImages(data.media || [])
+        // Map from API response to GalleryImage format
+        const images = (data.images || []).map((img: { id: string; fileUrl: string; thumbnailUrl?: string; title?: string }) => ({
+          id: img.id,
+          url: img.fileUrl,
+          thumbnailUrl: img.thumbnailUrl || img.fileUrl,
+          title: img.title || "Bild",
+        }))
+        setGalleryImages(images)
       }
     } catch (error) {
       console.error("Error fetching gallery:", error)
