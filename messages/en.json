@@ -190,7 +190,11 @@
       "draft": "Draft",
       "scheduled": "Scheduled",
       "published": "Published",
-      "failed": "Failed"
+      "failed": "Failed",
+      "pending": "Pending",
+      "processing": "Processing",
+      "posted": "Posted",
+      "cancelled": "Cancelled"
     },
     "types": {
       "image": "Image",

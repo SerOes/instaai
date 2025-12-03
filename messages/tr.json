@@ -190,7 +190,11 @@
       "draft": "Taslak",
       "scheduled": "Planlandı",
       "published": "Yayınlandı",
-      "failed": "Başarısız"
+      "failed": "Başarısız",
+      "pending": "Bekliyor",
+      "processing": "İşleniyor",
+      "posted": "Paylaşıldı",
+      "cancelled": "İptal Edildi"
     },
     "types": {
       "image": "Resim",

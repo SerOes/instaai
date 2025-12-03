@@ -190,7 +190,11 @@
       "draft": "Entwurf",
       "scheduled": "Geplant",
       "published": "Veröffentlicht",
-      "failed": "Fehlgeschlagen"
+      "failed": "Fehlgeschlagen",
+      "pending": "Ausstehend",
+      "processing": "Verarbeitung",
+      "posted": "Gepostet",
+      "cancelled": "Abgebrochen"
     },
     "types": {
       "image": "Bild",
