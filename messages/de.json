@@ -194,7 +194,8 @@
       "pending": "Ausstehend",
       "processing": "Verarbeitung",
       "posted": "Gepostet",
-      "cancelled": "Abgebrochen"
+      "cancelled": "Abgebrochen",
+      "completed": "Abgeschlossen"
     },
     "types": {
       "image": "Bild",

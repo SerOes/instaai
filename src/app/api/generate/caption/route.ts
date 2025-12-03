@@ -11,7 +11,7 @@ const captionSchema = z.object({
   language: z.enum(["de", "en", "tr"]).default("de"),
   includeEmojis: z.boolean().default(true),
   maxLength: z.number().min(50).max(2200).default(500),
-  model: z.enum(["gemini-2.5-flash", "gemini-3.0-pro"]).default("gemini-2.5-flash"),
+  model: z.enum(["gemini-2.5-flash", "gemini-3-pro-preview"]).default("gemini-2.5-flash"),
 })
 
 export async function POST(request: NextRequest) {
@@ -67,24 +67,26 @@ export async function POST(request: NextRequest) {
       ? "Verwende passende Emojis, um den Text lebendiger zu machen."
       : "Verwende keine Emojis."
 
-    // Include user's brand context if available
-    const brandContext = user?.systemPrompt 
-      ? `\nMarken-Kontext:\n${user.systemPrompt}\n`
-      : ""
+    // Build system instruction from user's global system prompt
+    const systemInstruction = user?.systemPrompt 
+      ? user.systemPrompt
+      : "Du bist ein erfahrener Social-Media-Creative Director und Copywriter."
 
-    const prompt = `Erstelle eine Instagram-Caption für folgendes Bild/Thema:
-${brandContext}
-Beschreibung: ${data.description}
+    const prompt = `Beschreibung des Contents: ${data.description}
+
+Erstelle eine Instagram-Caption mit relevanten Hashtags basierend auf der obigen Beschreibung.
 
 Anforderungen:
 - Stil: ${stylePrompts[data.style]}
 - ${languageInstruction}
 - ${emojiInstruction}
-- Maximale Länge: ${data.maxLength} Zeichen
+- Maximale Länge für Caption: ${data.maxLength} Zeichen
 - Füge einen Call-to-Action hinzu, der zur Interaktion einlädt
 - Die Caption soll authentisch und zur Marke passend sein
+- Generiere 10-15 relevante Hashtags passend zur Marke und Zielgruppe
 
-Gib NUR die Caption aus, ohne zusätzliche Erklärungen.`
+WICHTIG: Antworte NUR im folgenden JSON-Format, ohne Markdown-Code-Blöcke:
+{"caption": "Deine Caption hier...", "hashtags": ["#hashtag1", "#hashtag2", "#hashtag3"]}`
 
     // Call Gemini API with user-selected model (default: gemini-2.5-flash)
     const geminiResponse = await fetch(
@@ -95,6 +97,9 @@ Gib NUR die Caption aus, ohne zusätzliche Erklärungen.`
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
+          systemInstruction: {
+            parts: [{ text: systemInstruction }],
+          },
           contents: [
             {
               parts: [{ text: prompt }],
@@ -110,14 +115,35 @@ Gib NUR die Caption aus, ohne zusätzliche Erklärungen.`
 
     if (!geminiResponse.ok) {
       const errorData = await geminiResponse.json()
-      console.error("Gemini API Error:", errorData)
+      console.error("Gemini API Error:", JSON.stringify(errorData, null, 2))
       return NextResponse.json({ 
-        error: "Fehler bei der Generierung. Bitte überprüfen Sie Ihren API-Schlüssel." 
+        error: `Fehler bei der Generierung: ${errorData.error?.message || 'Unbekannter Fehler'}. Bitte überprüfen Sie Ihren API-Schlüssel.` 
       }, { status: 500 })
     }
 
     const geminiData = await geminiResponse.json()
-    const caption = geminiData.candidates?.[0]?.content?.parts?.[0]?.text || ""
+    const rawResponse = geminiData.candidates?.[0]?.content?.parts?.[0]?.text || ""
+    
+    // Parse JSON response from Gemini
+    let caption = ""
+    let hashtags: string[] = []
+    
+    try {
+      // Clean the response - remove potential markdown code blocks
+      const cleanedResponse = rawResponse
+        .replace(/```json\n?/g, "")
+        .replace(/```\n?/g, "")
+        .trim()
+      
+      const parsed = JSON.parse(cleanedResponse)
+      caption = parsed.caption || ""
+      hashtags = parsed.hashtags || []
+    } catch {
+      // Fallback: use raw response as caption if JSON parsing fails
+      console.warn("Could not parse JSON response, using raw text:", rawResponse)
+      caption = rawResponse
+      hashtags = []
+    }
 
     // Save caption if projectId is provided
     if (data.projectId) {
@@ -130,14 +156,20 @@ Gib NUR die Caption aus, ohne zusätzliche Erklärungen.`
       })
 
       if (project) {
+        // Get current caption count to set version
+        const captionCount = await prisma.caption.count({
+          where: { projectId: data.projectId },
+        })
+        
         await prisma.caption.create({
           data: {
             projectId: data.projectId,
             text: caption,
+            hashtags: JSON.stringify(hashtags),
             tone: data.style,
             language: data.language,
-            // hashtags defaults to "[]" in schema
-            isSelected: false,
+            isSelected: captionCount === 0, // Auto-select first caption
+            version: captionCount + 1,
           },
         })
       }
@@ -145,6 +177,7 @@ Gib NUR die Caption aus, ohne zusätzliche Erklärungen.`
 
     return NextResponse.json({ 
       caption,
+      hashtags,
       style: data.style,
       language: data.language,
     })

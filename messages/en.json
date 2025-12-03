@@ -194,7 +194,8 @@
       "pending": "Pending",
       "processing": "Processing",
       "posted": "Posted",
-      "cancelled": "Cancelled"
+      "cancelled": "Cancelled",
+      "completed": "Completed"
     },
     "types": {
       "image": "Image",

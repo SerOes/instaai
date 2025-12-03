@@ -194,7 +194,8 @@
       "pending": "Bekliyor",
       "processing": "İşleniyor",
       "posted": "Paylaşıldı",
-      "cancelled": "İptal Edildi"
+      "cancelled": "İptal Edildi",
+      "completed": "Tamamlandı"
     },
     "types": {
       "image": "Resim",

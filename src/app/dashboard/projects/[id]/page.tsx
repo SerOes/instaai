@@ -123,6 +123,7 @@ export default function ProjectDetailPage({
   const [generatingCaption, setGeneratingCaption] = useState(false)
   const [captionTone, setCaptionTone] = useState("casual")
   const [captionLanguage, setCaptionLanguage] = useState(locale)
+  const [captionModel, setCaptionModel] = useState("gemini-2.5-flash")
   const [showCaptionOptions, setShowCaptionOptions] = useState(false)
   const [copiedCaption, setCopiedCaption] = useState<string | null>(null)
 
@@ -218,6 +219,7 @@ export default function ProjectDetailPage({
           description: description,
           style: captionTone,
           language: captionLanguage,
+          model: captionModel,
           includeEmojis: true,
           maxLength: isReel ? 2200 : 500,
         }),
@@ -250,11 +252,16 @@ export default function ProjectDetailPage({
   }
 
   const copyCaption = async (caption: Caption) => {
-    const hashtags = JSON.parse(caption.hashtags || "[]").join(" ")
-    const fullText = `${caption.text}\n\n${hashtags}`
-    await navigator.clipboard.writeText(fullText)
-    setCopiedCaption(caption.id)
-    setTimeout(() => setCopiedCaption(null), 2000)
+    try {
+      const hashtags = JSON.parse(caption.hashtags || "[]").join(" ")
+      const captionText = caption.text || ""
+      const fullText = hashtags ? `${captionText}\n\n${hashtags}` : captionText
+      await navigator.clipboard.writeText(fullText)
+      setCopiedCaption(caption.id)
+      setTimeout(() => setCopiedCaption(null), 2000)
+    } catch (err) {
+      console.error("Error copying caption:", err)
+    }
   }
 
   const schedulePost = async () => {
@@ -545,6 +552,18 @@ export default function ProjectDetailPage({
 
                   {showCaptionOptions && (
                     <div className="mt-4 grid gap-4 sm:grid-cols-2">
+                      <div>
+                        <Label>KI-Modell</Label>
+                        <Select value={captionModel} onValueChange={setCaptionModel}>
+                          <SelectTrigger>
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="gemini-2.5-flash">Gemini 2.5 Flash (Schnell)</SelectItem>
+                            <SelectItem value="gemini-3-pro-preview">Gemini 3 Pro (Beste Qualität)</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
                       <div>
                         <Label>Tonalität</Label>
                         <Select value={captionTone} onValueChange={setCaptionTone}>
