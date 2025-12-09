@@ -54,6 +54,7 @@ COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 # Copy node_modules for Prisma
 COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
 COPY --from=builder /app/node_modules/@prisma ./node_modules/@prisma
+COPY --from=builder /app/node_modules/prisma ./node_modules/prisma
 
 USER nextjs
 
@@ -63,4 +64,4 @@ ENV PORT=3000
 ENV HOSTNAME="0.0.0.0"
 
 # Push schema to database and start the app
-CMD ["sh", "-c", "npx prisma db push --accept-data-loss && node server.js"]
+CMD ["sh", "-c", "node node_modules/prisma/build/index.js db push --accept-data-loss && node server.js"]
