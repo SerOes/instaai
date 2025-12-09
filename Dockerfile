@@ -19,7 +19,8 @@ WORKDIR /app
 
 # Copy package files from cloned repo
 COPY --from=cloner /app/package.json /app/package-lock.json* ./
-RUN npm ci
+# Install ALL dependencies including devDependencies for build
+RUN npm ci --include=dev
 
 # Rebuild the source code only when needed
 FROM base AS builder
