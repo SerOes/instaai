@@ -19,8 +19,8 @@ WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
-# Rebuild lightningcss for this platform
-RUN npm rebuild lightningcss
+# Install Linux-specific lightningcss binary
+RUN npm install lightningcss-linux-x64-gnu
 
 # Generate Prisma Client
 RUN npx prisma generate
