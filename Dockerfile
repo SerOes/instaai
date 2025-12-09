@@ -19,8 +19,8 @@ WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
-# Install Linux-specific native binaries for Tailwind v4
-RUN npm install lightningcss-linux-x64-gnu @tailwindcss/oxide-linux-x64-gnu
+# Install Linux-specific native binaries for Tailwind v4 and sharp
+RUN npm install lightningcss-linux-x64-gnu @tailwindcss/oxide-linux-x64-gnu sharp --os=linux --cpu=x64
 
 # Generate Prisma Client
 RUN npx prisma generate
