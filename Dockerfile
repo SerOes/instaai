@@ -1,24 +1,12 @@
 FROM node:20-slim AS base
 
-# Clone stage - clone the repo with token
-FROM base AS cloner
-RUN apt-get update && apt-get install -y git && rm -rf /var/lib/apt/lists/*
-WORKDIR /app
-
-ARG GIT_TOKEN
-ARG GIT_REPO=SerOes/instaai
-ARG GIT_BRANCH=main
-
-# Clone the repository using the token
-RUN git clone --depth 1 --branch ${GIT_BRANCH} https://${GIT_TOKEN}@github.com/${GIT_REPO}.git .
-
 # Install dependencies only when needed
 FROM base AS deps
 RUN apt-get update && apt-get install -y openssl && rm -rf /var/lib/apt/lists/*
 WORKDIR /app
 
-# Copy package files from cloned repo
-COPY --from=cloner /app/package.json /app/package-lock.json* ./
+# Copy package files
+COPY package.json package-lock.json* ./
 # Install ALL dependencies including devDependencies for build
 RUN npm ci --include=dev
 # Rebuild native modules for current platform
@@ -28,7 +16,7 @@ RUN npm rebuild lightningcss
 FROM base AS builder
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
-COPY --from=cloner /app .
+COPY . .
 
 # Generate Prisma Client
 RUN npx prisma generate
