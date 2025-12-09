@@ -5,6 +5,7 @@ const withNextIntl = createNextIntlPlugin('./src/i18n.ts');
 
 const nextConfig: NextConfig = {
   /* config options here */
+  output: 'standalone', // Required for Docker deployment
   reactCompiler: true,
   
   // Allow cross-origin requests in development

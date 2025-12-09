@@ -1,13 +1,13 @@
 // This is your Prisma schema file for the AI-powered Instagram Content Tool
 // Based on the specification: insta_ai_tool_extended_spec.md
-// SQLite for development (no enums), PostgreSQL for production
+// PostgreSQL for production
 
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
