@@ -641,6 +641,185 @@
     "skipLink": "Skip and set up later",
     "error": "Failed to save. Please try again."
   },
+  "seasonalIdeas": {
+    "title": "Seasonal Content Ideas",
+    "subtitle": "Personalized content ideas based on your brand profile",
+    "button": "Seasonal Ideas",
+    "loading": "AI is generating seasonal ideas...",
+    "loadingSubtitle": "Based on your brand profile and current events",
+    "refresh": "New Ideas",
+    "filter": {
+      "all": "All",
+      "images": "Images",
+      "videos": "Videos",
+      "carousel": "Carousel"
+    },
+    "contentTypes": {
+      "image": "Image",
+      "video": "Video",
+      "carousel": "Carousel"
+    },
+    "requiresSystemPrompt": {
+      "title": "System Prompt Required",
+      "description": "To generate personalized seasonal ideas, we need your brand profile. Please set up your system prompt in the settings first.",
+      "button": "Set Up System Prompt"
+    },
+    "ideaCard": {
+      "createContent": "Create Content",
+      "suggestedDate": "Suggested for"
+    },
+    "wizard": {
+      "steps": {
+        "image": "Image",
+        "video": "Video",
+        "caption": "Caption",
+        "schedule": "Schedule",
+        "complete": "Done"
+      },
+      "image": {
+        "title": "Generate Image",
+        "toggle": "Generate image?",
+        "prompt": "Image Prompt",
+        "model": "Model",
+        "aspectRatio": "Aspect Ratio",
+        "quality": "Quality",
+        "qualityBasic": "Standard (2K)",
+        "qualityHigh": "High (4K)",
+        "generate": "Generate Image",
+        "generating": "Generating...",
+        "generated": "Generated Image"
+      },
+      "video": {
+        "title": "Generate Video",
+        "toggle": "Generate video?",
+        "prompt": "Video Prompt",
+        "model": "Model",
+        "aspectRatio": "Aspect Ratio",
+        "duration": "Duration",
+        "withSound": "With Sound",
+        "generate": "Generate Video",
+        "generating": "Generating...",
+        "generated": "Generated Video"
+      },
+      "modelInfo": {
+        "provider": "Provider",
+        "speed": "Speed",
+        "price": "Price",
+        "quality": "Quality",
+        "features": "Features",
+        "requiresImage": "Requires Image",
+        "speeds": {
+          "fast": "Fast",
+          "medium": "Medium",
+          "slow": "Slow",
+          "veryFast": "Very Fast"
+        }
+      },
+      "imageModels": {
+        "nanoBananaPro": {
+          "name": "Nano Banana Pro",
+          "provider": "KIE.AI (Google)",
+          "description": "Gemini 3.0 Pro Image - Best quality, 4K support, up to 8 reference images",
+          "features": "4K Ultra HD, Multi-Reference, Best Text Rendering"
+        },
+        "nanoBanana": {
+          "name": "Nano Banana",
+          "provider": "KIE.AI (Google)",
+          "description": "Gemini 2.5 Flash Image - Fast & cheap, text-to-image",
+          "features": "Fast, Affordable, Good for simple images"
+        },
+        "seedream": {
+          "name": "Seedream 4.5",
+          "provider": "KIE.AI (ByteDance)",
+          "description": "Latest Seedream model - Photorealism, creative styles",
+          "features": "Photorealistic, 2K/4K, Creative Styles"
+        },
+        "flux2Pro": {
+          "name": "Flux 2 Pro",
+          "provider": "KIE.AI (Black Forest)",
+          "description": "Black Forest Labs - Excellent text rendering, high consistency",
+          "features": "Text Rendering, Multi-Reference, 4MP"
+        },
+        "gemini25Flash": {
+          "name": "Gemini 2.5 Flash",
+          "provider": "Google Direct",
+          "description": "Direct Gemini API - Fast image generation with natural language",
+          "features": "Direct API, Fast, Conversational"
+        },
+        "gemini3ProPreview": {
+          "name": "Gemini 3 Pro Preview",
+          "provider": "Google Direct",
+          "description": "Direct Gemini API - Highest quality, may take longer",
+          "features": "Highest Quality, 4K, Preview"
+        }
+      },
+      "videoModels": {
+        "kling26T2V": {
+          "name": "Kling 2.6 Text-to-Video",
+          "provider": "KIE.AI (Kuaishou)",
+          "description": "Text to video with optional sound - 5 or 10 seconds",
+          "features": "Sound Support, 5-10 Sec, High Quality"
+        },
+        "kling26I2V": {
+          "name": "Kling 2.6 Image-to-Video",
+          "provider": "KIE.AI (Kuaishou)",
+          "description": "Image to video animation with sound - Brings your images to life",
+          "features": "Sound Support, Image Animation, 5-10 Sec"
+        },
+        "veo31Quality": {
+          "name": "Veo 3.1 Quality",
+          "provider": "KIE.AI (Google)",
+          "description": "Google Veo - Highest video quality, 8 seconds, native audio",
+          "features": "8 Sec, 720p/1080p, Native Audio"
+        },
+        "veo31Fast": {
+          "name": "Veo 3.1 Fast",
+          "provider": "KIE.AI (Google)",
+          "description": "Google Veo Fast - Faster generation, good quality",
+          "features": "Fast, 720p, Native Audio"
+        },
+        "veo31GeminiDirect": {
+          "name": "Veo 3.1 (Gemini Direct)",
+          "provider": "Google Direct",
+          "description": "Direct Veo API via Gemini - 8 Sec HD with dialog & sound",
+          "features": "Dialog, Sound Effects, 8 Sec HD"
+        }
+      },
+      "caption": {
+        "title": "Caption & Hashtags",
+        "caption": "Caption",
+        "characters": "{count} / 2200 characters",
+        "hashtags": "Hashtags",
+        "hashtagCount": "{count} hashtags",
+        "copy": "Copy"
+      },
+      "schedule": {
+        "title": "Choose Schedule",
+        "date": "Date",
+        "time": "Time",
+        "account": "Instagram Account",
+        "accountPlaceholder": "Select account",
+        "noAccount": "No Instagram account connected. You can still create the content.",
+        "postType": "Post Type",
+        "postTypes": {
+          "feed": "Feed Post",
+          "reel": "Reel",
+          "story": "Story"
+        },
+        "submit": "Add to Calendar"
+      },
+      "complete": {
+        "title": "Content Created!",
+        "description": "Your seasonal content was successfully created",
+        "descriptionScheduled": "Your seasonal content was successfully created and scheduled.",
+        "button": "Go to Content Planner"
+      },
+      "navigation": {
+        "back": "Back",
+        "next": "Next"
+      }
+    }
+  },
   "languageSwitcher": {
     "label": "Language",
     "de": "Deutsch",

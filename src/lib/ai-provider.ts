@@ -1,6 +1,6 @@
 // AI Provider Service - Abstraction layer for AI integrations
 // Supports Gemini 2.5 Flash / 3.0 Pro and KIE.ai
-// KIE.ai Models: Nano Banana Pro, Flux 2, Seedream V4, Nano Banana Edit, Topaz Upscale
+// KIE.ai Models: Nano Banana Pro, Flux 2, Seedream V4/4.5, Nano Banana Edit, Topaz Upscale
 
 export type AIProvider = 'gemini' | 'kieai'
 export type GeminiModel = 'gemini-2.5-flash' | 'gemini-3.0-pro'
@@ -14,12 +14,14 @@ export type KieImageModel =
   | 'flux-2-pro-text-to-image'
   | 'flux-2-flex-text-to-image'
   | 'seedream-v4-text-to-image'
+  | 'seedream-4-5-text-to-image' // NEW: Seedream 4.5
   // Image-to-Image
   | 'flux-2-pro-image-to-image'
   | 'flux-2-flex-image-to-image'
   // Edit
   | 'nano-banana-edit'
   | 'seedream-v4-edit'
+  | 'seedream-4-5-edit' // NEW: Seedream 4.5 Edit
   // Upscale
   | 'topaz-image-upscale'
 
@@ -143,16 +145,25 @@ async function callGeminiAPI(
 }
 
 // KIE.ai API Endpoints for different models
+// Note: Seedream 4.5 uses the universal createTask endpoint with model ID
 const KIE_API_ENDPOINTS: Record<KieImageModel, string> = {
   'nano-banana-pro': 'https://api.kie.ai/api/models/google/nano-banana-pro',
   'flux-2-pro-text-to-image': 'https://api.kie.ai/api/models/flux-2/pro-text-to-image',
   'flux-2-flex-text-to-image': 'https://api.kie.ai/api/models/flux-2/flex-text-to-image',
   'seedream-v4-text-to-image': 'https://api.kie.ai/api/models/bytedance/seedream-v4-text-to-image',
+  'seedream-4-5-text-to-image': 'https://api.kie.ai/api/v1/jobs/createTask', // Seedream 4.5 uses createTask
   'flux-2-pro-image-to-image': 'https://api.kie.ai/api/models/flux-2/pro-image-to-image',
   'flux-2-flex-image-to-image': 'https://api.kie.ai/api/models/flux-2/flex-image-to-image',
   'nano-banana-edit': 'https://api.kie.ai/api/models/google/nano-banana-edit',
   'seedream-v4-edit': 'https://api.kie.ai/api/models/bytedance/seedream-v4-edit',
+  'seedream-4-5-edit': 'https://api.kie.ai/api/v1/jobs/createTask', // Seedream 4.5 Edit uses createTask
   'topaz-image-upscale': 'https://api.kie.ai/api/models/topaz/image-upscale',
+}
+
+// Seedream 4.5 Model IDs for createTask API
+const SEEDREAM_45_MODELS = {
+  'seedream-4-5-text-to-image': 'seedream/4.5-text-to-image',
+  'seedream-4-5-edit': 'seedream/4.5-edit',
 }
 
 // KIE.ai API Integration for Images

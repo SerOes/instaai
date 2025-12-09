@@ -17,6 +17,7 @@ export interface VideoModel {
     textToVideo: boolean
     tailImage?: boolean
     storyboard?: boolean
+    sound?: boolean
     resolution?: string[]
     durations: number[]
     aspectRatios: string[]
@@ -35,6 +36,44 @@ export const KIE_API = {
 // All supported video models
 export const VIDEO_MODELS: VideoModel[] = [
   // ============ KIE.AI MODELS ============
+  
+  // ===== KLING 2.6 (NEWEST) =====
+  {
+    id: 'kling-2-6-i2v',
+    name: 'Kling 2.6 Image-to-Video',
+    description: 'Neuestes Kling Modell - Hochwertige I2V mit Sound-Unterstützung',
+    provider: 'kie',
+    modelId: 'kling-2.6/image-to-video',
+    endpoint: KIE_API.createTask,
+    features: {
+      imageToVideo: true,
+      textToVideo: false,
+      sound: true,
+      durations: [5, 10],
+      aspectRatios: ['9:16', '16:9', '1:1'],
+    },
+    maxPromptLength: 1000,
+    pricing: 'medium',
+  },
+  {
+    id: 'kling-2-6-t2v',
+    name: 'Kling 2.6 Text-to-Video',
+    description: 'Neuestes Kling Modell - Text-to-Video mit Sound-Unterstützung',
+    provider: 'kie',
+    modelId: 'kling-2.6/text-to-video',
+    endpoint: KIE_API.createTask,
+    features: {
+      imageToVideo: false,
+      textToVideo: true,
+      sound: true,
+      durations: [5, 10],
+      aspectRatios: ['1:1', '16:9', '9:16'],
+    },
+    maxPromptLength: 1000,
+    pricing: 'medium',
+  },
+  
+  // ===== KLING 2.5 =====
   {
     id: 'kling-2-5-turbo',
     name: 'Kling 2.5 Turbo',

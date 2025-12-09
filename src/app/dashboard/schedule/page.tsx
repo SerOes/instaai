@@ -11,12 +11,14 @@ import {
   Video,
   MoreVertical,
   Trash2,
-  Edit
+  Edit,
+  Sparkles,
 } from "lucide-react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { SeasonalIdeasPanel } from "@/components/seasonal-ideas"
 
 interface Schedule {
   id: string
@@ -41,6 +43,7 @@ export default function SchedulePage() {
   const [loading, setLoading] = useState(true)
   const [currentDate, setCurrentDate] = useState(new Date())
   const [view, setView] = useState<"calendar" | "list">("list")
+  const [showSeasonalIdeas, setShowSeasonalIdeas] = useState(false)
 
   useEffect(() => {
     fetchSchedules()
@@ -146,13 +149,35 @@ export default function SchedulePage() {
             Plane und verwalte deine Instagram-Posts
           </p>
         </div>
-        <Link href="/dashboard/projects">
-          <Button variant="gradient" className="shadow-lg shadow-primary/20">
-            <Plus className="mr-2 h-4 w-4" />
-            Neuen Post planen
+        <div className="flex gap-2">
+          <Button 
+            variant="outline" 
+            className="border-primary/50 hover:bg-primary/10"
+            onClick={() => setShowSeasonalIdeas(true)}
+          >
+            <Sparkles className="mr-2 h-4 w-4 text-primary" />
+            Saisonale Ideen
           </Button>
-        </Link>
+          <Link href="/dashboard/projects">
+            <Button variant="gradient" className="shadow-lg shadow-primary/20">
+              <Plus className="mr-2 h-4 w-4" />
+              Neuen Post planen
+            </Button>
+          </Link>
+        </div>
       </div>
+
+      {/* Seasonal Ideas Panel */}
+      <SeasonalIdeasPanel
+        isOpen={showSeasonalIdeas}
+        onClose={() => setShowSeasonalIdeas(false)}
+        currentMonth={currentDate.getMonth() + 1}
+        currentYear={currentDate.getFullYear()}
+        onContentCreated={() => {
+          setShowSeasonalIdeas(false)
+          fetchSchedules()
+        }}
+      />
 
       {/* Month Navigation */}
       <Card className="border-border/50 bg-card/50 backdrop-blur-xl">

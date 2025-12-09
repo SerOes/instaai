@@ -641,6 +641,185 @@
     "skipLink": "Überspringen und später einrichten",
     "error": "Fehler beim Speichern. Bitte versuche es erneut."
   },
+  "seasonalIdeas": {
+    "title": "Saisonale Content-Ideen",
+    "subtitle": "Personalisierte Content-Ideen basierend auf deinem Markenprofil",
+    "button": "Saisonale Ideen",
+    "loading": "KI generiert saisonale Ideen...",
+    "loadingSubtitle": "Basierend auf deinem Markenprofil und aktuellen Events",
+    "refresh": "Neue Ideen",
+    "filter": {
+      "all": "Alle",
+      "images": "Bilder",
+      "videos": "Videos",
+      "carousel": "Carousel"
+    },
+    "contentTypes": {
+      "image": "Bild",
+      "video": "Video",
+      "carousel": "Carousel"
+    },
+    "requiresSystemPrompt": {
+      "title": "System-Prompt erforderlich",
+      "description": "Um personalisierte saisonale Ideen zu generieren, benötigen wir dein Markenprofil. Bitte richte zuerst deinen System-Prompt in den Einstellungen ein.",
+      "button": "System-Prompt einrichten"
+    },
+    "ideaCard": {
+      "createContent": "Content erstellen",
+      "suggestedDate": "Vorgeschlagen für"
+    },
+    "wizard": {
+      "steps": {
+        "image": "Bild",
+        "video": "Video",
+        "caption": "Caption",
+        "schedule": "Planen",
+        "complete": "Fertig"
+      },
+      "image": {
+        "title": "Bild generieren",
+        "toggle": "Bild generieren?",
+        "prompt": "Bild-Prompt",
+        "model": "Modell",
+        "aspectRatio": "Seitenverhältnis",
+        "quality": "Qualität",
+        "qualityBasic": "Standard (2K)",
+        "qualityHigh": "Hoch (4K)",
+        "generate": "Bild generieren",
+        "generating": "Wird generiert...",
+        "generated": "Generiertes Bild"
+      },
+      "video": {
+        "title": "Video generieren",
+        "toggle": "Video generieren?",
+        "prompt": "Video-Prompt",
+        "model": "Modell",
+        "aspectRatio": "Seitenverhältnis",
+        "duration": "Dauer",
+        "withSound": "Mit Sound",
+        "generate": "Video generieren",
+        "generating": "Wird generiert...",
+        "generated": "Generiertes Video"
+      },
+      "modelInfo": {
+        "provider": "Anbieter",
+        "speed": "Geschwindigkeit",
+        "price": "Preis",
+        "quality": "Qualität",
+        "features": "Features",
+        "requiresImage": "Benötigt Bild",
+        "speeds": {
+          "fast": "Schnell",
+          "medium": "Mittel",
+          "slow": "Langsam",
+          "veryFast": "Sehr schnell"
+        }
+      },
+      "imageModels": {
+        "nanoBananaPro": {
+          "name": "Nano Banana Pro",
+          "provider": "KIE.AI (Google)",
+          "description": "Gemini 3.0 Pro Image - Beste Qualität, 4K Support, bis zu 8 Referenzbilder",
+          "features": "4K Ultra HD, Multi-Referenz, Beste Text-Rendering"
+        },
+        "nanoBanana": {
+          "name": "Nano Banana",
+          "provider": "KIE.AI (Google)",
+          "description": "Gemini 2.5 Flash Image - Schnell & günstig, Text-to-Image",
+          "features": "Schnell, Günstig, Gut für einfache Bilder"
+        },
+        "seedream": {
+          "name": "Seedream 4.5",
+          "provider": "KIE.AI (ByteDance)",
+          "description": "Neuestes Seedream Modell - Fotorealismus, kreative Styles",
+          "features": "Fotorealistisch, 2K/4K, Kreative Styles"
+        },
+        "flux2Pro": {
+          "name": "Flux 2 Pro",
+          "provider": "KIE.AI (Black Forest)",
+          "description": "Black Forest Labs - Exzellentes Text-Rendering, hohe Konsistenz",
+          "features": "Text-Rendering, Multi-Referenz, 4MP"
+        },
+        "gemini25Flash": {
+          "name": "Gemini 2.5 Flash",
+          "provider": "Google Direct",
+          "description": "Direkte Gemini API - Schnelle Bildgenerierung mit natürlicher Sprache",
+          "features": "Direkte API, Schnell, Konversationell"
+        },
+        "gemini3ProPreview": {
+          "name": "Gemini 3 Pro Preview",
+          "provider": "Google Direct",
+          "description": "Direkte Gemini API - Höchste Qualität, kann länger dauern",
+          "features": "Höchste Qualität, 4K, Preview"
+        }
+      },
+      "videoModels": {
+        "kling26T2V": {
+          "name": "Kling 2.6 Text-to-Video",
+          "provider": "KIE.AI (Kuaishou)",
+          "description": "Text zu Video mit optionalem Sound - 5 oder 10 Sekunden",
+          "features": "Sound Support, 5-10 Sek, Hohe Qualität"
+        },
+        "kling26I2V": {
+          "name": "Kling 2.6 Image-to-Video",
+          "provider": "KIE.AI (Kuaishou)",
+          "description": "Bild zu Video Animation mit Sound - Belebt deine Bilder",
+          "features": "Sound Support, Bild-Animation, 5-10 Sek"
+        },
+        "veo31Quality": {
+          "name": "Veo 3.1 Quality",
+          "provider": "KIE.AI (Google)",
+          "description": "Google Veo - Höchste Videoqualität, 8 Sekunden, natives Audio",
+          "features": "8 Sek, 720p/1080p, Natives Audio"
+        },
+        "veo31Fast": {
+          "name": "Veo 3.1 Fast",
+          "provider": "KIE.AI (Google)",
+          "description": "Google Veo Fast - Schnellere Generierung, gute Qualität",
+          "features": "Schnell, 720p, Natives Audio"
+        },
+        "veo31GeminiDirect": {
+          "name": "Veo 3.1 (Gemini Direct)",
+          "provider": "Google Direct",
+          "description": "Direkte Veo API via Gemini - 8 Sek HD mit Dialog & Sound",
+          "features": "Dialog, Sound Effects, 8 Sek HD"
+        }
+      },
+      "caption": {
+        "title": "Caption & Hashtags",
+        "caption": "Caption",
+        "characters": "{count} / 2200 Zeichen",
+        "hashtags": "Hashtags",
+        "hashtagCount": "{count} Hashtags",
+        "copy": "Kopieren"
+      },
+      "schedule": {
+        "title": "Termin wählen",
+        "date": "Datum",
+        "time": "Uhrzeit",
+        "account": "Instagram Account",
+        "accountPlaceholder": "Account auswählen",
+        "noAccount": "Kein Instagram-Account verbunden. Du kannst den Content trotzdem erstellen.",
+        "postType": "Post-Typ",
+        "postTypes": {
+          "feed": "Feed Post",
+          "reel": "Reel",
+          "story": "Story"
+        },
+        "submit": "In Kalender eintragen"
+      },
+      "complete": {
+        "title": "Content erstellt!",
+        "description": "Dein saisonaler Content wurde erfolgreich erstellt",
+        "descriptionScheduled": "Dein saisonaler Content wurde erfolgreich erstellt und geplant.",
+        "button": "Zum Content-Planer"
+      },
+      "navigation": {
+        "back": "Zurück",
+        "next": "Weiter"
+      }
+    }
+  },
   "languageSwitcher": {
     "label": "Sprache",
     "de": "Deutsch",

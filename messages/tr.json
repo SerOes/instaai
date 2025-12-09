@@ -641,6 +641,185 @@
     "skipLink": "Atla ve sonra ayarla",
     "error": "Kaydetme başarısız. Lütfen tekrar deneyin."
   },
+  "seasonalIdeas": {
+    "title": "Mevsimsel İçerik Fikirleri",
+    "subtitle": "Marka profilinize dayalı kişiselleştirilmiş içerik fikirleri",
+    "button": "Mevsimsel Fikirler",
+    "loading": "Yapay zeka mevsimsel fikirler oluşturuyor...",
+    "loadingSubtitle": "Marka profilinize ve güncel etkinliklere dayalı",
+    "refresh": "Yeni Fikirler",
+    "filter": {
+      "all": "Tümü",
+      "images": "Resimler",
+      "videos": "Videolar",
+      "carousel": "Carousel"
+    },
+    "contentTypes": {
+      "image": "Resim",
+      "video": "Video",
+      "carousel": "Carousel"
+    },
+    "requiresSystemPrompt": {
+      "title": "Sistem İstemi Gerekli",
+      "description": "Kişiselleştirilmiş mevsimsel fikirler oluşturmak için marka profilinize ihtiyacımız var. Lütfen önce ayarlarda sistem isteminizi ayarlayın.",
+      "button": "Sistem İstemi Ayarla"
+    },
+    "ideaCard": {
+      "createContent": "İçerik Oluştur",
+      "suggestedDate": "Önerilen tarih"
+    },
+    "wizard": {
+      "steps": {
+        "image": "Resim",
+        "video": "Video",
+        "caption": "Açıklama",
+        "schedule": "Planla",
+        "complete": "Tamamlandı"
+      },
+      "image": {
+        "title": "Resim Oluştur",
+        "toggle": "Resim oluşturulsun mu?",
+        "prompt": "Resim İstemi",
+        "model": "Model",
+        "aspectRatio": "En Boy Oranı",
+        "quality": "Kalite",
+        "qualityBasic": "Standart (2K)",
+        "qualityHigh": "Yüksek (4K)",
+        "generate": "Resim Oluştur",
+        "generating": "Oluşturuluyor...",
+        "generated": "Oluşturulan Resim"
+      },
+      "video": {
+        "title": "Video Oluştur",
+        "toggle": "Video oluşturulsun mu?",
+        "prompt": "Video İstemi",
+        "model": "Model",
+        "aspectRatio": "En Boy Oranı",
+        "duration": "Süre",
+        "withSound": "Sesli",
+        "generate": "Video Oluştur",
+        "generating": "Oluşturuluyor...",
+        "generated": "Oluşturulan Video"
+      },
+      "modelInfo": {
+        "provider": "Sağlayıcı",
+        "speed": "Hız",
+        "price": "Fiyat",
+        "quality": "Kalite",
+        "features": "Özellikler",
+        "requiresImage": "Resim Gerekli",
+        "speeds": {
+          "fast": "Hızlı",
+          "medium": "Orta",
+          "slow": "Yavaş",
+          "veryFast": "Çok Hızlı"
+        }
+      },
+      "imageModels": {
+        "nanoBananaPro": {
+          "name": "Nano Banana Pro",
+          "provider": "KIE.AI (Google)",
+          "description": "Gemini 3.0 Pro Image - En iyi kalite, 4K desteği, 8 referans görüntüye kadar",
+          "features": "4K Ultra HD, Çoklu Referans, En İyi Metin İşleme"
+        },
+        "nanoBanana": {
+          "name": "Nano Banana",
+          "provider": "KIE.AI (Google)",
+          "description": "Gemini 2.5 Flash Image - Hızlı ve uygun fiyatlı, metinden görüntüye",
+          "features": "Hızlı, Uygun Fiyatlı, Basit görüntüler için iyi"
+        },
+        "seedream": {
+          "name": "Seedream 4.5",
+          "provider": "KIE.AI (ByteDance)",
+          "description": "En yeni Seedream modeli - Fotorealizm, yaratıcı stiller",
+          "features": "Fotorealistik, 2K/4K, Yaratıcı Stiller"
+        },
+        "flux2Pro": {
+          "name": "Flux 2 Pro",
+          "provider": "KIE.AI (Black Forest)",
+          "description": "Black Forest Labs - Mükemmel metin işleme, yüksek tutarlılık",
+          "features": "Metin İşleme, Çoklu Referans, 4MP"
+        },
+        "gemini25Flash": {
+          "name": "Gemini 2.5 Flash",
+          "provider": "Google Direct",
+          "description": "Doğrudan Gemini API - Doğal dille hızlı görüntü oluşturma",
+          "features": "Doğrudan API, Hızlı, Konuşmalı"
+        },
+        "gemini3ProPreview": {
+          "name": "Gemini 3 Pro Preview",
+          "provider": "Google Direct",
+          "description": "Doğrudan Gemini API - En yüksek kalite, daha uzun sürebilir",
+          "features": "En Yüksek Kalite, 4K, Önizleme"
+        }
+      },
+      "videoModels": {
+        "kling26T2V": {
+          "name": "Kling 2.6 Text-to-Video",
+          "provider": "KIE.AI (Kuaishou)",
+          "description": "İsteğe bağlı sesli metinden videoya - 5 veya 10 saniye",
+          "features": "Ses Desteği, 5-10 Sn, Yüksek Kalite"
+        },
+        "kling26I2V": {
+          "name": "Kling 2.6 Image-to-Video",
+          "provider": "KIE.AI (Kuaishou)",
+          "description": "Sesli görüntüden videoya animasyon - Görüntülerinizi canlandırır",
+          "features": "Ses Desteği, Görüntü Animasyonu, 5-10 Sn"
+        },
+        "veo31Quality": {
+          "name": "Veo 3.1 Quality",
+          "provider": "KIE.AI (Google)",
+          "description": "Google Veo - En yüksek video kalitesi, 8 saniye, doğal ses",
+          "features": "8 Sn, 720p/1080p, Doğal Ses"
+        },
+        "veo31Fast": {
+          "name": "Veo 3.1 Fast",
+          "provider": "KIE.AI (Google)",
+          "description": "Google Veo Fast - Daha hızlı oluşturma, iyi kalite",
+          "features": "Hızlı, 720p, Doğal Ses"
+        },
+        "veo31GeminiDirect": {
+          "name": "Veo 3.1 (Gemini Direct)",
+          "provider": "Google Direct",
+          "description": "Gemini üzerinden doğrudan Veo API - Diyalog ve sesli 8 Sn HD",
+          "features": "Diyalog, Ses Efektleri, 8 Sn HD"
+        }
+      },
+      "caption": {
+        "title": "Açıklama & Hashtag'ler",
+        "caption": "Açıklama",
+        "characters": "{count} / 2200 karakter",
+        "hashtags": "Hashtag'ler",
+        "hashtagCount": "{count} hashtag",
+        "copy": "Kopyala"
+      },
+      "schedule": {
+        "title": "Zamanlama Seç",
+        "date": "Tarih",
+        "time": "Saat",
+        "account": "Instagram Hesabı",
+        "accountPlaceholder": "Hesap seç",
+        "noAccount": "Instagram hesabı bağlı değil. Yine de içerik oluşturabilirsiniz.",
+        "postType": "Gönderi Türü",
+        "postTypes": {
+          "feed": "Feed Gönderisi",
+          "reel": "Reel",
+          "story": "Story"
+        },
+        "submit": "Takvime Ekle"
+      },
+      "complete": {
+        "title": "İçerik Oluşturuldu!",
+        "description": "Mevsimsel içeriğiniz başarıyla oluşturuldu",
+        "descriptionScheduled": "Mevsimsel içeriğiniz başarıyla oluşturuldu ve planlandı.",
+        "button": "İçerik Planlayıcıya Git"
+      },
+      "navigation": {
+        "back": "Geri",
+        "next": "İleri"
+      }
+    }
+  },
   "languageSwitcher": {
     "label": "Dil",
     "de": "Deutsch",
