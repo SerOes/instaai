@@ -1,8 +1,8 @@
-FROM node:20-alpine AS base
+FROM node:20-slim AS base
 
 # Clone stage - clone the repo with token
 FROM base AS cloner
-RUN apk add --no-cache git
+RUN apt-get update && apt-get install -y git && rm -rf /var/lib/apt/lists/*
 WORKDIR /app
 
 ARG GIT_TOKEN
@@ -14,7 +14,7 @@ RUN git clone --depth 1 --branch ${GIT_BRANCH} https://${GIT_TOKEN}@github.com/$
 
 # Install dependencies only when needed
 FROM base AS deps
-RUN apk add --no-cache libc6-compat openssl
+RUN apt-get update && apt-get install -y openssl && rm -rf /var/lib/apt/lists/*
 WORKDIR /app
 
 # Copy package files from cloned repo
