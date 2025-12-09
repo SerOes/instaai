@@ -21,6 +21,8 @@ WORKDIR /app
 COPY --from=cloner /app/package.json /app/package-lock.json* ./
 # Install ALL dependencies including devDependencies for build
 RUN npm ci --include=dev
+# Rebuild native modules for current platform
+RUN npm rebuild lightningcss
 
 # Rebuild the source code only when needed
 FROM base AS builder
