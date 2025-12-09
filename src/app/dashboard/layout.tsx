@@ -18,7 +18,8 @@ import {
   Sparkles,
   Instagram,
   ImagePlus,
-  MessageCircle
+  MessageCircle,
+  Shield
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
@@ -57,6 +58,9 @@ export default function DashboardLayout({
     { name: t('contentPlanner'), href: "/dashboard/schedule", icon: Calendar },
     { name: t('settings'), href: "/dashboard/settings", icon: Settings },
   ]
+
+  // Add admin navigation if user is admin
+  const isAdmin = (session?.user as { role?: string })?.role === 'ADMIN'
 
   useEffect(() => {
     if (status === "unauthenticated") {
@@ -141,6 +145,22 @@ export default function DashboardLayout({
                 </Link>
               )
             })}
+            
+            {/* Admin Link - nur für Admins sichtbar */}
+            {isAdmin && (
+              <Link
+                href="/admin"
+                className={`flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium transition-all duration-200 group ${
+                  pathname === "/admin"
+                    ? "bg-amber-500/10 text-amber-500 shadow-inner shadow-amber-500/5"
+                    : "text-amber-500/70 hover:bg-amber-500/10 hover:text-amber-500"
+                }`}
+                onClick={() => setSidebarOpen(false)}
+              >
+                <Shield className="h-5 w-5" />
+                Admin
+              </Link>
+            )}
           </nav>
 
           {/* User section */}

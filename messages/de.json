@@ -100,7 +100,8 @@
       "noAccount": "Noch kein Konto?",
       "registerLink": "Jetzt registrieren",
       "error": "Ungültige E-Mail oder Passwort",
-      "genericError": "Ein Fehler ist aufgetreten. Bitte versuchen Sie es erneut."
+      "genericError": "Ein Fehler ist aufgetreten. Bitte versuchen Sie es erneut.",
+      "forgotPassword": "Passwort vergessen?"
     },
     "register": {
       "title": "Konto erstellen",

@@ -128,6 +128,15 @@ export default function LoginPage() {
               )}
             </div>
 
+            <div className="text-right">
+              <Link 
+                href="/auth/forgot-password" 
+                className="text-sm text-muted-foreground hover:text-primary transition-colors"
+              >
+                {t('forgotPassword') || 'Passwort vergessen?'}
+              </Link>
+            </div>
+
             <Button type="submit" className="w-full shadow-lg shadow-primary/20" variant="gradient" disabled={isLoading}>
               {isLoading ? (
                 <>

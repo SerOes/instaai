@@ -100,7 +100,8 @@
       "noAccount": "Don't have an account?",
       "registerLink": "Register now",
       "error": "Invalid email or password",
-      "genericError": "An error occurred. Please try again."
+      "genericError": "An error occurred. Please try again.",
+      "forgotPassword": "Forgot password?"
     },
     "register": {
       "title": "Create account",

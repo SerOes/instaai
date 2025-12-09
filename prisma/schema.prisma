@@ -22,6 +22,12 @@ model User {
   locale        String    @default("de") // "de", "en", "tr"
   systemPrompt  String? // Global business/brand context for AI
   
+  // Role management
+  role          String    @default("USER") // "ADMIN" | "USER"
+  isActive      Boolean   @default(true)
+  invitedBy     String?   // User ID of who invited this user
+  invitedAt     DateTime? // When the invitation was sent
+  
   // Onboarding data
   brandName     String?
   industry      String?
@@ -41,6 +47,48 @@ model User {
   mediaProjects     MediaProject[]
   aiPresets         AiPreset[]
   seasonalIdeas     SeasonalIdea[]
+  
+  // Password reset
+  passwordResets    PasswordReset[]
+}
+
+// ==================== INVITATIONS ====================
+
+model Invitation {
+  id          String   @id @default(cuid())
+  email       String   @unique
+  token       String   @unique
+  invitedById String   // Admin user ID who sent the invite
+  name        String?  // Optional name for the invited user
+  
+  // Status tracking
+  status      String   @default("PENDING") // "PENDING" | "ACCEPTED" | "EXPIRED" | "CANCELLED"
+  expiresAt   DateTime
+  acceptedAt  DateTime?
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([email])
+  @@index([token])
+  @@index([invitedById])
+}
+
+// ==================== PASSWORD RESET ====================
+
+model PasswordReset {
+  id        String   @id @default(cuid())
+  userId    String
+  token     String   @unique
+  expiresAt DateTime
+  usedAt    DateTime?
+  
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([token])
+  @@index([userId])
 }
 
 model Account {

@@ -100,7 +100,8 @@
       "noAccount": "Hesabınız yok mu?",
       "registerLink": "Şimdi kayıt olun",
       "error": "Geçersiz e-posta veya şifre",
-      "genericError": "Bir hata oluştu. Lütfen tekrar deneyin."
+      "genericError": "Bir hata oluştu. Lütfen tekrar deneyin.",
+      "forgotPassword": "Şifrenizi mi unuttunuz?"
     },
     "register": {
       "title": "Hesap oluştur",
