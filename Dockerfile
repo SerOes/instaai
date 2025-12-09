@@ -51,16 +51,11 @@ RUN chown nextjs:nodejs .next
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 
-# Copy docker entrypoint
-COPY --chown=nextjs:nodejs docker-entrypoint.sh ./
-RUN chmod +x docker-entrypoint.sh
-
-# Copy node_modules for Prisma
+# Copy node_modules for Prisma and Next.js
 COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
 COPY --from=builder /app/node_modules/@prisma ./node_modules/@prisma
-COPY --from=builder /app/node_modules/prisma ./node_modules/prisma
 
-# Install OpenSSL for Prisma
+# Install OpenSSL for Prisma (before user switch)
 RUN apt-get update && apt-get install -y openssl && rm -rf /var/lib/apt/lists/*
 
 USER nextjs
@@ -70,5 +65,6 @@ EXPOSE 3000
 ENV PORT=3000
 ENV HOSTNAME="0.0.0.0"
 
-# Start the app (Prisma push will be done in entrypoint)
-CMD ["./docker-entrypoint.sh"]
+# Start Next.js directly without Prisma push
+# Database schema will be synced manually or via migration
+CMD ["node", "server.js"]
