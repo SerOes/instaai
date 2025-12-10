@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server"
 import { auth, isAdmin } from "@/lib/auth"
 import prisma from "@/lib/prisma"
 import crypto from "crypto"
+import { sendInvitationEmail } from "@/lib/email"
 
 /**
  * GET /api/admin/invitations
@@ -118,8 +119,35 @@ export async function POST(request: NextRequest) {
     const baseUrl = process.env.NEXTAUTH_URL || "http://localhost:3000"
     const invitationUrl = `${baseUrl}/auth/accept-invitation?token=${token}`
 
+    // Send invitation email
+    let emailSent = false
+    let emailError = null
+    try {
+      // Get inviter's name
+      const inviter = await prisma.user.findUnique({
+        where: { id: session.user.id },
+        select: { name: true, email: true }
+      })
+      
+      await sendInvitationEmail({
+        to: normalizedEmail,
+        inviteeName: name || undefined,
+        inviterName: inviter?.name || inviter?.email || 'Ein Administrator',
+        invitationUrl,
+        expiresAt,
+      })
+      emailSent = true
+    } catch (error) {
+      console.error("Failed to send invitation email:", error)
+      emailError = error instanceof Error ? error.message : "E-Mail konnte nicht gesendet werden"
+    }
+
     return NextResponse.json({
-      message: "Einladung erfolgreich erstellt",
+      message: emailSent 
+        ? "Einladung erfolgreich erstellt und E-Mail gesendet"
+        : "Einladung erstellt, aber E-Mail konnte nicht gesendet werden",
+      emailSent,
+      emailError,
       invitation: {
         id: invitation.id,
         email: invitation.email,

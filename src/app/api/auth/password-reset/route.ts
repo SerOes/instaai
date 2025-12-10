@@ -3,6 +3,7 @@ import bcrypt from "bcryptjs"
 import crypto from "crypto"
 import prisma from "@/lib/prisma"
 import { z } from "zod"
+import { sendPasswordResetEmail } from "@/lib/email"
 
 const requestResetSchema = z.object({
   email: z.string().email("Ungültige E-Mail-Adresse"),
@@ -59,14 +60,22 @@ export async function POST(request: NextRequest) {
     const baseUrl = process.env.NEXTAUTH_URL || "http://localhost:3000"
     const resetUrl = `${baseUrl}/auth/reset-password?token=${token}`
 
-    // In production, you would send an email here
-    // For now, we'll return the URL in development
-    console.log(`Password reset URL for ${email}: ${resetUrl}`)
+    // Send password reset email
+    try {
+      await sendPasswordResetEmail({
+        to: normalizedEmail,
+        userName: user.name || undefined,
+        resetUrl,
+        expiresAt,
+      })
+      console.log(`✅ Password reset email sent to ${email}`)
+    } catch (error) {
+      console.error("Failed to send password reset email:", error)
+      // Don't fail the request if email fails - user might still copy the URL
+    }
 
     return NextResponse.json({
       message: "Wenn ein Account mit dieser E-Mail existiert, erhalten Sie einen Reset-Link.",
-      // Only include resetUrl in development
-      ...(process.env.NODE_ENV === "development" && { resetUrl })
     })
   } catch (error) {
     console.error("Error requesting password reset:", error)
