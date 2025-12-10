@@ -28,6 +28,9 @@ export async function GET() {
         username: true,
         profilePicture: true,
         igBusinessId: true,
+        followersCount: true,
+        mediaCount: true,
+        lastSynced: true,
         createdAt: true,
         _count: {
           select: {
