@@ -455,6 +455,15 @@ export default function GenerateImagePage() {
       }
 
       setGeneratedImage(data.imageUrl)
+      
+      // Show auto-save success message
+      if (data.autoSaved) {
+        setSavedSuccess(true)
+        // Refresh gallery images
+        await fetchGalleryImages()
+        // Reset success message after 3 seconds
+        setTimeout(() => setSavedSuccess(false), 3000)
+      }
     } catch {
       setError("Ein Fehler ist aufgetreten. Bitte versuchen Sie es erneut.")
     } finally {
@@ -1628,31 +1637,22 @@ export default function GenerateImagePage() {
 
             {generatedImage && (
               <div className="space-y-2">
-                {/* Save Success Message */}
+                {/* Auto-Save Success Message */}
                 {savedSuccess && (
                   <div className="rounded-lg bg-green-500/10 border border-green-500/20 p-3 text-sm text-green-500 flex items-center gap-2">
                     <Check className="h-4 w-4" />
-                    Bild wurde in &quot;Meine Bilder&quot; gespeichert!
+                    Bild automatisch in &quot;Meine Bilder&quot; gespeichert!
                   </div>
                 )}
                 
-                {/* Action Buttons Row 1: Save & Preview */}
+                {/* Action Buttons Row 1: Saved Status & Preview */}
                 <div className="flex gap-2">
-                  <Button 
-                    variant="outline" 
-                    className={`flex-1 border-border/50 hover:bg-secondary/50 ${savedSuccess ? "border-green-500/50 text-green-500" : ""}`}
-                    onClick={handleSaveToGallery}
-                    disabled={isSaving || savedSuccess}
+                  <div 
+                    className="flex-1 flex items-center justify-center gap-2 px-4 py-2 rounded-md border border-green-500/50 bg-green-500/10 text-green-500 text-sm"
                   >
-                    {isSaving ? (
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    ) : savedSuccess ? (
-                      <Check className="mr-2 h-4 w-4" />
-                    ) : (
-                      <Save className="mr-2 h-4 w-4" />
-                    )}
-                    {savedSuccess ? "Gespeichert" : "Speichern"}
-                  </Button>
+                    <Check className="h-4 w-4" />
+                    <span>Automatisch gespeichert</span>
+                  </div>
                   <Button 
                     variant="outline" 
                     className="flex-1 border-border/50 hover:bg-secondary/50"
@@ -2070,22 +2070,12 @@ export default function GenerateImagePage() {
                 
                 {/* Action Buttons */}
                 <div className="flex gap-2 shrink-0">
-                  <Button
-                    variant="secondary"
-                    size="sm"
-                    onClick={handleSaveToGallery}
-                    disabled={isSaving || savedSuccess}
-                    className="bg-white/10 hover:bg-white/20 text-white border-0"
+                  <div
+                    className="flex items-center gap-2 px-3 py-1.5 rounded-md bg-green-500/20 text-green-400 text-sm"
                   >
-                    {isSaving ? (
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    ) : savedSuccess ? (
-                      <Check className="mr-2 h-4 w-4 text-green-400" />
-                    ) : (
-                      <Save className="mr-2 h-4 w-4" />
-                    )}
-                    {savedSuccess ? "Gespeichert!" : "Speichern"}
-                  </Button>
+                    <Check className="h-4 w-4" />
+                    <span>Auto-gespeichert</span>
+                  </div>
                   <Button
                     variant="secondary"
                     size="sm"

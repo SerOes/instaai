@@ -2,6 +2,9 @@ import { NextRequest, NextResponse } from "next/server"
 import { auth } from "@/lib/auth"
 import prisma from "@/lib/prisma"
 import { z } from "zod"
+import { writeFile, mkdir } from "fs/promises"
+import path from "path"
+import sharp from "sharp"
 
 const imageSchema = z.object({
   prompt: z.string().min(1, "Prompt ist erforderlich"),
@@ -41,6 +44,100 @@ const imageSchema = z.object({
     suggestedStyle: z.string().optional().nullable(),
   }).optional(),
 })
+
+// Helper function to save generated image locally and to database
+async function saveGeneratedImageLocally(
+  userId: string,
+  imageUrl: string,
+  options: {
+    prompt?: string
+    model?: string
+    provider?: string
+    presetId?: string
+    aspectRatio?: string
+    title?: string
+  }
+): Promise<{
+  localUrl: string
+  thumbnailUrl: string
+  projectId: string
+}> {
+  // Fetch the image from external URL
+  const imageResponse = await fetch(imageUrl)
+  if (!imageResponse.ok) {
+    throw new Error("Bild konnte nicht von externer URL geladen werden")
+  }
+
+  const contentType = imageResponse.headers.get("content-type") || "image/png"
+  const imageBuffer = Buffer.from(await imageResponse.arrayBuffer())
+
+  // Determine file extension
+  let extension = "png"
+  if (contentType.includes("jpeg") || contentType.includes("jpg")) {
+    extension = "jpg"
+  } else if (contentType.includes("webp")) {
+    extension = "webp"
+  }
+
+  // Create unique filename
+  const timestamp = Date.now()
+  const randomSuffix = Math.random().toString(36).substring(2, 8)
+  const filename = `${userId}-gen-${timestamp}-${randomSuffix}.${extension}`
+  const thumbnailFilename = `${userId}-gen-${timestamp}-${randomSuffix}-thumb.webp`
+
+  // Ensure upload directories exist
+  const uploadDir = path.join(process.cwd(), "public", "uploads")
+  const thumbnailDir = path.join(process.cwd(), "public", "uploads", "thumbnails")
+  
+  await mkdir(uploadDir, { recursive: true })
+  await mkdir(thumbnailDir, { recursive: true })
+
+  // Save original file
+  const filePath = path.join(uploadDir, filename)
+  await writeFile(filePath, imageBuffer)
+
+  // Create thumbnail with Sharp
+  const thumbnailPath = path.join(thumbnailDir, thumbnailFilename)
+  await sharp(imageBuffer)
+    .resize(400, 400, { fit: "cover" })
+    .webp({ quality: 80 })
+    .toFile(thumbnailPath)
+
+  // Get image metadata
+  const metadata = await sharp(imageBuffer).metadata()
+
+  // Create MediaProject entry
+  const project = await prisma.mediaProject.create({
+    data: {
+      userId: userId,
+      type: "IMAGE",
+      title: options.title || `Generiertes Bild ${new Date().toLocaleDateString('de-DE')}`,
+      status: "COMPLETED",
+      source: "GENERATED",
+      fileUrl: `/api/files/${filename}`,
+      thumbnailUrl: `/api/files/thumbnails/${thumbnailFilename}`,
+      aspectRatio: options.aspectRatio || "1:1",
+      prompt: options.prompt || undefined,
+      model: options.model || undefined,
+      provider: options.provider?.toUpperCase() || undefined,
+      presetId: options.presetId || undefined,
+      metadata: JSON.stringify({
+        originalUrl: imageUrl,
+        mimeType: contentType,
+        size: imageBuffer.length,
+        width: metadata.width,
+        height: metadata.height,
+        savedAt: new Date().toISOString(),
+      }),
+    },
+  })
+
+  return {
+    localUrl: `/api/files/${filename}`,
+    thumbnailUrl: `/api/files/thumbnails/${thumbnailFilename}`,
+    projectId: project.id,
+  }
+}
 
 // KIE.AI Universal API Configuration
 // Based on official KIE.ai API documentation from docs folder
@@ -283,7 +380,34 @@ export async function POST(request: NextRequest) {
       imageUrl = await generateWithKieAi(session.user.id, enhancedPrompt, data)
     }
 
-    // Save to project if projectId is provided
+    // Get preset name for title
+    let presetName: string | undefined
+    if (data.presetId) {
+      const preset = await prisma.preset.findUnique({
+        where: { id: data.presetId },
+        select: { name: true },
+      })
+      presetName = preset?.name
+    }
+
+    // Auto-save generated image locally and to database
+    // This ensures images are persistent and accessible from any device
+    const savedImage = await saveGeneratedImageLocally(
+      session.user.id,
+      imageUrl,
+      {
+        prompt: data.prompt,
+        model: usedModel,
+        provider: usedProvider,
+        presetId: data.presetId,
+        aspectRatio: data.aspectRatio,
+        title: presetName 
+          ? `${presetName} - ${new Date().toLocaleDateString('de-DE')}`
+          : undefined,
+      }
+    )
+
+    // If projectId is provided, also update that project
     if (data.projectId) {
       const project = await prisma.mediaProject.findFirst({
         where: {
@@ -296,8 +420,8 @@ export async function POST(request: NextRequest) {
         await prisma.mediaProject.update({
           where: { id: data.projectId },
           data: {
-            fileUrl: imageUrl,
-            thumbnailUrl: imageUrl,
+            fileUrl: savedImage.localUrl,
+            thumbnailUrl: savedImage.thumbnailUrl,
             prompt: data.prompt,
             style: styleUsed,
             aspectRatio: data.aspectRatio,
@@ -310,7 +434,9 @@ export async function POST(request: NextRequest) {
     }
 
     return NextResponse.json({ 
-      imageUrl,
+      imageUrl: savedImage.localUrl,
+      thumbnailUrl: savedImage.thumbnailUrl,
+      projectId: savedImage.projectId,
       prompt: data.prompt,
       enhancedPrompt: enhancedPrompt !== data.prompt ? enhancedPrompt : undefined,
       style: styleUsed,
@@ -318,6 +444,7 @@ export async function POST(request: NextRequest) {
       provider: usedProvider,
       model: usedModel,
       referenceImageUsed: !!data.referenceImageUrl,
+      autoSaved: true, // Indicates image was automatically saved to gallery
     })
   } catch (error) {
     console.error("Error generating image:", error)
