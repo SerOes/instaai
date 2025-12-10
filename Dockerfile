@@ -51,12 +51,24 @@ RUN chown nextjs:nodejs .next
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 
-# Copy node_modules for Prisma and Next.js  
+# Copy Prisma files and client
 COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
 COPY --from=builder /app/node_modules/@prisma ./node_modules/@prisma
+COPY --from=builder /app/node_modules/prisma ./node_modules/prisma
+COPY --from=builder /app/prisma ./prisma
 
 # Install OpenSSL for Prisma (before user switch)
 RUN apt-get update && apt-get install -y openssl && rm -rf /var/lib/apt/lists/*
+
+# Create and configure entrypoint script
+RUN echo '#!/bin/sh' > /app/entrypoint.sh && \
+    echo 'set -e' >> /app/entrypoint.sh && \
+    echo 'echo "🔄 Syncing database schema..."' >> /app/entrypoint.sh && \
+    echo 'cd /app && node node_modules/prisma/build/index.js db push --skip-generate --accept-data-loss || echo "DB sync failed, continuing..."' >> /app/entrypoint.sh && \
+    echo 'echo "🚀 Starting server..."' >> /app/entrypoint.sh && \
+    echo 'exec node server.js' >> /app/entrypoint.sh && \
+    chmod +x /app/entrypoint.sh && \
+    chown nextjs:nodejs /app/entrypoint.sh
 
 USER nextjs
 
@@ -65,5 +77,5 @@ EXPOSE 3000
 ENV PORT=3000
 ENV HOSTNAME="0.0.0.0"
 
-# Start server directly - DB schema already exists or will be created manually
-CMD ["node", "server.js"]
+# Use entrypoint to sync DB then start server
+CMD ["/app/entrypoint.sh"]
