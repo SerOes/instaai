@@ -21,6 +21,14 @@ export async function generateMetadata(): Promise<Metadata> {
   return {
     title: titles[locale] || titles.de,
     description: descriptions[locale] || descriptions.de,
+    icons: {
+      icon: [
+        { url: '/favicon.svg', type: 'image/svg+xml' },
+      ],
+      apple: [
+        { url: '/icon.svg', type: 'image/svg+xml' },
+      ],
+    },
   };
 }
 
