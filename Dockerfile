@@ -61,6 +61,9 @@ COPY --from=builder /app/prisma ./prisma
 # Install OpenSSL for Prisma (before user switch)
 RUN apt-get update && apt-get install -y openssl && rm -rf /var/lib/apt/lists/*
 
+# Create uploads directory with proper permissions (will be mounted as volume)
+RUN mkdir -p /app/public/uploads/thumbnails && chown -R nextjs:nodejs /app/public/uploads
+
 # Create and configure entrypoint script
 RUN echo '#!/bin/sh' > /app/entrypoint.sh && \
     echo 'set -e' >> /app/entrypoint.sh && \
@@ -68,6 +71,8 @@ RUN echo '#!/bin/sh' > /app/entrypoint.sh && \
     echo 'cd /app && node node_modules/prisma/build/index.js db push --skip-generate --accept-data-loss || echo "DB sync failed, continuing..."' >> /app/entrypoint.sh && \
     echo 'echo "👤 Creating admin user..."' >> /app/entrypoint.sh && \
     echo 'cd /app && node prisma/seed-admin.js || echo "Admin user creation failed, continuing..."' >> /app/entrypoint.sh && \
+    echo 'echo "🎨 Seeding AI presets..."' >> /app/entrypoint.sh && \
+    echo 'cd /app && node prisma/seed-presets.js || echo "Preset seeding failed, continuing..."' >> /app/entrypoint.sh && \
     echo 'echo "🚀 Starting server..."' >> /app/entrypoint.sh && \
     echo 'exec node server.js' >> /app/entrypoint.sh && \
     chmod +x /app/entrypoint.sh && \
