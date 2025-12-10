@@ -64,7 +64,7 @@ export default function GalleryPage() {
       const response = await fetch("/api/upload/image")
       if (response.ok) {
         const data = await response.json()
-        setImages(data.images)
+        setImages(data.images || [])
       }
     } catch (err) {
       console.error("Error fetching images:", err)

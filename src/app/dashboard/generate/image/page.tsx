@@ -325,7 +325,7 @@ export default function GenerateImagePage() {
       const response = await fetch("/api/upload/image")
       if (response.ok) {
         const data = await response.json()
-        setGalleryImages(data.images)
+        setGalleryImages(data.images || [])
       }
     } catch (error) {
       console.error("Error fetching gallery images:", error)

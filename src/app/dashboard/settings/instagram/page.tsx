@@ -282,19 +282,19 @@ function InstagramSettingsContent() {
                         </p>
                       </div>
                       <div className="flex items-center gap-4 text-sm text-muted-foreground mt-1">
-                        {account.followersCount !== undefined && (
+                        {account.followersCount != null && (
                           <span className="flex items-center gap-1">
                             <Users className="h-3.5 w-3.5" />
                             {account.followersCount.toLocaleString()} Follower
                           </span>
                         )}
-                        {account.mediaCount !== undefined && (
+                        {account.mediaCount != null && (
                           <span className="flex items-center gap-1">
                             <ImageIcon className="h-3.5 w-3.5" />
                             {account.mediaCount} Posts
                           </span>
                         )}
-                        {account._count?.postSchedules !== undefined && account._count.postSchedules > 0 && (
+                        {account._count?.postSchedules != null && account._count.postSchedules > 0 && (
                           <span className="flex items-center gap-1 text-purple-500">
                             <Clock className="h-3.5 w-3.5" />
                             {account._count.postSchedules} geplant
