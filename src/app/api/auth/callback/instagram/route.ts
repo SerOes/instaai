@@ -2,24 +2,8 @@ import { NextRequest, NextResponse } from "next/server"
 import prisma from "@/lib/prisma"
 import { encryptApiKey } from "@/lib/utils"
 
-interface FacebookPage {
-  id: string
-  name: string
-  access_token: string
-  instagram_business_account?: {
-    id: string
-  }
-}
-
-interface InstagramBusinessAccount {
-  id: string
-  username: string
-  profile_picture_url?: string
-  followers_count?: number
-  media_count?: number
-}
-
-// Instagram OAuth Callback
+// Instagram Business Login API - OAuth Callback
+// Using the NEW Instagram API (not Facebook Graph API for initial auth)
 export async function GET(request: NextRequest) {
   try {
     const searchParams = request.nextUrl.searchParams
@@ -53,94 +37,70 @@ export async function GET(request: NextRequest) {
       )
     }
 
-    // Exchange code for access token
-    const tokenResponse = await fetch("https://graph.facebook.com/v18.0/oauth/access_token", {
-      method: "GET",
-      headers: { "Content-Type": "application/json" },
+    // Step 1: Exchange code for short-lived access token
+    // Using Instagram API endpoint (not Facebook)
+    const tokenFormData = new URLSearchParams()
+    tokenFormData.append("client_id", clientId)
+    tokenFormData.append("client_secret", clientSecret)
+    tokenFormData.append("grant_type", "authorization_code")
+    tokenFormData.append("redirect_uri", redirectUri)
+    tokenFormData.append("code", code)
+
+    const tokenRes = await fetch("https://api.instagram.com/oauth/access_token", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      body: tokenFormData.toString(),
     })
 
-    const tokenUrl = new URL("https://graph.facebook.com/v18.0/oauth/access_token")
-    tokenUrl.searchParams.set("client_id", clientId)
-    tokenUrl.searchParams.set("client_secret", clientSecret)
-    tokenUrl.searchParams.set("redirect_uri", redirectUri)
-    tokenUrl.searchParams.set("code", code)
-
-    const tokenRes = await fetch(tokenUrl.toString())
     const tokenData = await tokenRes.json()
 
-    if (tokenData.error) {
-      console.error("Token exchange error:", tokenData.error)
+    if (tokenData.error_type || tokenData.error_message) {
+      console.error("Token exchange error:", tokenData)
       return NextResponse.redirect(
-        `${baseUrl}/dashboard/settings/instagram?error=${encodeURIComponent(tokenData.error.message || "Token-Fehler")}`
+        `${baseUrl}/dashboard/settings/instagram?error=${encodeURIComponent(tokenData.error_message || "Token-Fehler")}`
       )
     }
 
     const shortLivedToken = tokenData.access_token
+    const instagramUserId = tokenData.user_id
 
-    // Exchange for long-lived token (60 days)
-    const longLivedUrl = new URL("https://graph.facebook.com/v18.0/oauth/access_token")
-    longLivedUrl.searchParams.set("grant_type", "fb_exchange_token")
-    longLivedUrl.searchParams.set("client_id", clientId)
+    if (!shortLivedToken || !instagramUserId) {
+      console.error("Missing token or user_id:", tokenData)
+      return NextResponse.redirect(
+        `${baseUrl}/dashboard/settings/instagram?error=${encodeURIComponent("Ungültige Token-Antwort von Instagram")}`
+      )
+    }
+
+    // Step 2: Exchange for long-lived token (60 days)
+    const longLivedUrl = new URL("https://graph.instagram.com/access_token")
+    longLivedUrl.searchParams.set("grant_type", "ig_exchange_token")
     longLivedUrl.searchParams.set("client_secret", clientSecret)
-    longLivedUrl.searchParams.set("fb_exchange_token", shortLivedToken)
+    longLivedUrl.searchParams.set("access_token", shortLivedToken)
 
     const longLivedRes = await fetch(longLivedUrl.toString())
     const longLivedData = await longLivedRes.json()
 
     const accessToken = longLivedData.access_token || shortLivedToken
+    const expiresIn = longLivedData.expires_in // Usually 5184000 (60 days)
 
-    // Get user's Facebook Pages
-    const pagesRes = await fetch(
-      `https://graph.facebook.com/v18.0/me/accounts?access_token=${accessToken}`
-    )
-    const pagesData = await pagesRes.json()
+    // Step 3: Get Instagram user profile
+    const profileUrl = new URL(`https://graph.instagram.com/v21.0/${instagramUserId}`)
+    profileUrl.searchParams.set("fields", "id,username,account_type,profile_picture_url,followers_count,media_count,name")
+    profileUrl.searchParams.set("access_token", accessToken)
 
-    if (!pagesData.data || pagesData.data.length === 0) {
+    const profileRes = await fetch(profileUrl.toString())
+    const profileData = await profileRes.json()
+
+    if (profileData.error) {
+      console.error("Profile fetch error:", profileData.error)
       return NextResponse.redirect(
-        `${baseUrl}/dashboard/settings/instagram?error=${encodeURIComponent("Keine Facebook-Seiten gefunden. Bitte verknüpfe eine Facebook-Seite mit deinem Instagram Business-Account.")}`
+        `${baseUrl}/dashboard/settings/instagram?error=${encodeURIComponent(profileData.error.message || "Profil-Fehler")}`
       )
     }
 
-    // Find pages with Instagram Business accounts
-    const connectedAccounts: Array<{
-      pageId: string
-      pageName: string
-      pageToken: string
-      instagram: InstagramBusinessAccount
-    }> = []
-
-    for (const page of pagesData.data as FacebookPage[]) {
-      // Get Instagram Business Account for this page
-      const igRes = await fetch(
-        `https://graph.facebook.com/v18.0/${page.id}?fields=instagram_business_account&access_token=${page.access_token}`
-      )
-      const igData = await igRes.json()
-
-      if (igData.instagram_business_account?.id) {
-        // Get Instagram account details
-        const igDetailsRes = await fetch(
-          `https://graph.facebook.com/v18.0/${igData.instagram_business_account.id}?fields=id,username,profile_picture_url,followers_count,media_count&access_token=${page.access_token}`
-        )
-        const igDetails: InstagramBusinessAccount = await igDetailsRes.json()
-
-        if (igDetails.username) {
-          connectedAccounts.push({
-            pageId: page.id,
-            pageName: page.name,
-            pageToken: page.access_token,
-            instagram: igDetails
-          })
-        }
-      }
-    }
-
-    if (connectedAccounts.length === 0) {
-      return NextResponse.redirect(
-        `${baseUrl}/dashboard/settings/instagram?error=${encodeURIComponent("Keine Instagram Business-Accounts gefunden. Stelle sicher, dass dein Instagram-Account ein Business- oder Creator-Account ist und mit einer Facebook-Seite verbunden ist.")}`
-      )
-    }
-
-    // Verify user exists
+    // Verify user exists in our database
     const user = await prisma.user.findUnique({
       where: { id: state }
     })
@@ -151,52 +111,58 @@ export async function GET(request: NextRequest) {
       )
     }
 
-    // Save all connected Instagram accounts
-    let savedCount = 0
-    for (const account of connectedAccounts) {
-      // Check if already exists
-      const existing = await prisma.instagramAccount.findFirst({
-        where: {
-          userId: state,
-          igBusinessId: account.instagram.id
+    // Check if account already exists
+    const existing = await prisma.instagramAccount.findFirst({
+      where: {
+        userId: state,
+        igBusinessId: profileData.id
+      }
+    })
+
+    // Calculate token expiration date
+    const tokenExpiresAt = expiresIn 
+      ? new Date(Date.now() + expiresIn * 1000)
+      : new Date(Date.now() + 60 * 24 * 60 * 60 * 1000) // Default 60 days
+
+    if (existing) {
+      // Update existing account
+      await prisma.instagramAccount.update({
+        where: { id: existing.id },
+        data: {
+          accessTokenEncrypted: encryptApiKey(accessToken),
+          profilePicture: profileData.profile_picture_url || null,
+          username: profileData.username,
+          updatedAt: new Date(),
         }
       })
 
-      if (existing) {
-        // Update existing account
-        await prisma.instagramAccount.update({
-          where: { id: existing.id },
-          data: {
-            accessTokenEncrypted: encryptApiKey(account.pageToken),
-            profilePicture: account.instagram.profile_picture_url,
-            username: account.instagram.username,
-          }
-        })
-      } else {
-        // Create new account
-        await prisma.instagramAccount.create({
-          data: {
-            userId: state,
-            username: account.instagram.username,
-            igBusinessId: account.instagram.id,
-            accessTokenEncrypted: encryptApiKey(account.pageToken),
-            profilePicture: account.instagram.profile_picture_url,
-            facebookPageId: account.pageId,
-          }
-        })
-        savedCount++
-      }
-    }
+      return NextResponse.redirect(
+        `${baseUrl}/dashboard/settings/instagram?success=${encodeURIComponent("Instagram-Account aktualisiert!")}`
+      )
+    } else {
+      // Create new account
+      await prisma.instagramAccount.create({
+        data: {
+          userId: state,
+          username: profileData.username,
+          igBusinessId: profileData.id,
+          accessTokenEncrypted: encryptApiKey(accessToken),
+          profilePicture: profileData.profile_picture_url || null,
+          facebookPageId: null, // Not needed for Instagram Business Login
+        }
+      })
 
-    // Redirect back to settings with success
-    return NextResponse.redirect(
-      `${baseUrl}/dashboard/settings/instagram?success=${encodeURIComponent(`${savedCount > 0 ? savedCount + " Instagram-Account(s) verbunden!" : "Instagram-Account aktualisiert!"}`)}`
-    )
+      return NextResponse.redirect(
+        `${baseUrl}/dashboard/settings/instagram?success=${encodeURIComponent("Instagram-Account @" + profileData.username + " verbunden!")}`
+      )
+    }
   } catch (error) {
     console.error("Instagram callback error:", error)
     const baseUrl = process.env.NEXTAUTH_URL || "http://localhost:3000"
     return NextResponse.redirect(
-      `${baseUrl}/dashboard/settings/instagram?error=${encodeURIComponent("Fehler bei der Instagram-Verbindung")}`
+      `${baseUrl}/dashboard/settings/instagram?error=${encodeURIComponent("Fehler bei der Instagram-Verbindung: " + (error instanceof Error ? error.message : "Unbekannt"))}`
     )
+  }
+}
   }
 }

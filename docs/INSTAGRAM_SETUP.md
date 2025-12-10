@@ -1,13 +1,15 @@
 # Instagram-Verbindung einrichten
 
-Diese Anleitung zeigt dir, wie du die Instagram OAuth-Integration für InstaAI konfigurierst.
+Diese Anleitung zeigt dir, wie du die Instagram Business Login Integration für InstaAI konfigurierst.
+
+> **WICHTIG**: InstaAI nutzt die neue **Instagram Business Login API** (nicht Facebook Login). 
+> Dein Instagram-Account muss ein **Business-** oder **Creator-Account** sein!
 
 ## 📋 Voraussetzungen
 
-- Eine Facebook Developer Account
-- Ein Instagram Business- oder Creator-Account
-- Der Instagram-Account muss mit einer Facebook-Seite verknüpft sein
-- Admin-Zugriff auf die Facebook-Seite
+- Eine Meta Developer Account
+- Ein Instagram **Business-** oder **Creator-Account** (KEIN privater Account!)
+- Zugriff auf die Meta Developer Console
 
 ---
 

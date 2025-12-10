@@ -1,7 +1,8 @@
 import { NextResponse } from "next/server"
 import { auth } from "@/lib/auth"
 
-// Instagram OAuth - Start the authorization flow
+// Instagram Business Login OAuth - Start the authorization flow
+// Using the NEW Instagram Business Login API (not Facebook OAuth)
 export async function GET() {
   try {
     const session = await auth()
@@ -20,21 +21,18 @@ export async function GET() {
       )
     }
 
-    // For Instagram Basic Display API
-    // Scopes: user_profile, user_media
+    // Instagram Business Login API Scopes
+    // See: https://developers.facebook.com/docs/instagram-platform/instagram-api-with-instagram-login/business-login
     const scopes = [
-      "instagram_basic",
-      "instagram_content_publish",
-      "instagram_manage_comments",
-      "instagram_manage_insights",
-      "pages_show_list",
-      "pages_read_engagement",
-      "business_management"
+      "instagram_business_basic",
+      "instagram_business_content_publish",
+      "instagram_business_manage_comments",
+      "instagram_business_manage_messages",
     ].join(",")
 
-    // Using Facebook OAuth for Instagram Business accounts
-    // This requires a Facebook Page connected to an Instagram Business Account
-    const authUrl = new URL("https://www.facebook.com/v18.0/dialog/oauth")
+    // NEW: Using Instagram OAuth directly (not Facebook OAuth)
+    // This is the correct endpoint for Instagram Business Login
+    const authUrl = new URL("https://www.instagram.com/oauth/authorize")
     authUrl.searchParams.set("client_id", clientId)
     authUrl.searchParams.set("redirect_uri", redirectUri)
     authUrl.searchParams.set("scope", scopes)
