@@ -51,7 +51,8 @@ export async function POST(request: NextRequest) {
         
         // Save video locally
         await writeFile(filePath, Buffer.from(videoBuffer))
-        localFileUrl = `/uploads/videos/${fileName}`
+        // Use /api/files/ endpoint to serve uploaded files (works in Next.js standalone mode)
+        localFileUrl = `/api/files/videos/${fileName}`
 
         // Try to generate a thumbnail
         // For now, we'll use a placeholder or first frame extraction later

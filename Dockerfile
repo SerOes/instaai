@@ -62,7 +62,9 @@ COPY --from=builder /app/prisma ./prisma
 RUN apt-get update && apt-get install -y openssl && rm -rf /var/lib/apt/lists/*
 
 # Create uploads directory with proper permissions (will be mounted as volume)
-RUN mkdir -p /app/public/uploads/thumbnails && chown -R nextjs:nodejs /app/public/uploads
+RUN mkdir -p /app/public/uploads/thumbnails && \
+    mkdir -p /app/public/uploads/videos && \
+    chown -R nextjs:nodejs /app/public/uploads
 
 # Create and configure entrypoint script
 RUN echo '#!/bin/sh' > /app/entrypoint.sh && \

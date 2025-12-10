@@ -73,6 +73,7 @@ export async function POST(request: NextRequest) {
       : aspectRatio || "1:1"
 
     // Create MediaProject entry
+    // Use /api/files/ endpoint to serve uploaded files (works in Next.js standalone mode)
     const project = await prisma.mediaProject.create({
       data: {
         userId: session.user.id,
@@ -80,8 +81,8 @@ export async function POST(request: NextRequest) {
         title: title || `Generiertes Bild ${new Date().toLocaleDateString('de-DE')}`,
         status: "COMPLETED",
         source: "GENERATED",
-        fileUrl: `/uploads/${filename}`,
-        thumbnailUrl: `/uploads/thumbnails/${thumbnailFilename}`,
+        fileUrl: `/api/files/${filename}`,
+        thumbnailUrl: `/api/files/thumbnails/${thumbnailFilename}`,
         aspectRatio: aspectRatio || detectedAspectRatio,
         prompt: prompt || undefined,
         model: model || undefined,
