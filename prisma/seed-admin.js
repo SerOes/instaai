@@ -28,16 +28,13 @@ async function seedAdmin() {
   const password = 'Testen123';
   const passwordHash = crypto.createHash('sha256').update(password).digest('hex');
 
-  // Create admin user
+  // Create admin user - using correct field names from schema
   const user = await prisma.user.create({
     data: {
-      id: crypto.randomUUID(),
       name: 'Serhat Ösmen',
       email: email,
-      password: passwordHash,
-      role: 'admin',
-      createdAt: new Date(),
-      updatedAt: new Date()
+      passwordHash: passwordHash,  // Correct field name
+      role: 'ADMIN',  // Uppercase as in schema
     }
   });
 
