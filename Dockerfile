@@ -65,6 +65,8 @@ RUN echo '#!/bin/sh' > /app/entrypoint.sh && \
     echo 'set -e' >> /app/entrypoint.sh && \
     echo 'echo "🔄 Syncing database schema..."' >> /app/entrypoint.sh && \
     echo 'cd /app && node node_modules/prisma/build/index.js db push --skip-generate --accept-data-loss || echo "DB sync failed, continuing..."' >> /app/entrypoint.sh && \
+    echo 'echo "👤 Creating admin user..."' >> /app/entrypoint.sh && \
+    echo 'cd /app && node prisma/seed-admin.js || echo "Admin user creation failed, continuing..."' >> /app/entrypoint.sh && \
     echo 'echo "🚀 Starting server..."' >> /app/entrypoint.sh && \
     echo 'exec node server.js' >> /app/entrypoint.sh && \
     chmod +x /app/entrypoint.sh && \
