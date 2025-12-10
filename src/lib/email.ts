@@ -1,15 +1,23 @@
 /**
  * Email service for sending transactional emails
- * Uses Resend as the email provider
+ * Uses Nodemailer with SMTP (Hostinger)
  */
 
-import { Resend } from 'resend'
+import nodemailer from 'nodemailer'
 
-// Initialize Resend client
-const resend = new Resend(process.env.RESEND_API_KEY)
+// SMTP Configuration for Hostinger
+const transporter = nodemailer.createTransport({
+  host: process.env.SMTP_HOST || 'smtp.hostinger.com',
+  port: parseInt(process.env.SMTP_PORT || '465'),
+  secure: true, // SSL
+  auth: {
+    user: process.env.SMTP_USER || 'office@trendzone.tech',
+    pass: process.env.SMTP_PASSWORD,
+  },
+})
 
-// Default sender email - update this with your verified domain
-const DEFAULT_FROM = process.env.EMAIL_FROM || 'InstaAI <noreply@instaai.trendzone.tech>'
+// Default sender email
+const DEFAULT_FROM = process.env.EMAIL_FROM || 'InstaAI <office@trendzone.tech>'
 
 export interface SendEmailOptions {
   to: string | string[]
@@ -20,29 +28,29 @@ export interface SendEmailOptions {
 }
 
 /**
- * Send an email using Resend
+ * Send an email using SMTP
  */
 export async function sendEmail(options: SendEmailOptions) {
   const { to, subject, html, text, from = DEFAULT_FROM } = options
 
-  // If no API key, log and skip (useful for development)
-  if (!process.env.RESEND_API_KEY) {
-    console.warn('⚠️ RESEND_API_KEY not set, skipping email send')
+  // If no SMTP password, log and skip (useful for development)
+  if (!process.env.SMTP_PASSWORD) {
+    console.warn('⚠️ SMTP_PASSWORD not set, skipping email send')
     console.log('Would have sent email:', { to, subject })
     return { success: true, skipped: true }
   }
 
   try {
-    const result = await resend.emails.send({
+    const result = await transporter.sendMail({
       from,
-      to: Array.isArray(to) ? to : [to],
+      to: Array.isArray(to) ? to.join(', ') : to,
       subject,
       html,
       text: text || html.replace(/<[^>]*>/g, ''), // Strip HTML for text version
     })
 
-    console.log('✅ Email sent successfully:', { to, subject, id: result.data?.id })
-    return { success: true, id: result.data?.id }
+    console.log('✅ Email sent successfully:', { to, subject, messageId: result.messageId })
+    return { success: true, messageId: result.messageId }
   } catch (error) {
     console.error('❌ Failed to send email:', error)
     throw error
