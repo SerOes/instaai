@@ -149,9 +149,9 @@ export default function DashboardLayout({
             {/* Admin Link - nur für Admins sichtbar */}
             {isAdmin && (
               <Link
-                href="/admin"
+                href="/dashboard/admin"
                 className={`flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium transition-all duration-200 group ${
-                  pathname === "/admin"
+                  pathname === "/dashboard/admin"
                     ? "bg-amber-500/10 text-amber-500 shadow-inner shadow-amber-500/5"
                     : "text-amber-500/70 hover:bg-amber-500/10 hover:text-amber-500"
                 }`}
