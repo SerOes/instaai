@@ -4,7 +4,7 @@
  */
 
 const { PrismaClient } = require('@prisma/client');
-const crypto = require('crypto');
+const bcrypt = require('bcryptjs');
 
 const prisma = new PrismaClient();
 
@@ -20,21 +20,28 @@ async function seedAdmin() {
 
   if (existing) {
     console.log('✅ Admin user already exists:', email);
+    // Update password hash in case it was wrong
+    const passwordHash = await bcrypt.hash('Testen123', 10);
+    await prisma.user.update({
+      where: { email },
+      data: { passwordHash: passwordHash, role: 'ADMIN', isActive: true }
+    });
+    console.log('🔄 Updated admin user password hash');
     return;
   }
 
-  // Create password hash using crypto (sha256)
-  // Note: In production, use bcrypt. For now using crypto for simplicity.
+  // Create password hash using bcrypt (same as auth.ts uses)
   const password = 'Testen123';
-  const passwordHash = crypto.createHash('sha256').update(password).digest('hex');
+  const passwordHash = await bcrypt.hash(password, 10);
 
   // Create admin user - using correct field names from schema
   const user = await prisma.user.create({
     data: {
       name: 'Serhat Ösmen',
       email: email,
-      passwordHash: passwordHash,  // Correct field name
-      role: 'ADMIN',  // Uppercase as in schema
+      passwordHash: passwordHash,
+      role: 'ADMIN',
+      isActive: true,
     }
   });
 
