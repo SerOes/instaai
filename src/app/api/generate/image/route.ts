@@ -383,7 +383,7 @@ export async function POST(request: NextRequest) {
     // Get preset name for title
     let presetName: string | undefined
     if (data.presetId) {
-      const preset = await prisma.preset.findUnique({
+      const preset = await prisma.aiPreset.findUnique({
         where: { id: data.presetId },
         select: { name: true },
       })
