@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
+import { useSearchParams } from "next/navigation"
 import { 
   Instagram,
   Plus,
@@ -11,7 +12,7 @@ import {
   RefreshCw,
   Users,
   Image as ImageIcon,
-  Heart
+  CheckCircle
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -27,14 +28,29 @@ interface InstagramAccount {
 }
 
 export default function InstagramSettingsPage() {
+  const searchParams = useSearchParams()
   const [accounts, setAccounts] = useState<InstagramAccount[]>([])
   const [loading, setLoading] = useState(true)
   const [connecting, setConnecting] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [success, setSuccess] = useState<string | null>(null)
 
   useEffect(() => {
+    // Check for success/error messages from OAuth callback
+    const errorParam = searchParams.get("error")
+    const successParam = searchParams.get("success")
+    
+    if (errorParam) {
+      setError(decodeURIComponent(errorParam))
+    }
+    if (successParam) {
+      setSuccess(decodeURIComponent(successParam))
+      // Clear success message after 5 seconds
+      setTimeout(() => setSuccess(null), 5000)
+    }
+    
     fetchAccounts()
-  }, [])
+  }, [searchParams])
 
   const fetchAccounts = async () => {
     try {
@@ -55,12 +71,10 @@ export default function InstagramSettingsPage() {
     setError(null)
 
     try {
-      // In production, this would redirect to Instagram OAuth
-      // For now, we show a message
-      setError("Instagram OAuth wird in Produktion aktiviert. Bitte konfigurieren Sie INSTAGRAM_CLIENT_ID und INSTAGRAM_CLIENT_SECRET.")
+      // Redirect to Instagram OAuth
+      window.location.href = "/api/auth/instagram"
     } catch {
       setError("Verbindung fehlgeschlagen")
-    } finally {
       setConnecting(false)
     }
   }
@@ -117,6 +131,13 @@ export default function InstagramSettingsPage() {
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
+          {success && (
+            <div className="flex items-center gap-2 rounded-lg border border-green-500/20 bg-green-500/10 p-4 text-green-500">
+              <CheckCircle className="h-5 w-5 flex-shrink-0" />
+              <p className="text-sm">{success}</p>
+            </div>
+          )}
+
           {error && (
             <div className="flex items-center gap-2 rounded-lg border border-amber-500/20 bg-amber-500/10 p-4 text-amber-500">
               <AlertCircle className="h-5 w-5 flex-shrink-0" />

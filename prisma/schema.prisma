@@ -153,10 +153,12 @@ model InstagramAccount {
   username             String
   profileName          String?
   profilePicture       String?
+  facebookPageId       String?  // Facebook Page ID for API calls
   followersCount       Int?
   followingCount       Int?
   mediaCount           Int?
   lastSynced           DateTime?
+  tokenExpiresAt       DateTime? // When the access token expires
   createdAt            DateTime @default(now())
   updatedAt            DateTime @updatedAt
 
